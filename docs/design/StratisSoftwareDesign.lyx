@@ -1,0 +1,2100 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Stratis Software Design: Version 0.3
+\end_layout
+
+\begin_layout Author
+Andy Grover <agrover@redhat.com>
+\end_layout
+
+\begin_layout Date
+Last modified: 09/14/2016
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+Stratis is a local storage solution that lets multiple logical filesystems
+ share a pool of storage that is allocated from one or more block devices.
+ This is roughly equivalent to what volume-managing filesystems like ZFS
+ and Btrfs do, but differs in implementation.
+ Instead of an entirely in-kernel approach, Stratis uses a hybrid user/kernel
+ approach that builds upon existing block capabilities like devicemapper,
+ existing filesystem capabilities like XFS, and a user space daemon for
+ monitoring and control.
+\end_layout
+
+\begin_layout Standard
+The goal of Stratis is to provide the conceptual simplicity that volume-managing
+ filesystems offer, many of their features, but also surpass them in areas
+ like monitoring and notification, automatic reconfiguration, and integration
+ with higher-level storage management frameworks.
+\end_layout
+
+\begin_layout Section
+Conceptual Model
+\end_layout
+
+\begin_layout Standard
+Stratis’s conceptual model consists of 
+\emph on
+blockdevs
+\emph default
+, 
+\emph on
+pools
+\emph default
+, and 
+\emph on
+filesystems
+\emph default
+.
+ A pool is created from one or more blockdevs (block devices), after which
+ filesystems may be created from the pool.
+ Filesystems are mountable hierarchical collections of files that allocate
+ backing storage from the pool on an as-needed basis.
+ The key difference between a Stratis filesystem and a conventional Unix
+ filesystem is that Stratis filesystem sizes are not managed by the user,
+ but by Stratis.
+\end_layout
+
+\begin_layout Standard
+Since a single system may have multiple pools, each pool has a name, as
+ does each filesystem within a pool.
+ Each pool has a data redundancy level, which may be none, raid1, raid5,
+ raid6, or raid10.
+ The default is none.
+ The pool’s cache also has a redundancy level that also defaults to ‘none’.
+ This applies to how all storage is allocated within the pool.
+\end_layout
+
+\begin_layout Standard
+Stratis supports up to 1024[a][b][c][d][e][f] blockdevs in its pool, and
+ additional blockdevs may be added after the pool is created.
+ blockdevs may also be removed from a pool, if certain preparations are
+ performed and conditions are met.
+\end_layout
+
+\begin_layout Standard
+Stratis supports up to 
+\begin_inset Formula $2^{20}$
+\end_inset
+
+ filesystems.
+ New filesystems may be created from an existing filesystem (i.e.
+ a read/write snapshot), or created from scratch.
+ After creation, Stratis treats all filesystems identically; a filesystem
+ and its snapshot have no dependencies on each other, but simply take up
+ less space in the pool due to each initially referencing the same set of
+ data blocks.
+ However, to aid the user informationally, Stratis tracks and reports snapshot
+ parents.
+\end_layout
+
+\begin_layout Section
+User Experience
+\end_layout
+
+\begin_layout Standard
+Stratis has a command-line tool that enables the administrator to create
+ a Stratis pool from one or more blockdevs, and then allocate filesystems
+ from the pool.
+\end_layout
+
+\begin_layout Standard
+See reference implementation at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/stratis-storage/stratis-cli
+\end_layout
+
+\end_inset
+
+ for the most up-to-date status of the CLI design.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Command-line-Reference"
+
+\end_inset
+
+Command-line Reference
+\end_layout
+
+\begin_layout Standard
+In the following examples <dev> indicates the blockdev node path or a link
+ to that path, e.g., any /dev/disk/by-* link.
+\end_layout
+
+\begin_layout Subsubsection
+Stratis Version 1
+\end_layout
+
+\begin_layout Standard
+stratis create [-f] [-t raidtype] <pool_name> <dev> [<dev>...]
+\end_layout
+
+\begin_layout Standard
+# Initializes a new pool using the given blockdevs.
+\end_layout
+
+\begin_layout Standard
+# Also creates an initial vol named <pool_name>.
+\end_layout
+
+\begin_layout Standard
+# If not given, default raidtype is ‘none’.
+\end_layout
+
+\begin_layout Standard
+# -f to overwrite existing data on devs.
+\end_layout
+
+\begin_layout Standard
+stratis destroy <pool_name>
+\end_layout
+
+\begin_layout Standard
+# destroys a Stratis pool.
+ May fail if in use.
+\end_layout
+
+\begin_layout Standard
+stratis list
+\end_layout
+
+\begin_layout Standard
+# List Stratis pools present on the system.
+\end_layout
+
+\begin_layout Standard
+stratis dev add[g][h][i][j][k][l][m] <pool_name> <dev> [<dev...]
+\end_layout
+
+\begin_layout Standard
+# Adds a new blockdev to the pool
+\end_layout
+
+\begin_layout Standard
+stratis dev list <pool_name>
+\end_layout
+
+\begin_layout Standard
+# Lists blockdevs in the pool[n][o] and their status:
+\end_layout
+
+\begin_layout Standard
+# (used, unused, bad, spare)[p][q]
+\end_layout
+
+\begin_layout Standard
+stratis vol add <pool_name> <vol_name> [<old_vol_name>]
+\end_layout
+
+\begin_layout Standard
+# Adds a new filesystem to the pool.
+\end_layout
+
+\begin_layout Standard
+# If old_vol_name is given, created as a snapshot of that filesystem.
+\end_layout
+
+\begin_layout Standard
+stratis vol remove <pool_name> <vol_name>
+\end_layout
+
+\begin_layout Standard
+# Removes the filesystem from the pool.
+\end_layout
+
+\begin_layout Standard
+stratis vol list <pool_name>
+\end_layout
+
+\begin_layout Standard
+# Lists filesystems in the pool.
+\end_layout
+
+\begin_layout Standard
+stratis cache <pool_name> list
+\end_layout
+
+\begin_layout Standard
+# Lists cache blockdevs in the pool.
+\end_layout
+
+\begin_layout Standard
+stratis cache <pool_name> add <dev> [<dev>...]
+\end_layout
+
+\begin_layout Standard
+# Adds blockdevs to the pool as caching blockdevs.
+\end_layout
+
+\begin_layout Standard
+# (Think SSDs.) These do not increase pool size, but cache
+\end_layout
+
+\begin_layout Standard
+# data blocks for faster reads and writes.
+\end_layout
+
+\begin_layout Standard
+stratis cache [r]<pool_name> remove <dev> [<dev>...]
+\end_layout
+
+\begin_layout Standard
+# Removes cache blockdevs from the pool.
+\end_layout
+
+\begin_layout Subsubsection
+Stratis Version 2
+\end_layout
+
+\begin_layout Standard
+stratis dev make-spare[s] <pool_name> <dev>
+\end_layout
+
+\begin_layout Standard
+# Makes a blockdev into a spare blockdev, potentially moving
+\end_layout
+
+\begin_layout Standard
+# live data off of it.
+ This may take a while, or fail if there
+\end_layout
+
+\begin_layout Standard
+# isn’t enough available space in other blockdevs.
+\end_layout
+
+\begin_layout Standard
+stratis dev remove [-f] <pool_name> <dev> [<dev...]
+\end_layout
+
+\begin_layout Standard
+# Removes a blockdev from the pool, if unused[t] or spare.
+\end_layout
+
+\begin_layout Standard
+# -f needed if would degrade a redundant pool
+\end_layout
+
+\begin_layout Section
+D-Bus Programmatic API
+\end_layout
+
+\begin_layout Standard
+The Stratis service process exposes a DBus interface, for other programs
+ to integrate support for Stratis.
+ This is considered the primary Stratis interface.
+ The command-line tool described above uses the DBus API.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:D-Bus-Interfaces"
+
+\end_inset
+
+D-Bus Interfaces
+\end_layout
+
+\begin_layout Subsubsection
+Stratis Manager
+\end_layout
+
+\begin_layout Paragraph
+Properties
+\end_layout
+
+\begin_layout Standard
+Version 
+\end_layout
+
+\begin_layout Standard
+readable 
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\begin_layout Standard
+State 
+\end_layout
+
+\begin_layout Standard
+readable 
+\end_layout
+
+\begin_layout Standard
+u
+\end_layout
+
+\begin_layout Paragraph
+Methods
+\end_layout
+
+\begin_layout Standard
+SetLogging 
+\end_layout
+
+\begin_layout Standard
+IN level 
+\end_layout
+
+\begin_layout Standard
+Set the logging level for Stratis
+\end_layout
+
+\begin_layout Standard
+GetLogging 
+\end_layout
+
+\begin_layout Standard
+OUT level 
+\end_layout
+
+\begin_layout Standard
+Get the logging level for Stratis
+\end_layout
+
+\begin_layout Standard
+GetPermissions 
+\end_layout
+
+\begin_layout Standard
+Returns the permissions a caller has for various authenticated operations
+ that Stratis Manager provides.
+\end_layout
+
+\begin_layout Standard
+GetDevs 
+\end_layout
+
+\begin_layout Standard
+OUT devs 
+\end_layout
+
+\begin_layout Standard
+Get a list of stratis devs
+\end_layout
+
+\begin_layout Standard
+GetState 
+\end_layout
+
+\begin_layout Standard
+Out state 
+\end_layout
+
+\begin_layout Standard
+Get current state
+\end_layout
+
+\begin_layout Standard
+CreatePool
+\end_layout
+
+\begin_layout Standard
+IN devs list
+\end_layout
+
+\begin_layout Standard
+IN raid level
+\end_layout
+
+\begin_layout Standard
+OUT pool id 
+\end_layout
+
+\begin_layout Standard
+Create a pool from the list of devs
+\end_layout
+
+\begin_layout Standard
+Raid level (none, raid1, raid5, raid6, or raid10)
+\end_layout
+
+\begin_layout Standard
+DeletePool 
+\end_layout
+
+\begin_layout Standard
+IN devs list
+\end_layout
+
+\begin_layout Standard
+OUT pool id 
+\end_layout
+
+\begin_layout Standard
+Delete a pool
+\end_layout
+
+\begin_layout Paragraph
+Signals
+\end_layout
+
+\begin_layout Standard
+CheckPermissions[u] 
+\end_layout
+
+\begin_layout Standard
+void 
+\end_layout
+
+\begin_layout Standard
+Emitted when system authorization details change, indicating that clients
+ may wish to recheck permissions with GetPermissions
+\end_layout
+
+\begin_layout Standard
+StateChanged 
+\end_layout
+
+\begin_layout Standard
+enum 
+\end_layout
+
+\begin_layout Standard
+The new state of Stratis
+\end_layout
+
+\begin_layout Subsubsection
+Pool[v]
+\end_layout
+
+\begin_layout Paragraph
+Properties
+\end_layout
+
+\begin_layout Standard
+Name 
+\end_layout
+
+\begin_layout Standard
+string 
+\end_layout
+
+\begin_layout Standard
+Pool Name
+\end_layout
+
+\begin_layout Standard
+Size 
+\end_layout
+
+\begin_layout Standard
+? 
+\end_layout
+
+\begin_layout Standard
+Pool Size
+\end_layout
+
+\begin_layout Standard
+blockdev List 
+\end_layout
+
+\begin_layout Standard
+Array of objects 
+\end_layout
+
+\begin_layout Standard
+List of blockdevs
+\end_layout
+
+\begin_layout Standard
+Cache blockdev List 
+\end_layout
+
+\begin_layout Standard
+Array of objects 
+\end_layout
+
+\begin_layout Standard
+List of blockdevs that are designated for cache[w]
+\end_layout
+
+\begin_layout Standard
+Checksum 
+\end_layout
+
+\begin_layout Standard
+Boolean 
+\end_layout
+
+\begin_layout Standard
+Read Only 
+\end_layout
+
+\begin_layout Paragraph
+Methods[x]
+\end_layout
+
+\begin_layout Standard
+SetLogging 
+\end_layout
+
+\begin_layout Standard
+IN level 
+\end_layout
+
+\begin_layout Standard
+Set the logging level for a pool
+\end_layout
+
+\begin_layout Standard
+GetLogging 
+\end_layout
+
+\begin_layout Standard
+OUT level 
+\end_layout
+
+\begin_layout Standard
+Get the logging level for a pool
+\end_layout
+
+\begin_layout Standard
+l
+\end_layout
+
+\begin_layout Standard
+Createfilesystems
+\end_layout
+
+\begin_layout Standard
+IN: a(sss)
+\end_layout
+
+\begin_layout Standard
+OUT: a(sis)is 
+\end_layout
+
+\begin_layout Standard
+IN names
+\end_layout
+
+\begin_layout Standard
+IN mount points
+\end_layout
+
+\begin_layout Standard
+IN sizes
+\end_layout
+
+\begin_layout Standard
+OUT:
+\end_layout
+
+\begin_layout Standard
+(object path, result, user_string”)summary result, summary string 
+\end_layout
+
+\begin_layout Standard
+Create a filesystems for a pool
+\end_layout
+
+\begin_layout Standard
+Destroyfilesystems
+\end_layout
+
+\begin_layout Standard
+IN: asi
+\end_layout
+
+\begin_layout Standard
+OUT: a(sis)is 
+\end_layout
+
+\begin_layout Standard
+IN array of names
+\end_layout
+
+\begin_layout Standard
+IN force flag
+\end_layout
+
+\begin_layout Standard
+OUT:
+\end_layout
+
+\begin_layout Standard
+(object path, result, user_string”)summary result, summary string 
+\end_layout
+
+\begin_layout Standard
+Delete filesystems for a pool
+\end_layout
+
+\begin_layout Standard
+Listfilesystems
+\end_layout
+
+\begin_layout Standard
+OUT: asis 
+\end_layout
+
+\begin_layout Standard
+OUT: array of filesystem names
+\end_layout
+
+\begin_layout Standard
+OUT: result
+\end_layout
+
+\begin_layout Standard
+OUT: result string 
+\end_layout
+
+\begin_layout Standard
+List filesystems for a pool
+\end_layout
+
+\begin_layout Standard
+ListCacheDevs
+\end_layout
+
+\begin_layout Standard
+OUT: asis 
+\end_layout
+
+\begin_layout Standard
+OUT: array of cache dev names
+\end_layout
+
+\begin_layout Standard
+OUT: result
+\end_layout
+
+\begin_layout Standard
+OUT: result string 
+\end_layout
+
+\begin_layout Standard
+List cache devs for a pool
+\end_layout
+
+\begin_layout Standard
+AddCacheDevs
+\end_layout
+
+\begin_layout Standard
+IN: as
+\end_layout
+
+\begin_layout Standard
+OUT: sis 
+\end_layout
+
+\begin_layout Standard
+IN array of devs
+\end_layout
+
+\begin_layout Standard
+OUT: 
+\end_layout
+
+\begin_layout Paragraph
+Signals
+\end_layout
+
+\begin_layout Standard
+Name Changed 
+\end_layout
+
+\begin_layout Standard
+Pool Created 
+\end_layout
+
+\begin_layout Standard
+Pool Deleted 
+\end_layout
+
+\begin_layout Standard
+blockdev Added 
+\end_layout
+
+\begin_layout Standard
+blockdev Removed 
+\end_layout
+
+\begin_layout Standard
+Size Changed 
+\end_layout
+
+\begin_layout Standard
+IO Error 
+\end_layout
+
+\begin_layout Subsubsection
+filesystem[y]
+\end_layout
+
+\begin_layout Paragraph
+Properties[z]
+\end_layout
+
+\begin_layout Standard
+Name 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Standard
+Size 
+\end_layout
+
+\begin_layout Standard
+readable 
+\end_layout
+
+\begin_layout Standard
+Quota 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Standard
+Mount Point 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Standard
+Checksum 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Standard
+Warning Utilization Threshold 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Standard
+Error Utilization Threshold 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Paragraph
+Methods
+\end_layout
+
+\begin_layout Standard
+SetLogging[aa] 
+\end_layout
+
+\begin_layout Standard
+IN level 
+\end_layout
+
+\begin_layout Standard
+Set the logging level for filesystem
+\end_layout
+
+\begin_layout Standard
+GetLogging 
+\end_layout
+
+\begin_layout Standard
+OUT level 
+\end_layout
+
+\begin_layout Standard
+Get the logging level for filesystem
+\end_layout
+
+\begin_layout Standard
+CreateSnapshot 
+\end_layout
+
+\begin_layout Standard
+IN snap shot name 
+\end_layout
+
+\begin_layout Standard
+Create a snapshot of the filesystem
+\end_layout
+
+\begin_layout Standard
+Set Quota 
+\end_layout
+
+\begin_layout Standard
+IN quota 
+\end_layout
+
+\begin_layout Standard
+Set the quota for the filesystem
+\end_layout
+
+\begin_layout Standard
+Set Checksum 
+\end_layout
+
+\begin_layout Standard
+IN on/off 
+\end_layout
+
+\begin_layout Standard
+Set checksum [ab]on/off
+\end_layout
+
+\begin_layout Standard
+Set Mountpoint 
+\end_layout
+
+\begin_layout Standard
+IN mount point 
+\end_layout
+
+\begin_layout Standard
+Set the mount point for the filesystem
+\end_layout
+
+\begin_layout Standard
+Set Error Utilization Threshold 
+\end_layout
+
+\begin_layout Standard
+IN error threshold 
+\end_layout
+
+\begin_layout Standard
+Set the threshold for sending an error signal on the filesystem
+\end_layout
+
+\begin_layout Standard
+Warning Utilization Threshold 
+\end_layout
+
+\begin_layout Standard
+IN warning threshold 
+\end_layout
+
+\begin_layout Standard
+Set the threshold for sending an warning signal on the filesystem
+\end_layout
+
+\begin_layout Standard
+Signals[ac]
+\end_layout
+
+\begin_layout Standard
+filesystem Created 
+\end_layout
+
+\begin_layout Standard
+filesystem Deleted 
+\end_layout
+
+\begin_layout Standard
+Warning Utilization Threshold Exceeded 
+\end_layout
+
+\begin_layout Standard
+Error Utilization Threshold Exceeded 
+\end_layout
+
+\begin_layout Standard
+Dev Added 
+\end_layout
+
+\begin_layout Standard
+Dev Removed 
+\end_layout
+
+\begin_layout Standard
+IO Error 
+\end_layout
+
+\begin_layout Subsubsection
+blockdev
+\end_layout
+
+\begin_layout Paragraph
+Properties[ad]
+\end_layout
+
+\begin_layout Standard
+Name 
+\end_layout
+
+\begin_layout Standard
+readwrite 
+\end_layout
+
+\begin_layout Standard
+Size 
+\end_layout
+
+\begin_layout Standard
+read 
+\end_layout
+
+\begin_layout Paragraph
+Methods
+\end_layout
+
+\begin_layout Standard
+SetLogging[ae] 
+\end_layout
+
+\begin_layout Standard
+IN level 
+\end_layout
+
+\begin_layout Standard
+Set the logging level for Dev
+\end_layout
+
+\begin_layout Standard
+GetLogging 
+\end_layout
+
+\begin_layout Standard
+OUT level 
+\end_layout
+
+\begin_layout Standard
+Get the logging level for Dev
+\end_layout
+
+\begin_layout Standard
+Change Name 
+\end_layout
+
+\begin_layout Standard
+IN new name 
+\end_layout
+
+\begin_layout Paragraph
+Signals
+\end_layout
+
+\begin_layout Standard
+Dev Created 
+\end_layout
+
+\begin_layout Standard
+Dev Deleted 
+\end_layout
+
+\begin_layout Standard
+IO Error 
+\end_layout
+
+\begin_layout Subsection
+D-Bus Access Control
+\end_layout
+
+\begin_layout Subsubsection
+Security Policy
+\end_layout
+
+\begin_layout Subsubsection
+Prevent Spoofing
+\end_layout
+
+\begin_layout Subsection
+Scalability and Performance Considerations
+\end_layout
+
+\begin_layout Standard
+Stratis assumes three usage models:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:Disk-only"
+
+\end_inset
+
+Disk only
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:Disk-with-SSD"
+
+\end_inset
+
+Disk with SSD caching
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:SSD-only"
+
+\end_inset
+
+SSD only
+\end_layout
+
+\begin_layout Standard
+The use cases that might do 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "enu:Disk-only"
+
+\end_inset
+
+ are not terribly concerned with IOPs, but are concerned about resiliency,
+ integrity, and ease of management.
+ This might include large media files that are accessed mostly sequentially,
+ or other 
+\begin_inset Quotes eld
+\end_inset
+
+cold
+\begin_inset Quotes erd
+\end_inset
+
+ data.
+\end_layout
+
+\begin_layout Standard
+If random IO performance is needed, adding a caching tier based on SSDs
+ 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "enu:Disk-with-SSD"
+
+\end_inset
+
+ is going to be better than any optimization of a disk-only solution.
+ Stratis therefore doesn’t optimize case 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "enu:Disk-only"
+
+\end_inset
+
+ for IOPs, but supports setting up faster devices in a caching tier, for
+ either read caching or read/write caching (for which users likely want
+ redundancy in the cache tier).
+\end_layout
+
+\begin_layout Standard
+In case 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "enu:SSD-only"
+
+\end_inset
+
+, the cache tier isn’t needed; the pool should have high IOPs.
+ Stratis adds value through resiliency, integrity, ease of use, and ease
+ of management.
+\end_layout
+
+\begin_layout Section
+Software Components
+\end_layout
+
+\begin_layout Standard
+Stratis consists of a command-line tool, 
+\emph on
+stratis
+\emph default
+, and a service, 
+\emph on
+stratisd
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+stratis implements the command-line interface
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:Command-line-Reference"
+
+\end_inset
+
+, and converts commands into DBus API calls to stratisd.
+\end_layout
+
+\begin_layout Standard
+stratisd implements the DBus interface 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:D-Bus-Interfaces"
+
+\end_inset
+
+, and manages and monitors Stratis internal pool blockdevs, as described
+ below.
+ It is started by (udev? systemd?) and continues to run as long as Stratis
+ pools or blockdevs are present in the system.
+\end_layout
+
+\begin_layout Section
+Internals
+\end_layout
+
+\begin_layout Standard
+Stratis internals are opaque to the user.
+ This allows its implementation maximum flexibility to do whatever it needs
+ in Stratis version 1, as well as to be extended in later versions without
+ violating any user-visible expectations.
+\end_layout
+
+\begin_layout Subsection
+Cache Tier
+\end_layout
+
+\begin_layout Standard
+Caching may be configured for redundancy, or no redundancy.
+\end_layout
+
+\begin_layout Standard
+Caching may be configured for write-back and write-through modes.
+\end_layout
+
+\begin_layout Standard
+Stratis concatenates all cache blockdevs and uses the resulting device to
+ cache the thinpool device (L4).
+ This lets all filesystems benefit from the cache.
+\end_layout
+
+\begin_layout Standard
+Cache blocksize should match thinpool datablock size.
+\end_layout
+
+\begin_layout Standard
+The cache tier can be entirely reconfigured without data loss, once flushed
+ and in write-through mode, because it’s just a cache.
+ To handle configuration changes, we can just drop the cache and recreate
+ it with its new configuration.
+\end_layout
+
+\begin_layout Standard
+(more details to fill in here.)
+\end_layout
+
+\begin_layout Subsection
+Data Tier
+\end_layout
+
+\begin_layout Subsubsection
+Layer 0: blockdevs
+\end_layout
+
+\begin_layout Standard
+This layer is responsible for discovering existing blockdevs in a pool,
+ initializing and labeling new blockdevs unambiguously as part of the pool,
+ setting up any disk-specific parameters (TLER?), and storing pool metadata
+ on each blockdev.
+ Blockdevs may be in the following states: good-unused, good-used, bad,
+ spare.
+\end_layout
+
+\begin_layout Subsubsection
+Layer 1: Integrity (not in version 1)
+\end_layout
+
+\begin_layout Standard
+Identity-mapped immediately above each blockdev in the pool, Stratis uses
+ a to-be-developed DM target that allows the detection of incorrect data
+ as it is read, by using extra space to record the results of checksum/hash
+ functions on the data blocks, and then compare the results with what the
+ blockdev actually returned.
+ This will enable Stratis to detect data corruption when the pool is non-redunda
+nt, and to repair the corruption when the pool is redundant.
+ Such a DM target could use DIF information if present, but would also need
+ to work with non-DIF blockdevs.
+\end_layout
+
+\begin_layout Subsubsection
+Layer 2: Redundancy
+\end_layout
+
+\begin_layout Standard
+A Stratis pool may optionally be configured to spread data across multiple
+ physical disks, so that the loss of any one disk does not cause data loss.
+ Stratis uses conventional RAID technology (1, 5, 6, 10) as specified, and
+ converts Layer 0 blockdevs into a smaller-sized amount of storage with
+ the specified raid properties.
+\end_layout
+
+\begin_layout Standard
+Since Stratis supports more blockdevs than are RAID-able (generally 8 or
+ fewer is best for a raidset IIRC), and differently-sized blockdevs, a redundant
+ Stratis pool will likely contain multiple raid sets (all of the same global
+ type) Depending on layout, there may be some amount of space in a pool’s
+ blockdevs that cannot be used because[af][ag] it cannot be used in a RAID
+ set.
+ Stratis will intensively manage raidsets[ah][ai][aj], extending them across
+ newly added blockdevs (version 1) or creating new raidsets; and handling
+ the removal of blockdevs (version X).
+ Stratis may use dm-raid’s reshape capabilities when possible.
+\end_layout
+
+\begin_layout Standard
+A pool may also be configured with redundancy level of ‘none’.
+ In this case, Stratis may opt to[ak][al] create a striped blockdev (‘raid0’)
+ across all or some part of the blockdevs, if there are more than one.
+\end_layout
+
+\begin_layout Standard
+Stratis cannot support redundancy with a single disk, but we may wish to
+ reserve the small space for raid metadata and other uses even on one-disk
+ Stratis pools.
+ This will allow the pool to be made redundant (in the version when we support
+ this) without encountering some ugly edge cases.
+\end_layout
+
+\begin_layout Subsubsection
+Layer 3: Flexibility
+\end_layout
+
+\begin_layout Standard
+Whether blockdevs are part of raidsets or used directly, pools need to cope
+ with the addition (version X) or removal (version X+1) of them.
+\end_layout
+
+\begin_layout Standard
+Version X: Stratis needs to add a blockdev to a pool, and have the space
+ available to its filesystems grow accordingly.
+ This may involve reshaping one or more raidsets to be wider, or just knowing
+ to extend the thinpool onto the blockdev when previous blockdevs are full.
+\end_layout
+
+\begin_layout Standard
+Version X+1: Stratis needs to be able assign states to each blockdev that
+ reflect whether a) it can be removed from the pool with no effect, b) removed
+ with loss of redundancy, or c) not removed without data loss.
+ It should also be able to move active data off a perhaps-failing disk (or
+ refuse, if space on other disks in the pool is not sufficient) so that
+ the disk then can be removed from the pool.
+ blockdevs may also be marked as ‘spare’, so that they do not contribute
+ to the total available space of the pool, but can immediately replace a
+ failed disk.
+\end_layout
+
+\begin_layout Standard
+This layer will support two linear devices made up of segments from L2 devices.
+ It will track what L2 devices they are allocated from, allow the two devices
+ to grow (and shrink?), and handle the online movement of segments in these
+ devices when L2 devices come and go(v2).
+\end_layout
+
+\begin_layout Subsubsection
+Layer 4: Thin Provisioning
+\end_layout
+
+\begin_layout Standard
+The two linear targets from L3 are used as metadata device and data device
+ for a thin pool.
+ Stratis manages the thinpool device by extending the two L3 subdevices
+ when either runs low on available blocks.
+ If we approach a point where we no longer have empty L2 space to extend
+ onto, this is when we would need to start setting off alarm bells, remounting
+ read-only, throttling writes, that sort of thing.
+\end_layout
+
+\begin_layout Subsubsection
+Layer 5: Filesystem
+\end_layout
+
+\begin_layout Standard
+From the thin pool Stratis can create one or more thin volumes.
+ It will automatically give a new volume a default size, and format it with
+ a filesystem[am][an], and make it available to the user.
+ Stratis monitors each filesystem’s fullness vs its capacity and automatically
+ extends (using e.g.
+ xfs_growfs) them without user intervention.
+ Stratis also periodically runs fstrim on each one as well.
+\end_layout
+
+\begin_layout Standard
+Stratis keeps snapshot origin info in its metadata for user informational
+ purposes.
+\end_layout
+
+\begin_layout Standard
+Encryption layer (in version 3) could conceivably go on top of thin device,
+ making it per-fs.
+\end_layout
+
+\begin_layout Subsection
+Metadata
+\end_layout
+
+\begin_layout Standard
+Stratis must track the blockdevs (cache and data) that make up the pool
+ (L0), the raidsets that are created from the data blockdevs (L2), the two
+ linear targets that span the L2 devices (L3), and the attributes of the
+ thin devices and filesystems created from the thinpool (L5).
+\end_layout
+
+\begin_layout Subsubsection
+Requirements
+\end_layout
+
+\begin_layout Enumerate
+Uniquely identify a blockdev as used by Stratis, which pool it is a member
+ of, and parameters needed to recreate upper layers 1-5
+\end_layout
+
+\begin_layout Enumerate
+Detect incomplete or corrupted metadata
+\end_layout
+
+\begin_layout Enumerate
+Allow for blockdevs being expanded underneath Stratis
+\end_layout
+
+\begin_layout Enumerate
+Redundant on each blockdev to tolerate e.g.
+ accidental dd
+\end_layout
+
+\begin_layout Enumerate
+Redundant across blockdevs to handle missing, damaged etc.
+ members.
+ Can provide number & characteristics of missing blockdevs
+\end_layout
+
+\begin_layout Enumerate
+Handle thousand+ blockdevs in a pool
+\end_layout
+
+\begin_layout Enumerate
+Handle million+ filesystems in a pool and updates without writing to each
+ blockdev (idea: use a system filesystem to store user filesystem info?)
+\end_layout
+
+\begin_layout Enumerate
+Extensible/upgradeable metadata format
+\end_layout
+
+\begin_layout Section
+Delivery of Features
+\end_layout
+
+\begin_layout Subsection
+Stratis version 0.1
+\end_layout
+
+\begin_layout Standard
+Simplest thing that does something useful
+\end_layout
+
+\begin_layout Enumerate
+Create a pool
+\end_layout
+
+\begin_layout Enumerate
+Destroy a pool
+\end_layout
+
+\begin_layout Enumerate
+Create a filesystem
+\end_layout
+
+\begin_layout Enumerate
+Create a filesystem from existing filesystem (a r/w snapshot)
+\end_layout
+
+\begin_layout Enumerate
+Destroy a filesystem
+\end_layout
+
+\begin_layout Enumerate
+List filesystems
+\end_layout
+
+\begin_layout Enumerate
+Rename filesystems
+\end_layout
+
+\begin_layout Enumerate
+List pools
+\end_layout
+
+\begin_layout Enumerate
+Rename pools
+\end_layout
+
+\begin_layout Enumerate
+List blockdevs in a pool
+\end_layout
+
+\begin_layout Enumerate
+Redundancy level: none
+\end_layout
+
+\begin_layout Enumerate
+DBus API
+\end_layout
+
+\begin_layout Enumerate
+Command-line tool
+\end_layout
+
+\begin_layout Enumerate
+Save/restore configuration across reboot
+\end_layout
+
+\begin_layout Enumerate
+Initial disk labeling and on-disk metadata format
+\end_layout
+
+\begin_layout Enumerate
+Error handling for missing, corrupted, or duplicate blockdevs in a pool
+\end_layout
+
+\begin_layout Subsection
+Stratis version 0.5
+\end_layout
+
+\begin_layout Standard
+Add cache tier
+\end_layout
+
+\begin_layout Enumerate
+List cache blockdevs in a pool
+\end_layout
+
+\begin_layout Enumerate
+Add cache blockdevs
+\end_layout
+
+\begin_layout Enumerate
+Remove cache blockdevs
+\end_layout
+
+\begin_layout Enumerate
+Write-through caching only
+\end_layout
+
+\begin_layout Subsection
+Stratis version 1
+\end_layout
+
+\begin_layout Standard
+Minimum Viable Product
+\end_layout
+
+\begin_layout Enumerate
+Snapshot management: auto snaps, date-based culling, “promotion” from snap
+ to “primary”
+\end_layout
+
+\begin_layout Enumerate
+Monitor pool(s) for getting close to capacity, and do something (remount
+ ro?) if dangerously full[ao]
+\end_layout
+
+\begin_layout Enumerate
+Some sort of notification method to the user if pool is approaching capacity[ap]
+\end_layout
+
+\begin_layout Enumerate
+Maintain filesystems: Grow a filesystem as it nears capacity
+\end_layout
+
+\begin_layout Enumerate
+Maintain filesystems: Run fstrim periodically to release unused areas back
+ to thinpool
+\end_layout
+
+\begin_layout Enumerate
+Add and use an additional blockdev
+\end_layout
+
+\begin_layout Subsection
+Stratis version 2
+\end_layout
+
+\begin_layout Standard
+Add Redundancy Support
+\end_layout
+
+\begin_layout Enumerate
+Remove an existing blockdev
+\end_layout
+
+\begin_layout Enumerate
+Redundancy level: raid1
+\end_layout
+
+\begin_layout Enumerate
+Redundancy level: raid5
+\end_layout
+
+\begin_layout Enumerate
+Redundancy level: raid6
+\end_layout
+
+\begin_layout Enumerate
+Redundancy level: raid10
+\end_layout
+
+\begin_layout Enumerate
+Cache redundancy level: raid1
+\end_layout
+
+\begin_layout Enumerate
+Write-through caching enabled
+\end_layout
+
+\begin_layout Enumerate
+thin/cache metadata validation/check (i.e.
+ call thin_check & cache_check)
+\end_layout
+
+\begin_layout Enumerate
+Quotas
+\end_layout
+
+\begin_layout Enumerate
+Blockdev resize (larger)
+\end_layout
+
+\begin_layout Enumerate
+Spares
+\end_layout
+
+\begin_layout Subsection
+Stratis version 3
+\end_layout
+
+\begin_layout Standard
+Rough ZFS feature parity.
+ New DM features needed.
+\end_layout
+
+\begin_layout Enumerate
+Send/Receive Integrity checking (w/ self-healing only if on raid)
+\end_layout
+
+\begin_layout Enumerate
+Raid scrub
+\end_layout
+
+\begin_layout Enumerate
+Compression
+\end_layout
+
+\begin_layout Enumerate
+Encryption
+\end_layout
+
+\begin_layout Enumerate
+Dedupe[aq]
+\end_layout
+
+\begin_layout Enumerate
+Raid write log (on ssd? To eliminate raid write hole)
+\end_layout
+
+\begin_layout Subsection
+Stratis version 4
+\end_layout
+
+\begin_layout Subsection
+Future features and evolution
+\end_layout
+
+\begin_layout Enumerate
+Change a pool’s redundancy level
+\end_layout
+
+\begin_layout Enumerate
+Boot from a filesystem
+\end_layout
+
+\begin_layout Enumerate
+Libstoragemgmt integration
+\end_layout
+
+\begin_layout Enumerate
+Multipath integration
+\end_layout
+
+\begin_layout Enumerate
+Tag-based blockdev and filesystem classification/grouping
+\end_layout
+
+\begin_layout Enumerate
+Mirroring across partitions within a pool, for multi-site or across hw failure
+ domains (shelves/racks)
+\end_layout
+
+\begin_layout Section
+Open Questions
+\end_layout
+
+\begin_layout Paragraph
+Initial filesystem sizing.
+\end_layout
+
+\begin_layout Standard
+Mkfs does different things depending on the size of the blockdev.
+ If it’s small then things will be suboptimal if we grow it substantially.
+ Weigh this against too large, which would waste thinpool space (mkfs touches/al
+locates more thin blocks).
+\end_layout
+
+\begin_layout Paragraph
+Alignment and tuning of sizes across layers.
+\end_layout
+
+\begin_layout Standard
+It would be great if the fs happens to write to a new location that allocates
+ a thin block that it uses that entire block.
+ Also, look at XFS allocation groups, they may work cross-purposes to thinpool
+ by spreading files across the blkdev.
+ Align as much as possible.
+\end_layout
+
+\begin_layout Paragraph
+Behavior when thin pool is exhausted.
+\end_layout
+
+\begin_layout Standard
+Slow down? Switch all fs to read-only?
+\end_layout
+
+\begin_layout Paragraph
+Should we separate cache into read devs and write devs?
+\end_layout
+
+\begin_layout Standard
+Write-back cache we may want to support redundancy (cache contains only
+ copy of data until flush) whereas read cache redundancy serves little purpose,
+ just reduces the total space available.
+\end_layout
+
+\begin_layout Paragraph
+Snapshot semantics & management.
+\end_layout
+
+\begin_layout Standard
+Snapshots should be thought of as “secondary” and read-only until promoted
+ to “primary” and read-write
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+See GitHub issue: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/stratis-storage/stratisd/issues/19
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Quotas.
+\end_layout
+
+\begin_layout Standard
+If the default behavior is to grow a vol that nears its notional capacity,
+ how do we limit it for vols (e.g.
+ /var/log or time machine) where being limited in size is part of how they
+ expect to operate?
+\end_layout
+
+\begin_layout Paragraph
+Should we have a ‘monitor’ subcommand?
+\end_layout
+
+\begin_layout Standard
+What would it do?
+\end_layout
+
+\begin_layout Paragraph
+Being able to identify and differentiate blockdevs within a pool is very
+ important, given how many there can be.
+\end_layout
+
+\begin_layout Standard
+We should provide the user with system-generated info, and also allow the
+ user to add their own descriptions of blockdevs.
+\end_layout
+
+\begin_layout Paragraph
+Journald interactions
+\end_layout
+
+\begin_layout Paragraph
+Nfs interactions
+\end_layout
+
+\begin_layout Section
+End Matter and Comments
+\end_layout
+
+\begin_layout Standard
+[a]That seems low.
+ It is helpful to indicate the source of the constraint: 1) a limit imposed
+ to make testing easier or reduce initial complexity, 2) a design limit
+ - not likely to be increased soon.
+\end_layout
+
+\begin_layout Standard
+[b]fairly arbitrary.
+ The more devices and volumes, the more we need to keep track of.
+ This goes to metadata requirements, either a large staticly-sized md area
+ or some dynamically-sized technique.
+ And also we need to get fancy about how many copies we keep across all
+ the devices.
+\end_layout
+
+\begin_layout Standard
+[c]Actually, in a single pool, that seems quite high! imagine a single volume
+ composed of 1024 devices...
+ 1024 in a VG, sure.
+\end_layout
+
+\begin_layout Standard
+[d]The way I read this document a pool is an arbitrary group of dev's (correspon
+ds to a VG).
+ A vol is a user-visible subset of the capacity in the pool (corresponds
+ to a LV).
+ Am I reading it wrong?
+\end_layout
+
+\begin_layout Standard
+[e]That is my understanding, also.
+\end_layout
+
+\begin_layout Standard
+[f]"each pool has a data redundancy level" - that is an LV property, not
+ a VG property.
+ I'm sure we can ask during the call...
+\end_layout
+
+\begin_layout Standard
+[g]Indicate which devices are allowed.
+ Specifically, what about multipath, dm-crypt? md? lvm lv's?
+\end_layout
+
+\begin_layout Standard
+We will need to handle the first two, at least (unless stratis v1 will take
+ "sd" devices and configure multipath and dm-crypt on its own).
+\end_layout
+
+\begin_layout Standard
+[h]It might be reasonable to have a stratis command that lists allowed devs,
+ maybe "stratis list devs', which would be defined to list all devs that
+ stratis could use in a create command (so it would leave out devs that
+ already belong to another pool).
+\end_layout
+
+\begin_layout Standard
+[i]Trying to access an already-open block device will fail.
+ Trying to initialize a device with data on it will fail unless a --force
+ option is given, isn't that enough to protect the user from this scenario?
+ Beyond that, Stratis should be able to use any rw-capable block device.
+\end_layout
+
+\begin_layout Standard
+[j]The goal isn't to protect the user from error, just to let them know
+ the lay of the land.
+ If they want to create, and they ask for possible devices, then they probably
+ don't want to see impossible devices.
+\end_layout
+
+\begin_layout Standard
+[k]Not sure what we can do over what 'lsblk' does.
+\end_layout
+
+\begin_layout Standard
+[l]Perhaps you are thinking of some particular confguration options for
+ lsblk that do the right thing.
+ Usually, when I interact w/ it, it ends up showing all sorts of devices
+ that are claimed by other devices and would be a bad choice for stratis
+ to interact w/ directly.
+ Think multipath or see bug: https://bugzilla.redhat.com/show_bug.cgi?id=1195374.
+\end_layout
+
+\begin_layout Standard
+[m]lsblk --nodeps --inverse would be mostly right, I would think.
+\end_layout
+
+\begin_layout Standard
+[n]Will indicate the state of the pool (synching, redundant, degraded)?
+\end_layout
+
+\begin_layout Standard
+[o]'stratis dev list' wouldn't, but 'stratis list' would, I'd think.
+\end_layout
+
+\begin_layout Standard
+[p]It might be advisable to start out with the idea of a status as a bit
+ vector, rather than thinking of every dev as having just one status.
+\end_layout
+
+\begin_layout Standard
+[q]agree
+\end_layout
+
+\begin_layout Standard
+[r]Do you need a '-f' in case it is in use?
+\end_layout
+
+\begin_layout Standard
+[s]need a better command name and/or semantics.
+\end_layout
+
+\begin_layout Standard
+[t]Would be nice for stratis to allow user to retire a working disk, in
+ anticipation of its replacement, by getting stratis to pvmove all the related
+ volumes off of a dev.
+ This could be built into "stratis dev remove" as a UI matter, by removing
+ the ", if unused..." condition.
+\end_layout
+
+\begin_layout Standard
+[u]Permissions in dbus can have a very fine granularity, however I've not
+ seen them changeable at runtime.
+\end_layout
+
+\begin_layout Standard
+[v]Shouldn't all the objects have some type of UUID?
+\end_layout
+
+\begin_layout Standard
+[w]This should be array of object paths
+\end_layout
+
+\begin_layout Standard
+[x]Have you thought about monitoring issues? Beyond just logging, it would
+ be good to have a mechanism to query cache hit rates, I/O amounts/speeds,
+ identity of all constituent devices, whatever data might be available from
+ the lower level md/kernel stats.
+\end_layout
+
+\begin_layout Standard
+[y]A Volume should likely have a property which is an pool object path,
+ so you can resolve that relationship.
+\end_layout
+
+\begin_layout Standard
+[z]From what I have been told, best practice is to have properties read
+ only and use methods to change.
+\end_layout
+
+\begin_layout Standard
+[aa]I would have logging as a property with a method to change it.
+\end_layout
+
+\begin_layout Standard
+[ab]The pool has a boolean checksum property, but the volume controls it?
+ IIRC the checksum was going to be at the block level, so shouldn't all
+ the control be on the pool?
+\end_layout
+
+\begin_layout Standard
+[ac]If you utilize the standard dbus interfaces you can leverage ObjectManager
+ and it's signals for objects being created and removed.
+ You can also leverage the properties interface to get signals when properties
+ of the objects change as well.
+\end_layout
+
+\begin_layout Standard
+[ad]A Dev should likely have a property which is an pool object path, so
+ you can determine which pool it is associated with.
+\end_layout
+
+\begin_layout Standard
+[ae]You have logging controls on virtually every object (Dev, Volume, Pool),
+ do we need this flexibility?
+\end_layout
+
+\begin_layout Standard
+[af]Is the amount of this free but currently unusable free space part of
+ the status of a device?
+\end_layout
+
+\begin_layout Standard
+[ag]probably part of the status of the device and added up into the status
+ of the overall pool, I'd think.
+\end_layout
+
+\begin_layout Standard
+[ah]What kind of management policy will it follow?
+\end_layout
+
+\begin_layout Standard
+[ai]I can imagine a policy where we'd want min and max size of each raidset,
+ both in terms of size and members constituting it, and then Stratis would
+ need to reshape existing raids and create new ones as new disks were added,
+ or disks removed.
+ I think this could end up being quite involved -- this is a big part of
+ what Stratis is taking on in hiding the hard bits of storage mgmt from
+ the user.
+ i.e.
+ what is the optimal configuration of raids based upon devices available,
+ what is current config, and how do we reshape to achieve optimal config?
+\end_layout
+
+\begin_layout Standard
+[aj]How would automatically constructing a new RAID device w/in the pool
+ help a user of the pool?
+\end_layout
+
+\begin_layout Standard
+[ak]Is there a reason why it wouldn't, if more than one device were available?
+\end_layout
+
+\begin_layout Standard
+[al]it would take work to configure striping, which we may or may not want
+ to do for our initial version, is the only reason.
+\end_layout
+
+\begin_layout Standard
+[am]For the foreseeable future this is always xfs?
+\end_layout
+
+\begin_layout Standard
+[an]xfs a "default known good" filesystem.
+ It may or may not be the best choice, but we don't have a comparative analysis
+ yet that might give us reason to make a different choice.
+\end_layout
+
+\begin_layout Standard
+[ao]I wonder how this can be handled good, available space starvation is
+ bad, and it should be signaled on several channels if this limit is approached.
+\end_layout
+
+\begin_layout Standard
+[ap]Health stats and user defined threshold settings are something that
+ should be in a first release - add some unique value.
+\end_layout
+
+\begin_layout Standard
+[aq]These features are really some of the last nails in the coffin of BRTFS
+ and requests for ZFS.
+ Therefore, these features are very important.
+\end_layout
+
+\end_body
+\end_document
