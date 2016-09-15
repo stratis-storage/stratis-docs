@@ -1,4 +1,4 @@
-fsm.pdf:
+fsm.pdf: fsm.dot
 	dot -Tpdf fsm.dot > fsm.pdf
 
 clean:
