@@ -34,7 +34,7 @@ digraph outline {
         "redundancy start" -> "degraded" [label="failure/removal"];
 
         "degraded" -> "degraded" [label="do nothing"];
-        "degraded" -> "redundancy start" [label="spare used"];
+        "degraded" -> "redundancy sync" [label="spare used"];
         "degraded" -> "redundancy sync" [label="storage added"];
         "degraded" -> "redundancy end" [label="unrecoverable"];
 
