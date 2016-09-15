@@ -159,14 +159,14 @@ Since a single system may have multiple pools, each pool has a name, as
  Each pool has a data redundancy level, which may be none, raid1, raid5,
  raid6, or raid10.
  The default is none.
- The pool’s cache also has a redundancy level that also defaults to ‘none’.
- This applies to how all storage is allocated within the pool.
+ The pool’s cache also has a redundancy level that also defaults to none.
+ This redundancy level applies to all storage allocated within the pool.
 \end_layout
 
 \begin_layout Standard
 Stratis supports up to 1024[a][b][c][d][e][f] blockdevs in its pool, and
  additional blockdevs may be added after the pool is created.
- blockdevs may also be removed from a pool, if certain preparations are
+ Blockdevs may also be removed from a pool, if certain preparations are
  performed and conditions are met.
 \end_layout
 
@@ -212,7 +212,14 @@ https://github.com/stratis-storage/stratis-cli
 \end_layout
 
 \begin_layout Standard
-See the appendix for a few examples of command-line usage.
+See the appendix
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Command-Line-Interface-Usage"
+
+\end_inset
+
+ for a few examples of command-line usage.
 \end_layout
 
 \begin_layout Section
@@ -223,719 +230,18 @@ D-Bus Programmatic API
 The Stratis service process exposes a DBus interface, for other programs
  to integrate support for Stratis.
  This is considered the primary Stratis interface.
- The command-line tool described above uses the DBus API.
+ The command-line tool uses the DBus API.
 \end_layout
 
-\begin_layout Subsection
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:D-Bus-Interfaces"
+\begin_layout Standard
+See the appendix
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Dbus-API"
 
 \end_inset
 
-D-Bus Interfaces
-\end_layout
-
-\begin_layout Subsubsection
-Stratis Manager
-\end_layout
-
-\begin_layout Paragraph
-Properties
-\end_layout
-
-\begin_layout Standard
-Version 
-\end_layout
-
-\begin_layout Standard
-readable 
-\end_layout
-
-\begin_layout Standard
-s
-\end_layout
-
-\begin_layout Standard
-State 
-\end_layout
-
-\begin_layout Standard
-readable 
-\end_layout
-
-\begin_layout Standard
-u
-\end_layout
-
-\begin_layout Paragraph
-Methods
-\end_layout
-
-\begin_layout Standard
-SetLogging 
-\end_layout
-
-\begin_layout Standard
-IN level 
-\end_layout
-
-\begin_layout Standard
-Set the logging level for Stratis
-\end_layout
-
-\begin_layout Standard
-GetLogging 
-\end_layout
-
-\begin_layout Standard
-OUT level 
-\end_layout
-
-\begin_layout Standard
-Get the logging level for Stratis
-\end_layout
-
-\begin_layout Standard
-GetPermissions 
-\end_layout
-
-\begin_layout Standard
-Returns the permissions a caller has for various authenticated operations
- that Stratis Manager provides.
-\end_layout
-
-\begin_layout Standard
-GetDevs 
-\end_layout
-
-\begin_layout Standard
-OUT devs 
-\end_layout
-
-\begin_layout Standard
-Get a list of stratis devs
-\end_layout
-
-\begin_layout Standard
-GetState 
-\end_layout
-
-\begin_layout Standard
-Out state 
-\end_layout
-
-\begin_layout Standard
-Get current state
-\end_layout
-
-\begin_layout Standard
-CreatePool
-\end_layout
-
-\begin_layout Standard
-IN devs list
-\end_layout
-
-\begin_layout Standard
-IN raid level
-\end_layout
-
-\begin_layout Standard
-OUT pool id 
-\end_layout
-
-\begin_layout Standard
-Create a pool from the list of devs
-\end_layout
-
-\begin_layout Standard
-Raid level (none, raid1, raid5, raid6, or raid10)
-\end_layout
-
-\begin_layout Standard
-DeletePool 
-\end_layout
-
-\begin_layout Standard
-IN devs list
-\end_layout
-
-\begin_layout Standard
-OUT pool id 
-\end_layout
-
-\begin_layout Standard
-Delete a pool
-\end_layout
-
-\begin_layout Paragraph
-Signals
-\end_layout
-
-\begin_layout Standard
-CheckPermissions[u] 
-\end_layout
-
-\begin_layout Standard
-void 
-\end_layout
-
-\begin_layout Standard
-Emitted when system authorization details change, indicating that clients
- may wish to recheck permissions with GetPermissions
-\end_layout
-
-\begin_layout Standard
-StateChanged 
-\end_layout
-
-\begin_layout Standard
-enum 
-\end_layout
-
-\begin_layout Standard
-The new state of Stratis
-\end_layout
-
-\begin_layout Subsubsection
-Pool[v]
-\end_layout
-
-\begin_layout Paragraph
-Properties
-\end_layout
-
-\begin_layout Standard
-Name 
-\end_layout
-
-\begin_layout Standard
-string 
-\end_layout
-
-\begin_layout Standard
-Pool Name
-\end_layout
-
-\begin_layout Standard
-Size 
-\end_layout
-
-\begin_layout Standard
-? 
-\end_layout
-
-\begin_layout Standard
-Pool Size
-\end_layout
-
-\begin_layout Standard
-blockdev List 
-\end_layout
-
-\begin_layout Standard
-Array of objects 
-\end_layout
-
-\begin_layout Standard
-List of blockdevs
-\end_layout
-
-\begin_layout Standard
-Cache blockdev List 
-\end_layout
-
-\begin_layout Standard
-Array of objects 
-\end_layout
-
-\begin_layout Standard
-List of blockdevs that are designated for cache[w]
-\end_layout
-
-\begin_layout Standard
-Checksum 
-\end_layout
-
-\begin_layout Standard
-Boolean 
-\end_layout
-
-\begin_layout Standard
-Read Only 
-\end_layout
-
-\begin_layout Paragraph
-Methods[x]
-\end_layout
-
-\begin_layout Standard
-SetLogging 
-\end_layout
-
-\begin_layout Standard
-IN level 
-\end_layout
-
-\begin_layout Standard
-Set the logging level for a pool
-\end_layout
-
-\begin_layout Standard
-GetLogging 
-\end_layout
-
-\begin_layout Standard
-OUT level 
-\end_layout
-
-\begin_layout Standard
-Get the logging level for a pool
-\end_layout
-
-\begin_layout Standard
-l
-\end_layout
-
-\begin_layout Standard
-Createfilesystems
-\end_layout
-
-\begin_layout Standard
-IN: a(sss)
-\end_layout
-
-\begin_layout Standard
-OUT: a(sis)is 
-\end_layout
-
-\begin_layout Standard
-IN names
-\end_layout
-
-\begin_layout Standard
-IN mount points
-\end_layout
-
-\begin_layout Standard
-IN sizes
-\end_layout
-
-\begin_layout Standard
-OUT:
-\end_layout
-
-\begin_layout Standard
-(object path, result, user_string”)summary result, summary string 
-\end_layout
-
-\begin_layout Standard
-Create a filesystems for a pool
-\end_layout
-
-\begin_layout Standard
-Destroyfilesystems
-\end_layout
-
-\begin_layout Standard
-IN: asi
-\end_layout
-
-\begin_layout Standard
-OUT: a(sis)is 
-\end_layout
-
-\begin_layout Standard
-IN array of names
-\end_layout
-
-\begin_layout Standard
-IN force flag
-\end_layout
-
-\begin_layout Standard
-OUT:
-\end_layout
-
-\begin_layout Standard
-(object path, result, user_string”)summary result, summary string 
-\end_layout
-
-\begin_layout Standard
-Delete filesystems for a pool
-\end_layout
-
-\begin_layout Standard
-Listfilesystems
-\end_layout
-
-\begin_layout Standard
-OUT: asis 
-\end_layout
-
-\begin_layout Standard
-OUT: array of filesystem names
-\end_layout
-
-\begin_layout Standard
-OUT: result
-\end_layout
-
-\begin_layout Standard
-OUT: result string 
-\end_layout
-
-\begin_layout Standard
-List filesystems for a pool
-\end_layout
-
-\begin_layout Standard
-ListCacheDevs
-\end_layout
-
-\begin_layout Standard
-OUT: asis 
-\end_layout
-
-\begin_layout Standard
-OUT: array of cache dev names
-\end_layout
-
-\begin_layout Standard
-OUT: result
-\end_layout
-
-\begin_layout Standard
-OUT: result string 
-\end_layout
-
-\begin_layout Standard
-List cache devs for a pool
-\end_layout
-
-\begin_layout Standard
-AddCacheDevs
-\end_layout
-
-\begin_layout Standard
-IN: as
-\end_layout
-
-\begin_layout Standard
-OUT: sis 
-\end_layout
-
-\begin_layout Standard
-IN array of devs
-\end_layout
-
-\begin_layout Standard
-OUT: 
-\end_layout
-
-\begin_layout Paragraph
-Signals
-\end_layout
-
-\begin_layout Standard
-Name Changed 
-\end_layout
-
-\begin_layout Standard
-Pool Created 
-\end_layout
-
-\begin_layout Standard
-Pool Deleted 
-\end_layout
-
-\begin_layout Standard
-blockdev Added 
-\end_layout
-
-\begin_layout Standard
-blockdev Removed 
-\end_layout
-
-\begin_layout Standard
-Size Changed 
-\end_layout
-
-\begin_layout Standard
-IO Error 
-\end_layout
-
-\begin_layout Subsubsection
-filesystem[y]
-\end_layout
-
-\begin_layout Paragraph
-Properties[z]
-\end_layout
-
-\begin_layout Standard
-Name 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Standard
-Size 
-\end_layout
-
-\begin_layout Standard
-readable 
-\end_layout
-
-\begin_layout Standard
-Quota 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Standard
-Mount Point 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Standard
-Checksum 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Standard
-Warning Utilization Threshold 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Standard
-Error Utilization Threshold 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Paragraph
-Methods
-\end_layout
-
-\begin_layout Standard
-SetLogging[aa] 
-\end_layout
-
-\begin_layout Standard
-IN level 
-\end_layout
-
-\begin_layout Standard
-Set the logging level for filesystem
-\end_layout
-
-\begin_layout Standard
-GetLogging 
-\end_layout
-
-\begin_layout Standard
-OUT level 
-\end_layout
-
-\begin_layout Standard
-Get the logging level for filesystem
-\end_layout
-
-\begin_layout Standard
-CreateSnapshot 
-\end_layout
-
-\begin_layout Standard
-IN snap shot name 
-\end_layout
-
-\begin_layout Standard
-Create a snapshot of the filesystem
-\end_layout
-
-\begin_layout Standard
-Set Quota 
-\end_layout
-
-\begin_layout Standard
-IN quota 
-\end_layout
-
-\begin_layout Standard
-Set the quota for the filesystem
-\end_layout
-
-\begin_layout Standard
-Set Checksum 
-\end_layout
-
-\begin_layout Standard
-IN on/off 
-\end_layout
-
-\begin_layout Standard
-Set checksum [ab]on/off
-\end_layout
-
-\begin_layout Standard
-Set Mountpoint 
-\end_layout
-
-\begin_layout Standard
-IN mount point 
-\end_layout
-
-\begin_layout Standard
-Set the mount point for the filesystem
-\end_layout
-
-\begin_layout Standard
-Set Error Utilization Threshold 
-\end_layout
-
-\begin_layout Standard
-IN error threshold 
-\end_layout
-
-\begin_layout Standard
-Set the threshold for sending an error signal on the filesystem
-\end_layout
-
-\begin_layout Standard
-Warning Utilization Threshold 
-\end_layout
-
-\begin_layout Standard
-IN warning threshold 
-\end_layout
-
-\begin_layout Standard
-Set the threshold for sending an warning signal on the filesystem
-\end_layout
-
-\begin_layout Standard
-Signals[ac]
-\end_layout
-
-\begin_layout Standard
-filesystem Created 
-\end_layout
-
-\begin_layout Standard
-filesystem Deleted 
-\end_layout
-
-\begin_layout Standard
-Warning Utilization Threshold Exceeded 
-\end_layout
-
-\begin_layout Standard
-Error Utilization Threshold Exceeded 
-\end_layout
-
-\begin_layout Standard
-Dev Added 
-\end_layout
-
-\begin_layout Standard
-Dev Removed 
-\end_layout
-
-\begin_layout Standard
-IO Error 
-\end_layout
-
-\begin_layout Subsubsection
-blockdev
-\end_layout
-
-\begin_layout Paragraph
-Properties[ad]
-\end_layout
-
-\begin_layout Standard
-Name 
-\end_layout
-
-\begin_layout Standard
-readwrite 
-\end_layout
-
-\begin_layout Standard
-Size 
-\end_layout
-
-\begin_layout Standard
-read 
-\end_layout
-
-\begin_layout Paragraph
-Methods
-\end_layout
-
-\begin_layout Standard
-SetLogging[ae] 
-\end_layout
-
-\begin_layout Standard
-IN level 
-\end_layout
-
-\begin_layout Standard
-Set the logging level for Dev
-\end_layout
-
-\begin_layout Standard
-GetLogging 
-\end_layout
-
-\begin_layout Standard
-OUT level 
-\end_layout
-
-\begin_layout Standard
-Get the logging level for Dev
-\end_layout
-
-\begin_layout Standard
-Change Name 
-\end_layout
-
-\begin_layout Standard
-IN new name 
-\end_layout
-
-\begin_layout Paragraph
-Signals
-\end_layout
-
-\begin_layout Standard
-Dev Created 
-\end_layout
-
-\begin_layout Standard
-Dev Deleted 
-\end_layout
-
-\begin_layout Standard
-IO Error 
+ for a more complete outline of the DBus API.
 \end_layout
 
 \begin_layout Subsection
@@ -950,7 +256,7 @@ Security Policy
 Prevent Spoofing
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Scalability and Performance Considerations
 \end_layout
 
@@ -989,7 +295,7 @@ SSD only
 \end_layout
 
 \begin_layout Standard
-The use cases that might do 
+The use cases that might do
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "enu:Disk-only"
@@ -999,7 +305,7 @@ reference "enu:Disk-only"
  are not terribly concerned with IOPs, but are concerned about resiliency,
  integrity, and ease of management.
  This might include large media files that are accessed mostly sequentially,
- or other 
+ or other
 \begin_inset Quotes eld
 \end_inset
 
@@ -1012,7 +318,7 @@ cold
 
 \begin_layout Standard
 If random IO performance is needed, adding a caching tier based on SSDs
- 
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "enu:Disk-with-SSD"
@@ -1020,7 +326,7 @@ reference "enu:Disk-with-SSD"
 \end_inset
 
  is going to be better than any optimization of a disk-only solution.
- Stratis therefore doesn’t optimize case 
+ Stratis therefore doesn’t optimize case
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "enu:Disk-only"
@@ -1033,7 +339,7 @@ reference "enu:Disk-only"
 \end_layout
 
 \begin_layout Standard
-In case 
+In case
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "enu:SSD-only"
@@ -1050,11 +356,11 @@ Software Components
 \end_layout
 
 \begin_layout Standard
-Stratis consists of a command-line tool, 
+Stratis consists of a command-line tool,
 \emph on
 stratis
 \emph default
-, and a service, 
+, and a service,
 \emph on
 stratisd
 \emph default
@@ -1065,7 +371,7 @@ stratisd
 stratis implements the command-line interface
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "sub:Command-line-Reference"
+reference "sec:Command-Line-Interface-Usage"
 
 \end_inset
 
@@ -1073,10 +379,10 @@ reference "sub:Command-line-Reference"
 \end_layout
 
 \begin_layout Standard
-stratisd implements the DBus interface 
+stratisd implements the DBus interface
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "sub:D-Bus-Interfaces"
+reference "sec:Dbus-API"
 
 \end_inset
 
@@ -1637,7 +943,7 @@ Snapshots should be thought of as “secondary” and read-only until promoted
 status open
 
 \begin_layout Plain Layout
-See GitHub issue: 
+See GitHub issue:
 \begin_inset Flex URL
 status open
 
@@ -1944,6 +1250,12 @@ We will need to handle the first two, at least (unless stratis v1 will take
 
 \begin_layout Section
 \start_of_appendix
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Command-Line-Interface-Usage"
+
+\end_inset
+
 Command-Line Interface Usage Examples
 \end_layout
 
@@ -2164,7 +1476,7 @@ stratis dev make-spare[s] <pool_name> <dev>
 
 \begin_layout Verbatim
 
-# isn’t enough available space in other blockdevs.
+# isn't enough available space in other blockdevs.
 \end_layout
 
 \begin_layout Verbatim
@@ -2187,7 +1499,985 @@ stratis dev remove [-f] <pool_name> <dev> [<dev...]
 \end_layout
 
 \begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Dbus-API"
+
+\end_inset
+
 Dbus API
+\end_layout
+
+\begin_layout Subsubsection
+Stratis Manager
+\end_layout
+
+\begin_layout Description
+Properties
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Properties
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+readable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+s
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+readable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+u
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Methods
+\end_layout
+
+\begin_layout Description
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Properties
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Purpose
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SetLogging
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IN level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Set the logging level for Stratis
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+GetLogging
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OUT level
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Get the logging level for Stratis
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+GetPermissions
+\end_layout
+
+\begin_layout Standard
+Returns the permissions a caller has for various authenticated operations
+ that Stratis Manager provides.
+\end_layout
+
+\begin_layout Standard
+GetDevs
+\end_layout
+
+\begin_layout Standard
+OUT devs
+\end_layout
+
+\begin_layout Standard
+Get a list of stratis devs
+\end_layout
+
+\begin_layout Standard
+GetState
+\end_layout
+
+\begin_layout Standard
+Out state
+\end_layout
+
+\begin_layout Standard
+Get current state
+\end_layout
+
+\begin_layout Standard
+CreatePool
+\end_layout
+
+\begin_layout Standard
+IN devs list
+\end_layout
+
+\begin_layout Standard
+IN raid level
+\end_layout
+
+\begin_layout Standard
+OUT pool id
+\end_layout
+
+\begin_layout Standard
+Create a pool from the list of devs
+\end_layout
+
+\begin_layout Standard
+Raid level (none, raid1, raid5, raid6, or raid10)
+\end_layout
+
+\begin_layout Standard
+DeletePool
+\end_layout
+
+\begin_layout Standard
+IN devs list
+\end_layout
+
+\begin_layout Standard
+OUT pool id
+\end_layout
+
+\begin_layout Standard
+Delete a pool
+\end_layout
+
+\begin_layout Paragraph
+Signals
+\end_layout
+
+\begin_layout Standard
+CheckPermissions[u]
+\end_layout
+
+\begin_layout Standard
+void
+\end_layout
+
+\begin_layout Standard
+Emitted when system authorization details change, indicating that clients
+ may wish to recheck permissions with GetPermissions
+\end_layout
+
+\begin_layout Standard
+StateChanged
+\end_layout
+
+\begin_layout Standard
+enum
+\end_layout
+
+\begin_layout Standard
+The new state of Stratis
+\end_layout
+
+\begin_layout Subsubsection
+Pool[v]
+\end_layout
+
+\begin_layout Paragraph
+Properties
+\end_layout
+
+\begin_layout Standard
+Name
+\end_layout
+
+\begin_layout Standard
+string
+\end_layout
+
+\begin_layout Standard
+Pool Name
+\end_layout
+
+\begin_layout Standard
+Size
+\end_layout
+
+\begin_layout Standard
+?
+\end_layout
+
+\begin_layout Standard
+Pool Size
+\end_layout
+
+\begin_layout Standard
+blockdev List
+\end_layout
+
+\begin_layout Standard
+Array of objects
+\end_layout
+
+\begin_layout Standard
+List of blockdevs
+\end_layout
+
+\begin_layout Standard
+Cache blockdev List
+\end_layout
+
+\begin_layout Standard
+Array of objects
+\end_layout
+
+\begin_layout Standard
+List of blockdevs that are designated for cache[w]
+\end_layout
+
+\begin_layout Standard
+Checksum
+\end_layout
+
+\begin_layout Standard
+Boolean
+\end_layout
+
+\begin_layout Standard
+Read Only
+\end_layout
+
+\begin_layout Paragraph
+Methods[x]
+\end_layout
+
+\begin_layout Standard
+SetLogging
+\end_layout
+
+\begin_layout Standard
+IN level
+\end_layout
+
+\begin_layout Standard
+Set the logging level for a pool
+\end_layout
+
+\begin_layout Standard
+GetLogging
+\end_layout
+
+\begin_layout Standard
+OUT level
+\end_layout
+
+\begin_layout Standard
+Get the logging level for a pool
+\end_layout
+
+\begin_layout Standard
+l
+\end_layout
+
+\begin_layout Standard
+Createfilesystems
+\end_layout
+
+\begin_layout Standard
+IN: a(sss)
+\end_layout
+
+\begin_layout Standard
+OUT: a(sis)is
+\end_layout
+
+\begin_layout Standard
+IN names
+\end_layout
+
+\begin_layout Standard
+IN mount points
+\end_layout
+
+\begin_layout Standard
+IN sizes
+\end_layout
+
+\begin_layout Standard
+OUT:
+\end_layout
+
+\begin_layout Standard
+(object path, result, user_string”)summary result, summary string
+\end_layout
+
+\begin_layout Standard
+Create a filesystems for a pool
+\end_layout
+
+\begin_layout Standard
+Destroyfilesystems
+\end_layout
+
+\begin_layout Standard
+IN: asi
+\end_layout
+
+\begin_layout Standard
+OUT: a(sis)is
+\end_layout
+
+\begin_layout Standard
+IN array of names
+\end_layout
+
+\begin_layout Standard
+IN force flag
+\end_layout
+
+\begin_layout Standard
+OUT:
+\end_layout
+
+\begin_layout Standard
+(object path, result, user_string”)summary result, summary string
+\end_layout
+
+\begin_layout Standard
+Delete filesystems for a pool
+\end_layout
+
+\begin_layout Standard
+Listfilesystems
+\end_layout
+
+\begin_layout Standard
+OUT: asis
+\end_layout
+
+\begin_layout Standard
+OUT: array of filesystem names
+\end_layout
+
+\begin_layout Standard
+OUT: result
+\end_layout
+
+\begin_layout Standard
+OUT: result string
+\end_layout
+
+\begin_layout Standard
+List filesystems for a pool
+\end_layout
+
+\begin_layout Standard
+ListCacheDevs
+\end_layout
+
+\begin_layout Standard
+OUT: asis
+\end_layout
+
+\begin_layout Standard
+OUT: array of cache dev names
+\end_layout
+
+\begin_layout Standard
+OUT: result
+\end_layout
+
+\begin_layout Standard
+OUT: result string
+\end_layout
+
+\begin_layout Standard
+List cache devs for a pool
+\end_layout
+
+\begin_layout Standard
+AddCacheDevs
+\end_layout
+
+\begin_layout Standard
+IN: as
+\end_layout
+
+\begin_layout Standard
+OUT: sis
+\end_layout
+
+\begin_layout Standard
+IN array of devs
+\end_layout
+
+\begin_layout Standard
+OUT:
+\end_layout
+
+\begin_layout Paragraph
+Signals
+\end_layout
+
+\begin_layout Standard
+Name Changed
+\end_layout
+
+\begin_layout Standard
+Pool Created
+\end_layout
+
+\begin_layout Standard
+Pool Deleted
+\end_layout
+
+\begin_layout Standard
+blockdev Added
+\end_layout
+
+\begin_layout Standard
+blockdev Removed
+\end_layout
+
+\begin_layout Standard
+Size Changed
+\end_layout
+
+\begin_layout Standard
+IO Error
+\end_layout
+
+\begin_layout Subsubsection
+filesystem[y]
+\end_layout
+
+\begin_layout Paragraph
+Properties[z]
+\end_layout
+
+\begin_layout Standard
+Name
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Standard
+Size
+\end_layout
+
+\begin_layout Standard
+readable
+\end_layout
+
+\begin_layout Standard
+Quota
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Standard
+Mount Point
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Standard
+Checksum
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Standard
+Warning Utilization Threshold
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Standard
+Error Utilization Threshold
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Paragraph
+Methods
+\end_layout
+
+\begin_layout Standard
+SetLogging[aa]
+\end_layout
+
+\begin_layout Standard
+IN level
+\end_layout
+
+\begin_layout Standard
+Set the logging level for filesystem
+\end_layout
+
+\begin_layout Standard
+GetLogging
+\end_layout
+
+\begin_layout Standard
+OUT level
+\end_layout
+
+\begin_layout Standard
+Get the logging level for filesystem
+\end_layout
+
+\begin_layout Standard
+CreateSnapshot
+\end_layout
+
+\begin_layout Standard
+IN snap shot name
+\end_layout
+
+\begin_layout Standard
+Create a snapshot of the filesystem
+\end_layout
+
+\begin_layout Standard
+Set Quota
+\end_layout
+
+\begin_layout Standard
+IN quota
+\end_layout
+
+\begin_layout Standard
+Set the quota for the filesystem
+\end_layout
+
+\begin_layout Standard
+Set Checksum
+\end_layout
+
+\begin_layout Standard
+IN on/off
+\end_layout
+
+\begin_layout Standard
+Set checksum [ab]on/off
+\end_layout
+
+\begin_layout Standard
+Set Mountpoint
+\end_layout
+
+\begin_layout Standard
+IN mount point
+\end_layout
+
+\begin_layout Standard
+Set the mount point for the filesystem
+\end_layout
+
+\begin_layout Standard
+Set Error Utilization Threshold
+\end_layout
+
+\begin_layout Standard
+IN error threshold
+\end_layout
+
+\begin_layout Standard
+Set the threshold for sending an error signal on the filesystem
+\end_layout
+
+\begin_layout Standard
+Warning Utilization Threshold
+\end_layout
+
+\begin_layout Standard
+IN warning threshold
+\end_layout
+
+\begin_layout Standard
+Set the threshold for sending an warning signal on the filesystem
+\end_layout
+
+\begin_layout Standard
+Signals[ac]
+\end_layout
+
+\begin_layout Standard
+filesystem Created
+\end_layout
+
+\begin_layout Standard
+filesystem Deleted
+\end_layout
+
+\begin_layout Standard
+Warning Utilization Threshold Exceeded
+\end_layout
+
+\begin_layout Standard
+Error Utilization Threshold Exceeded
+\end_layout
+
+\begin_layout Standard
+Dev Added
+\end_layout
+
+\begin_layout Standard
+Dev Removed
+\end_layout
+
+\begin_layout Standard
+IO Error
+\end_layout
+
+\begin_layout Subsubsection
+blockdev
+\end_layout
+
+\begin_layout Paragraph
+Properties[ad]
+\end_layout
+
+\begin_layout Standard
+Name
+\end_layout
+
+\begin_layout Standard
+readwrite
+\end_layout
+
+\begin_layout Standard
+Size
+\end_layout
+
+\begin_layout Standard
+read
+\end_layout
+
+\begin_layout Paragraph
+Methods
+\end_layout
+
+\begin_layout Standard
+SetLogging[ae]
+\end_layout
+
+\begin_layout Standard
+IN level
+\end_layout
+
+\begin_layout Standard
+Set the logging level for Dev
+\end_layout
+
+\begin_layout Standard
+GetLogging
+\end_layout
+
+\begin_layout Standard
+OUT level
+\end_layout
+
+\begin_layout Standard
+Get the logging level for Dev
+\end_layout
+
+\begin_layout Standard
+Change Name
+\end_layout
+
+\begin_layout Standard
+IN new name
+\end_layout
+
+\begin_layout Paragraph
+Signals
+\end_layout
+
+\begin_layout Standard
+Dev Created
+\end_layout
+
+\begin_layout Standard
+Dev Deleted
+\end_layout
+
+\begin_layout Standard
+IO Error
 \end_layout
 
 \end_body
