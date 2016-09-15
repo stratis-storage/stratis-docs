@@ -88,7 +88,18 @@ This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
 \end_layout
 
 \begin_layout Author
-Andy Grover <agrover@redhat.com>
+Andy Grover 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+<agrover@redhat.com>
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Date
@@ -318,7 +329,6 @@ cold
 
 \begin_layout Standard
 If random IO performance is needed, adding a caching tier based on SSDs
-
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "enu:Disk-with-SSD"
