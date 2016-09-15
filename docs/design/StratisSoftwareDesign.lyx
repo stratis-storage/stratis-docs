@@ -115,6 +115,22 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Before saving this file preparatory to a commit, make sure that all insets
+ are closed.
+ If you are able to read this note, you haven't performed this essential
+ step.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section*
 Introduction
 \end_layout
