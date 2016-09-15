@@ -211,173 +211,8 @@ https://github.com/stratis-storage/stratis-cli
  for the most up-to-date status of the CLI design.
 \end_layout
 
-\begin_layout Subsection
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Command-line-Reference"
-
-\end_inset
-
-Command-line Reference
-\end_layout
-
 \begin_layout Standard
-In the following examples <dev> indicates the blockdev node path or a link
- to that path, e.g., any /dev/disk/by-* link.
-\end_layout
-
-\begin_layout Subsubsection
-Stratis Version 1
-\end_layout
-
-\begin_layout Standard
-stratis create [-f] [-t raidtype] <pool_name> <dev> [<dev>...]
-\end_layout
-
-\begin_layout Standard
-# Initializes a new pool using the given blockdevs.
-\end_layout
-
-\begin_layout Standard
-# Also creates an initial vol named <pool_name>.
-\end_layout
-
-\begin_layout Standard
-# If not given, default raidtype is ‘none’.
-\end_layout
-
-\begin_layout Standard
-# -f to overwrite existing data on devs.
-\end_layout
-
-\begin_layout Standard
-stratis destroy <pool_name>
-\end_layout
-
-\begin_layout Standard
-# destroys a Stratis pool.
- May fail if in use.
-\end_layout
-
-\begin_layout Standard
-stratis list
-\end_layout
-
-\begin_layout Standard
-# List Stratis pools present on the system.
-\end_layout
-
-\begin_layout Standard
-stratis dev add[g][h][i][j][k][l][m] <pool_name> <dev> [<dev...]
-\end_layout
-
-\begin_layout Standard
-# Adds a new blockdev to the pool
-\end_layout
-
-\begin_layout Standard
-stratis dev list <pool_name>
-\end_layout
-
-\begin_layout Standard
-# Lists blockdevs in the pool[n][o] and their status:
-\end_layout
-
-\begin_layout Standard
-# (used, unused, bad, spare)[p][q]
-\end_layout
-
-\begin_layout Standard
-stratis vol add <pool_name> <vol_name> [<old_vol_name>]
-\end_layout
-
-\begin_layout Standard
-# Adds a new filesystem to the pool.
-\end_layout
-
-\begin_layout Standard
-# If old_vol_name is given, created as a snapshot of that filesystem.
-\end_layout
-
-\begin_layout Standard
-stratis vol remove <pool_name> <vol_name>
-\end_layout
-
-\begin_layout Standard
-# Removes the filesystem from the pool.
-\end_layout
-
-\begin_layout Standard
-stratis vol list <pool_name>
-\end_layout
-
-\begin_layout Standard
-# Lists filesystems in the pool.
-\end_layout
-
-\begin_layout Standard
-stratis cache <pool_name> list
-\end_layout
-
-\begin_layout Standard
-# Lists cache blockdevs in the pool.
-\end_layout
-
-\begin_layout Standard
-stratis cache <pool_name> add <dev> [<dev>...]
-\end_layout
-
-\begin_layout Standard
-# Adds blockdevs to the pool as caching blockdevs.
-\end_layout
-
-\begin_layout Standard
-# (Think SSDs.) These do not increase pool size, but cache
-\end_layout
-
-\begin_layout Standard
-# data blocks for faster reads and writes.
-\end_layout
-
-\begin_layout Standard
-stratis cache [r]<pool_name> remove <dev> [<dev>...]
-\end_layout
-
-\begin_layout Standard
-# Removes cache blockdevs from the pool.
-\end_layout
-
-\begin_layout Subsubsection
-Stratis Version 2
-\end_layout
-
-\begin_layout Standard
-stratis dev make-spare[s] <pool_name> <dev>
-\end_layout
-
-\begin_layout Standard
-# Makes a blockdev into a spare blockdev, potentially moving
-\end_layout
-
-\begin_layout Standard
-# live data off of it.
- This may take a while, or fail if there
-\end_layout
-
-\begin_layout Standard
-# isn’t enough available space in other blockdevs.
-\end_layout
-
-\begin_layout Standard
-stratis dev remove [-f] <pool_name> <dev> [<dev...]
-\end_layout
-
-\begin_layout Standard
-# Removes a blockdev from the pool, if unused[t] or spare.
-\end_layout
-
-\begin_layout Standard
-# -f needed if would degrade a redundant pool
+See the appendix for a few examples of command-line usage.
 \end_layout
 
 \begin_layout Section
@@ -2105,6 +1940,254 @@ We will need to handle the first two, at least (unless stratis v1 will take
 [aq]These features are really some of the last nails in the coffin of BRTFS
  and requests for ZFS.
  Therefore, these features are very important.
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Command-Line Interface Usage Examples
+\end_layout
+
+\begin_layout Standard
+In the following examples <dev> indicates the blockdev node path or a link
+ to that path, e.g., any /dev/disk/by-* link.
+\end_layout
+
+\begin_layout Subsubsection
+Stratis Version 1
+\end_layout
+
+\begin_layout Verbatim
+
+stratis create [-f] [-t raidtype] <pool_name> <dev> [<dev>...]
+\end_layout
+
+\begin_layout Verbatim
+
+# Initializes a new pool using the given blockdevs.
+\end_layout
+
+\begin_layout Verbatim
+
+# Also creates an initial vol named <pool_name>.
+\end_layout
+
+\begin_layout Verbatim
+
+# If not given, default raidtype is 'none'.
+\end_layout
+
+\begin_layout Verbatim
+
+# -f to overwrite existing data on devs.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis destroy <pool_name>
+\end_layout
+
+\begin_layout Verbatim
+
+# destroys a Stratis pool.
+ May fail if in use.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis list
+\end_layout
+
+\begin_layout Verbatim
+
+# List Stratis pools present on the system.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis dev add[g][h][i][j][k][l][m] <pool_name> <dev> [<dev...]
+\end_layout
+
+\begin_layout Verbatim
+
+# Adds a new blockdev to the pool
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis dev list <pool_name>
+\end_layout
+
+\begin_layout Verbatim
+
+# Lists blockdevs in the pool[n][o] and their status:
+\end_layout
+
+\begin_layout Verbatim
+
+# (used, unused, bad, spare)[p][q]
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis vol add <pool_name> <vol_name> [<old_vol_name>]
+\end_layout
+
+\begin_layout Verbatim
+
+# Adds a new filesystem to the pool.
+\end_layout
+
+\begin_layout Verbatim
+
+# If old_vol_name is given, created as a snapshot of that filesystem.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis vol remove <pool_name> <vol_name>
+\end_layout
+
+\begin_layout Verbatim
+
+# Removes the filesystem from the pool.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis vol list <pool_name>
+\end_layout
+
+\begin_layout Verbatim
+
+# Lists filesystems in the pool.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis cache <pool_name> list
+\end_layout
+
+\begin_layout Verbatim
+
+# Lists cache blockdevs in the pool.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis cache <pool_name> add <dev> [<dev>...]
+\end_layout
+
+\begin_layout Verbatim
+
+# Adds blockdevs to the pool as caching blockdevs.
+\end_layout
+
+\begin_layout Verbatim
+
+# (Think SSDs.) These do not increase pool size, but cache
+\end_layout
+
+\begin_layout Verbatim
+
+# data blocks for faster reads and writes.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis cache [r]<pool_name> remove <dev> [<dev>...]
+\end_layout
+
+\begin_layout Verbatim
+
+# Removes cache blockdevs from the pool.
+\end_layout
+
+\begin_layout Subsubsection
+Stratis Version 2
+\end_layout
+
+\begin_layout Verbatim
+
+stratis dev make-spare[s] <pool_name> <dev>
+\end_layout
+
+\begin_layout Verbatim
+
+# Makes a blockdev into a spare blockdev, potentially moving
+\end_layout
+
+\begin_layout Verbatim
+
+# live data off of it.
+ This may take a while, or fail if there
+\end_layout
+
+\begin_layout Verbatim
+
+# isn’t enough available space in other blockdevs.
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+
+stratis dev remove [-f] <pool_name> <dev> [<dev...]
+\end_layout
+
+\begin_layout Verbatim
+
+# Removes a blockdev from the pool, if unused[t] or spare.
+\end_layout
+
+\begin_layout Verbatim
+
+# -f needed if would degrade a redundant pool
+\end_layout
+
+\begin_layout Section
+Dbus API
 \end_layout
 
 \end_body
