@@ -75,7 +75,7 @@
 \begin_layout Title
 Stratis Software Design: Version 0.3
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
@@ -524,18 +524,75 @@ Since Stratis supports more blockdevs than are RAID-able (generally 8 or
  fewer is best for a raidset IIRC), and differently-sized blockdevs, a redundant
  Stratis pool will likely contain multiple raid sets (all of the same global
  type) Depending on layout, there may be some amount of space in a pool’s
- blockdevs that cannot be used because[af][ag] it cannot be used in a RAID
- set.
- Stratis will intensively manage raidsets[ah][ai][aj], extending them across
- newly added blockdevs (version 1) or creating new raidsets; and handling
- the removal of blockdevs (version X).
+ blockdevs that cannot be used because
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Is the amount of this free but currently unusable free space part of the
+ status of a device?
+\end_layout
+
+\begin_layout Plain Layout
+probably part of the status of the device and added up into the status of
+ the overall pool, I'd think.
+\end_layout
+
+\end_inset
+
+it cannot be used in a RAID set.
+ Stratis will intensively manage raidsets,
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+What kind of management policy will it follow?
+\end_layout
+
+\begin_layout Plain Layout
+I can imagine a policy where we'd want min and max size of each raidset,
+ both in terms of size and members constituting it, and then Stratis would
+ need to reshape existing raids and create new ones as new disks were added,
+ or disks removed.
+ I think this could end up being quite involved -- this is a big part of
+ what Stratis is taking on in hiding the hard bits of storage mgmt from
+ the user.
+ i.e.
+ what is the optimal configuration of raids based upon devices available,
+ what is current config, and how do we reshape to achieve optimal config?
+\end_layout
+
+\begin_layout Plain Layout
+How would automatically constructing a new RAID device w/in the pool help
+ a user of the pool?
+\end_layout
+
+\end_inset
+
+extending them across newly added blockdevs (version 1) or creating new
+ raidsets; and handling the removal of blockdevs (version X).
  Stratis may use dm-raid’s reshape capabilities when possible.
 \end_layout
 
 \begin_layout Standard
 A pool may also be configured with redundancy level of ‘none’.
- In this case, Stratis may opt to[ak][al] create a striped blockdev (‘raid0’)
- across all or some part of the blockdevs, if there are more than one.
+ In this case, Stratis may opt to
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Is there a reason why it wouldn't, if more than one device were available?
+\end_layout
+
+\begin_layout Plain Layout
+it would take work to configure striping, which we may or may not want to
+ do for our initial version, is the only reason.
+\end_layout
+
+\end_inset
+
+ create a striped blockdev (‘raid0’) across all or some part of the blockdevs,
+ if there are more than one.
 \end_layout
 
 \begin_layout Standard
@@ -602,7 +659,23 @@ Layer 5: Filesystem
 \begin_layout Standard
 From the thin pool Stratis can create one or more thin volumes.
  It will automatically give a new volume a default size, and format it with
- a filesystem[am][an], and make it available to the user.
+ a filesystem
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+For the foreseeable future this is always xfs?
+\end_layout
+
+\begin_layout Plain Layout
+xfs is a "default known good" filesystem.
+ It may or may not be the best choice, but we don't have a comparative analysis
+ yet that might give us reason to make a different choice.
+\end_layout
+
+\end_inset
+
+, and make it available to the user.
  Stratis monitors each filesystem’s fullness vs its capacity and automatically
  extends (using e.g.
  xfs_growfs) them without user intervention.
@@ -786,11 +859,33 @@ Snapshot management: auto snaps, date-based culling, “promotion” from snap
 
 \begin_layout Enumerate
 Monitor pool(s) for getting close to capacity, and do something (remount
- ro?) if dangerously full[ao]
+ ro?) if dangerously full
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+I wonder how this can be handled good, available space starvation is bad,
+ and it should be signaled on several channels if this limit is approached.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
-Some sort of notification method to the user if pool is approaching capacity[ap]
+Some sort of notification method to the user if pool is approaching capacity
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Health stats and user defined threshold settings are something that should
+ be in a first release - add some unique value.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -1038,173 +1133,6 @@ Nfs interactions
 \end_layout
 
 \begin_layout Section
-End Matter and Comments
-\end_layout
-
-\begin_layout Standard
-[g]Indicate which devices are allowed.
- Specifically, what about multipath, dm-crypt? md? lvm lv's?
-\end_layout
-
-\begin_layout Standard
-We will need to handle the first two, at least (unless stratis v1 will take
- "sd" devices and configure multipath and dm-crypt on its own).
-\end_layout
-
-\begin_layout Standard
-[h]It might be reasonable to have a stratis command that lists allowed devs,
- maybe "stratis list devs', which would be defined to list all devs that
- stratis could use in a create command (so it would leave out devs that
- already belong to another pool).
-\end_layout
-
-\begin_layout Standard
-[i]Trying to access an already-open block device will fail.
- Trying to initialize a device with data on it will fail unless a --force
- option is given, isn't that enough to protect the user from this scenario?
- Beyond that, Stratis should be able to use any rw-capable block device.
-\end_layout
-
-\begin_layout Standard
-[j]The goal isn't to protect the user from error, just to let them know
- the lay of the land.
- If they want to create, and they ask for possible devices, then they probably
- don't want to see impossible devices.
-\end_layout
-
-\begin_layout Standard
-[k]Not sure what we can do over what 'lsblk' does.
-\end_layout
-
-\begin_layout Standard
-[l]Perhaps you are thinking of some particular confguration options for
- lsblk that do the right thing.
- Usually, when I interact w/ it, it ends up showing all sorts of devices
- that are claimed by other devices and would be a bad choice for stratis
- to interact w/ directly.
- Think multipath or see bug: https://bugzilla.redhat.com/show_bug.cgi?id=1195374.
-\end_layout
-
-\begin_layout Standard
-[m]lsblk --nodeps --inverse would be mostly right, I would think.
-\end_layout
-
-\begin_layout Standard
-[n]Will indicate the state of the pool (synching, redundant, degraded)?
-\end_layout
-
-\begin_layout Standard
-[o]'stratis dev list' wouldn't, but 'stratis list' would, I'd think.
-\end_layout
-
-\begin_layout Standard
-[p]It might be advisable to start out with the idea of a status as a bit
- vector, rather than thinking of every dev as having just one status.
-\end_layout
-
-\begin_layout Standard
-[q]agree
-\end_layout
-
-\begin_layout Standard
-[r]Do you need a '-f' in case it is in use?
-\end_layout
-
-\begin_layout Standard
-[s]need a better command name and/or semantics.
-\end_layout
-
-\begin_layout Standard
-[t]Would be nice for stratis to allow user to retire a working disk, in
- anticipation of its replacement, by getting stratis to pvmove all the related
- volumes off of a dev.
- This could be built into "stratis dev remove" as a UI matter, by removing
- the ", if unused..." condition.
-\end_layout
-
-\begin_layout Standard
-[u]Permissions in dbus can have a very fine granularity, however I've not
- seen them changeable at runtime.
-\end_layout
-
-\begin_layout Standard
-[z]From what I have been told, best practice is to have properties read
- only and use methods to change.
-\end_layout
-
-\begin_layout Standard
-[ad]A Dev should likely have a property which is an pool object path, so
- you can determine which pool it is associated with.
-\end_layout
-
-\begin_layout Standard
-[af]Is the amount of this free but currently unusable free space part of
- the status of a device?
-\end_layout
-
-\begin_layout Standard
-[ag]probably part of the status of the device and added up into the status
- of the overall pool, I'd think.
-\end_layout
-
-\begin_layout Standard
-[ah]What kind of management policy will it follow?
-\end_layout
-
-\begin_layout Standard
-[ai]I can imagine a policy where we'd want min and max size of each raidset,
- both in terms of size and members constituting it, and then Stratis would
- need to reshape existing raids and create new ones as new disks were added,
- or disks removed.
- I think this could end up being quite involved -- this is a big part of
- what Stratis is taking on in hiding the hard bits of storage mgmt from
- the user.
- i.e.
- what is the optimal configuration of raids based upon devices available,
- what is current config, and how do we reshape to achieve optimal config?
-\end_layout
-
-\begin_layout Standard
-[aj]How would automatically constructing a new RAID device w/in the pool
- help a user of the pool?
-\end_layout
-
-\begin_layout Standard
-[ak]Is there a reason why it wouldn't, if more than one device were available?
-\end_layout
-
-\begin_layout Standard
-[al]it would take work to configure striping, which we may or may not want
- to do for our initial version, is the only reason.
-\end_layout
-
-\begin_layout Standard
-[am]For the foreseeable future this is always xfs?
-\end_layout
-
-\begin_layout Standard
-[an]xfs a "default known good" filesystem.
- It may or may not be the best choice, but we don't have a comparative analysis
- yet that might give us reason to make a different choice.
-\end_layout
-
-\begin_layout Standard
-[ao]I wonder how this can be handled good, available space starvation is
- bad, and it should be signaled on several channels if this limit is approached.
-\end_layout
-
-\begin_layout Standard
-[ap]Health stats and user defined threshold settings are something that
- should be in a first release - add some unique value.
-\end_layout
-
-\begin_layout Standard
-[aq]These features are really some of the last nails in the coffin of BRTFS
- and requests for ZFS.
- Therefore, these features are very important.
-\end_layout
-
-\begin_layout Section
 \start_of_appendix
 \begin_inset CommandInset label
 LatexCommand label
@@ -1222,6 +1150,92 @@ In the following examples <dev> indicates the blockdev node path or a link
 
 \begin_layout Subsubsection
 Stratis Version 1
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+It might be advisable to start out with the idea of a status as a bit vector,
+ rather than thinking of every dev as having just one status.
+\end_layout
+
+\begin_layout Plain Layout
+agree
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Will indicate the state of the pool (synching, redundant, degraded)?
+\end_layout
+
+\begin_layout Plain Layout
+'stratis dev list' wouldn't, but 'stratis list' would, I'd think.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Indicate which devices are allowed to be added.
+ Specifically, what about multipath, dm-crypt? md? lvm lv's?
+\end_layout
+
+\begin_layout Plain Layout
+We will need to handle the first two, at least (unless stratis v1 will take
+ "sd" devices and configure multipath and dm-crypt on its own).
+\end_layout
+
+\begin_layout Plain Layout
+It might be reasonable to have a stratis command that lists allowed devs,
+ maybe "stratis list devs', which would be defined to list all devs that
+ stratis could use in a create command (so it would leave out devs that
+ already belong to another pool).
+\end_layout
+
+\begin_layout Plain Layout
+Trying to access an already-open block device will fail.
+ Trying to initialize a device with data on it will fail unless a --force
+ option is given, isn't that enough to protect the user from this scenario?
+ Beyond that, Stratis should be able to use any rw-capable block device.
+\end_layout
+
+\begin_layout Plain Layout
+The goal isn't to protect the user from error, just to let them know the
+ lay of the land.
+ If they want to create, and they ask for possible devices, then they probably
+ don't want to see impossible devices.
+\end_layout
+
+\begin_layout Plain Layout
+Not sure what we can do over what 'lsblk' does.
+\end_layout
+
+\begin_layout Plain Layout
+Perhaps you are thinking of some particular confguration options for lsblk
+ that do the right thing.
+ Usually, when I interact w/ it, it ends up showing all sorts of devices
+ that are claimed by other devices and would be a bad choice for stratis
+ to interact w/ directly.
+ Think multipath or see bug: https://bugzilla.redhat.com/show_bug.cgi?id=1195374.
+\end_layout
+
+\begin_layout Plain Layout
+lsblk --nodeps --inverse would be mostly right, I would think.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Verbatim
@@ -1274,7 +1288,7 @@ stratis list
 \end_layout
 
 \begin_layout Verbatim
-stratis dev add[g][h][i][j][k][l][m] <pool_name> <dev> [<dev...]
+stratis dev add <pool_name> <dev> [<dev...]
 \end_layout
 
 \begin_layout Verbatim
@@ -1290,11 +1304,11 @@ stratis dev list <pool_name>
 \end_layout
 
 \begin_layout Verbatim
-# Lists blockdevs in the pool[n][o] and their status:
+# Lists blockdevs in the pool and their status:
 \end_layout
 
 \begin_layout Verbatim
-# (used, unused, bad, spare)[p][q]
+# (used, unused, bad, spare)
 \end_layout
 
 \begin_layout Verbatim
@@ -1374,7 +1388,7 @@ stratis cache <pool_name> add <dev> [<dev>...]
 \end_layout
 
 \begin_layout Verbatim
-stratis cache [r]<pool_name> remove <dev> [<dev>...]
+stratis cache <pool_name> remove <dev> [<dev>...]
 \end_layout
 
 \begin_layout Verbatim
@@ -1385,8 +1399,25 @@ stratis cache [r]<pool_name> remove <dev> [<dev>...]
 Stratis Version 2
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Would be nice for stratis to allow user to retire a working disk, in anticipatio
+n of its replacement, by getting stratis to pvmove all the related volumes
+ off of a dev.
+ This could be built into "stratis dev remove" as a UI matter, by removing
+ the ", if unused..." condition.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Verbatim
-stratis dev make-spare[s] <pool_name> <dev>
+stratis dev make-spare <pool_name> <dev>
 \end_layout
 
 \begin_layout Verbatim
@@ -1411,7 +1442,7 @@ stratis dev remove [-f] <pool_name> <dev> [<dev...]
 \end_layout
 
 \begin_layout Verbatim
-# Removes a blockdev from the pool, if unused[t] or spare.
+# Removes a blockdev from the pool, if unused or spare.
 \end_layout
 
 \begin_layout Verbatim
@@ -1433,7 +1464,7 @@ All methods return at least a pair, consisting of a non-negative integer
  return code and a message string.
  A method may return more values; these precede the return code.
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 houldn't all the objects have some type of UUID?
@@ -1443,7 +1474,7 @@ houldn't all the objects have some type of UUID?
 
 
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 If you utilize the standard dbus interfaces you can leverage ObjectManager
@@ -1456,7 +1487,7 @@ If you utilize the standard dbus interfaces you can leverage ObjectManager
 
 
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Have you thought about monitoring issues? Beyond just logging, it would
@@ -1500,7 +1531,7 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset CommandInset include
@@ -1586,7 +1617,7 @@ Overview
 Blockdev is the interface that yields information about the block devices
  that comprise the pool.
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 A Dev should likely have a property which is an pool object path, so you
