@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties false
+\origin unavailable
 \textclass article
 \begin_preamble
 
@@ -12,16 +14,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -570,7 +572,7 @@ I can imagine a policy where we'd want min and max size of each raidset,
  both in terms of size and members constituting it, and then Stratis would
  need to reshape existing raids and create new ones as new disks were added,
  or disks removed.
- I think this could end up being quite involved -- this is a big part of
+ I think this could end up being quite involved – this is a big part of
  what Stratis is taking on in hiding the hard bits of storage mgmt from
  the user.
  i.e.
@@ -1220,7 +1222,7 @@ It might be reasonable to have a stratis command that lists allowed devs,
 
 \begin_layout Plain Layout
 Trying to access an already-open block device will fail.
- Trying to initialize a device with data on it will fail unless a --force
+ Trying to initialize a device with data on it will fail unless a –force
  option is given, isn't that enough to protect the user from this scenario?
  Beyond that, Stratis should be able to use any rw-capable block device.
 \end_layout
@@ -1246,7 +1248,7 @@ Perhaps you are thinking of some particular confguration options for lsblk
 \end_layout
 
 \begin_layout Plain Layout
-lsblk --nodeps --inverse would be mostly right, I would think.
+lsblk –nodeps –inverse would be mostly right, I would think.
 \end_layout
 
 \end_inset
@@ -1547,6 +1549,11 @@ width "100col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status collapsed
 
 \begin_layout Plain Layout
