@@ -1,0 +1,6 @@
+branches:
+  only:
+    - master
+
+script:
+  make check
