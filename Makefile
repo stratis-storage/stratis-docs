@@ -1,2 +1,2 @@
 check:
-	pushd . ; cd ./docs/design ; $(MAKE) check && popd
+	cd ./docs/design ; $(MAKE) check && cd -
