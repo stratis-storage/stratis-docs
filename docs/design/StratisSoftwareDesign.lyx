@@ -155,6 +155,25 @@ The goal of Stratis is to provide the conceptual simplicity that volume-managing
  with higher-level storage management frameworks.
 \end_layout
 
+\begin_layout Section*
+Asking Questions and Making Changes to this Document
+\end_layout
+
+\begin_layout Standard
+This document can be found 
+\begin_inset CommandInset href
+LatexCommand href
+name "in the stratis-docs repo"
+target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/design/StratisSoftwareDesign.lyx"
+
+\end_inset
+
+, and is written using \SpecialChar LyX
+ 2.2.1.
+ Please ask any questions by opening an issue, and proposed changes as pull
+ requests.
+\end_layout
+
 \begin_layout Section
 Conceptual Model
 \end_layout
