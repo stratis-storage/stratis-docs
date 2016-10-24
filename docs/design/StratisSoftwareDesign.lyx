@@ -212,36 +212,8 @@ Since a single system may have multiple pools, each pool has a name, as
 \end_layout
 
 \begin_layout Standard
-Stratis supports up to 1024
-\begin_inset Note Comment
-status collapsed
-
-\begin_layout Plain Layout
-That seems low.
- It is helpful to indicate the source of the constraint: 1) a limit imposed
- to make testing easier or reduce initial complexity, 2) a design limit
- - not likely to be increased soon.
-\end_layout
-
-\end_inset
-
-
-\begin_inset Note Comment
-status collapsed
-
-\begin_layout Plain Layout
-fairly arbitrary.
- The more devices and volumes, the more we need to keep track of.
- This goes to metadata requirements, either a large staticly-sized md area
- or some dynamically-sized technique.
- And also we need to get fancy about how many copies we keep across all
- the devices.
-\end_layout
-
-\end_inset
-
-blockdevs in its pool, and additional blockdevs may be added after the pool
- is created.
+Stratis supports effectively unlimited blockdevs in a pool, and additional
+ blockdevs may be added after the pool is created.
  Blockdevs may also be removed from a pool, if certain preparations are
  performed and conditions are met.
 \end_layout
