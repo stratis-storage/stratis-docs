@@ -1604,8 +1604,8 @@ Thin Device 0
 \end_layout
 
 \begin_layout Standard
-Thin device 0 is an XFS-formatted thin device that is used by Stratis to
- store information on user-created filesystems.
+Thin device 0 is an XFS-formatted thin filesystem that is used by Stratis
+ to store information on user-created filesystems (L5).
  These are stored in the filesystem in TBD format.
 \end_layout
 
