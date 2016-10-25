@@ -264,10 +264,10 @@ D-Bus Programmatic API
 \end_layout
 
 \begin_layout Standard
-The Stratis service process exposes a DBus interface, for other programs
+The Stratis service process exposes a D-Bus interface, for other programs
  to integrate support for Stratis.
  This is considered the primary Stratis interface.
- The command-line tool uses the DBus API.
+ The command-line tool uses the D-Bus API.
 \end_layout
 
 \begin_layout Standard
@@ -398,11 +398,11 @@ Stratis consists of a command-line tool,
 
 \begin_layout Standard
 stratis implements the command-line interface, and converts commands into
- DBus API calls to stratisd.
+ D-Bus API calls to stratisd.
 \end_layout
 
 \begin_layout Standard
-stratisd implements the DBus interface, and manages and monitors Stratis
+stratisd implements the D-Bus interface, and manages and monitors Stratis
  internal pool blockdevs, as described below.
  It is started by (udev? systemd?) and continues to run as long as Stratis
  pools or blockdevs are present in the system.
@@ -1693,7 +1693,7 @@ Redundancy level: none
 \end_layout
 
 \begin_layout Enumerate
-DBus API
+D-Bus API
 \end_layout
 
 \begin_layout Enumerate
