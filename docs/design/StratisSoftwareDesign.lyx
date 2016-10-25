@@ -387,11 +387,11 @@ Software Components
 \begin_layout Standard
 Stratis consists of a command-line tool,
 \emph on
-stratis
+ stratis
 \emph default
 , and a service,
 \emph on
-stratisd
+ stratisd
 \emph default
 .
 \end_layout
@@ -844,7 +844,7 @@ Write-through caching only
 \end_layout
 
 \begin_layout Subsection
-Stratis version 1
+Stratis version 1.0
 \end_layout
 
 \begin_layout Standard
@@ -901,7 +901,7 @@ Add and use an additional blockdev
 \end_layout
 
 \begin_layout Subsection
-Stratis version 2
+Stratis version 2.0
 \end_layout
 
 \begin_layout Standard
@@ -954,7 +954,7 @@ Spares
 \end_layout
 
 \begin_layout Subsection
-Stratis version 3
+Stratis version 3.0
 \end_layout
 
 \begin_layout Standard
@@ -987,10 +987,10 @@ Raid write log (on ssd? To eliminate raid write hole)
 \end_layout
 
 \begin_layout Subsection
-Stratis version 4
+Stratis version 4.0
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
 Future features and evolution
 \end_layout
 
