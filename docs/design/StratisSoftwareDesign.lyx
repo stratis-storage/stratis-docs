@@ -420,7 +420,7 @@ Stratis internals are opaque to the user.
 \end_layout
 
 \begin_layout Subsection
-Cache Tier
+Cache Tier Requirements
 \end_layout
 
 \begin_layout Standard
@@ -450,6 +450,27 @@ The cache tier can be entirely reconfigured without data loss, once flushed
 
 \begin_layout Standard
 (more details to fill in here.)
+\end_layout
+
+\begin_layout Subsection
+Cache Tier Metadata
+\end_layout
+
+\begin_layout Subsubsection
+Cache Tier Metadata Requirements
+\end_layout
+
+\begin_layout Enumerate
+Identify all blockdevs part of the pool's cache tier, and the configured
+ redundancy level
+\end_layout
+
+\begin_layout Enumerate
+Cache tier supports up to 8 devices.
+\end_layout
+
+\begin_layout Enumerate
+TBD
 \end_layout
 
 \begin_layout Subsection
