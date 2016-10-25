@@ -1614,7 +1614,7 @@ The MDA and Very Large Pools
 \end_layout
 
 \begin_layout Standard
-Very large Stratis pools will encounter two issues.
+Stratis pools with very large numbers of blockdevs will encounter two issues.
  First, updating the metadata on all blockdevs in the pool may become a
  performance bottleneck.
  Second, the default MDA size may become inadequate to contain the information
