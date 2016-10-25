@@ -756,10 +756,16 @@ Stratis metadata is in three places:
 Blockdev Data Area
 \end_layout
 
+\begin_deeper
 \begin_layout Enumerate
-Blockdev metadata area
+Signature Block
 \end_layout
 
+\begin_layout Enumerate
+Metadata Area (MDA)
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Thin Device 0
 \end_layout
@@ -769,8 +775,9 @@ BlockDev Data Area (BDA)
 \end_layout
 
 \begin_layout Standard
-The BDA consists of a static header of eight sectors, followed by the metadata
- area (MDA), whose length is specified in the Signature Block.
+The BDA consists of a fixed-length header of eight sectors, which contains
+ the Signature Block, followed by the metadata area (MDA), whose length
+ is specified in the Signature Block.
 \end_layout
 
 \begin_layout Standard
@@ -1584,7 +1591,7 @@ The identical MDAx and signature block is then written to the end-of-blockdev
 \end_layout
 
 \begin_layout Subsubsection
-BlockDev Metadata Area (MDA)
+Metadata Area (MDA)
 \end_layout
 
 \begin_layout Standard
