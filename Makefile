@@ -3,7 +3,7 @@ SITE=./_site
 website-distrib: check
 	mkdir $(SITE)
 	cp -R ./website/* $(SITE)
-	cd ./docs/design ; $(MAKE) StratisSoftwareDesign.pdf & cd -
+	cd ./docs/design ; $(MAKE) StratisSoftwareDesign.pdf; cd -
 	cp ./docs/design/StratisSoftwareDesign.pdf $(SITE)
 
 check:
