@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 10/24/2016
+Last modified: 10/28/2016
 \end_layout
 
 \begin_layout Standard
@@ -775,13 +775,15 @@ BlockDev Data Area (BDA)
 \end_layout
 
 \begin_layout Standard
-The BDA consists of a fixed-length header of eight sectors, which contains
- the Signature Block, followed by the metadata area (MDA), whose length
+The BDA consists of a fixed-length Static Header of eight sectors, which
+ contains the Signature Block; and the metadata area (MDA), whose length
  is specified in the Signature Block.
+ These are written to the beginning and end of the blockdev as described
+ below.
 \end_layout
 
 \begin_layout Standard
-Stratis reserves the first 8 sectors of each blockdev for a static header:
+Stratis reserves the first 8 sectors of each blockdev for the Static Header:
 \end_layout
 
 \begin_layout Standard
@@ -1532,6 +1534,15 @@ Blockdev metadata area (offset 160) must be an even number of at least 2040
 
 \begin_layout Itemize
 The BDA is written to the beginning and end of the blockdev.
+ When writing to the beginning of the blockdev, the Static Header is placed
+ first (LBA 0), then the MDA starts at LBA 8, then reserved space.
+ When writing to the end of the blockdev, the Static Header occupies the
+ last 8 sectors of the blockdev, and the MDA
+\emph on
+precedes
+\emph default
+ it.
+ (The end-of-blockdev BDA has no reserved space.)
 \end_layout
 
 \begin_layout Itemize
