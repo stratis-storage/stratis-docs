@@ -788,10 +788,10 @@ Stratis reserves the first 8 sectors of each blockdev for the Static Header:
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
@@ -947,10 +947,10 @@ The Signature Block consists of:
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
@@ -1666,10 +1666,10 @@ Top level objects:
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
@@ -2022,10 +2022,10 @@ block_devs
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
@@ -2291,10 +2291,10 @@ data_dev
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
@@ -2573,10 +2573,10 @@ thinpool_dev
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
@@ -2741,10 +2741,10 @@ thin_devs
 
 \begin_layout Standard
 \begin_inset Box Frameless
-position "t"
+position "c"
 hor_pos "c"
 has_inner_box 1
-inner_pos "t"
+inner_pos "c"
 use_parbox 0
 use_makebox 0
 width "100col%"
