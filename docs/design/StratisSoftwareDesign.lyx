@@ -2707,7 +2707,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the number of free data blocks that that dropping below will result in extending
+the number of free data blocks that dropping below will result in extending
  the data device
 \end_layout
 
