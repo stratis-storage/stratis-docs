@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.5.1
+Stratis Software Design: Version 0.6
 \begin_inset Foot
 status collapsed
 
@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 11/03/2016
+Last modified: 11/14/2016
 \end_layout
 
 \begin_layout Standard
@@ -461,20 +461,75 @@ Cache Tier Metadata Requirements
 \end_layout
 
 \begin_layout Enumerate
-Identify all blockdevs part of the pool's cache tier, and the configured
- redundancy level
+Identify all blockdevs part of the pool's cache tier, the configured redundancy
+ level, and other cache-specific configuration parameters (e.g.
+ WT/WB, block size, cache policy)
 \end_layout
 
 \begin_layout Enumerate
 Cache tier supports up to 8 devices.
 \end_layout
 
+\begin_layout Subsection
+Data Tier Requirements
+\end_layout
+
+\begin_layout Standard
+The data tier of Stratis must manage blockdevs on behalf of the user to
+ provide the following:
+\end_layout
+
 \begin_layout Enumerate
-TBD
+Managed filesystems that consume only as much space as the files they contain
+\end_layout
+
+\begin_layout Enumerate
+Fast snapshots of existing filesystems
+\end_layout
+
+\begin_layout Enumerate
+The ability to add (and eventually remove) individual blockdevs to grow
+ the available space available to filesystems
+\end_layout
+
+\begin_layout Enumerate
+User-selectable redundancy level (per-pool granularity)
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Integrity checking
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Data Tier
+\end_layout
+
+\begin_layout Standard
+The data tier achieves these requirements by layering Devicemapper (DM)
+ devices on top of the pool's blockdevs, culminating in a thin devices allocated
+ from a thinpool.
+ Stratis initializes these with a filesystem, and manages the DM devices
+ and filesystems to meet the above requirements.
 \end_layout
 
 \begin_layout Subsubsection
@@ -491,7 +546,17 @@ This layer is responsible for discovering existing blockdevs in a pool,
 \end_layout
 
 \begin_layout Subsubsection
-Layer 1: Integrity (not in version 1)
+Layer 1: Integrity
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -503,11 +568,21 @@ Identity-mapped immediately above each blockdev in the pool, Stratis uses
  This will enable Stratis to detect data corruption when the pool is non-redunda
 nt, and to repair the corruption when the pool is redundant.
  Such a DM target could use DIF information if present, but would also need
- to work with non-DIF blockdevs.
+ to work with non-DIF blockdevs, perhaps requiring some space for its metadata.
 \end_layout
 
 \begin_layout Subsubsection
 Layer 2: Redundancy
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -568,8 +643,18 @@ How would automatically constructing a new RAID device w/in the pool help
 
 \end_inset
 
-extending them across newly added blockdevs (version 1) or creating new
- raidsets; and handling the removal of blockdevs (version X).
+extending them across newly added blockdevs or creating new raidsets; and
+ handling the removal of blockdevs
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+.
  Stratis may use dm-raid’s reshape capabilities when possible.
 \end_layout
 
@@ -608,20 +693,30 @@ Layer 3: Flexibility
 
 \begin_layout Standard
 Whether blockdevs are part of raidsets or used directly, pools need to cope
- with the addition (version X) or removal (version X+1) of them.
+ with the addition or removal
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+ of them.
 \end_layout
 
 \begin_layout Standard
-Version X: Stratis needs to add a blockdev to a pool, and have the space
- available to its filesystems grow accordingly.
- This may involve reshaping one or more raidsets to be wider, or just knowing
- to extend the thinpool onto the blockdev when previous blockdevs are full.
+Stratis needs to allow adding a blockdev to an existing pool, and use the
+ new available to allow its the pool's allocated space to grow.
+ (This may involve reshaping one or more raidsets to be wider, or just knowing
+ to extend the thinpool onto the blockdev when previous blockdevs are full.)
 \end_layout
 
 \begin_layout Standard
-Version X+1: Stratis needs to be able assign states to each blockdev that
- reflect whether a) it can be removed from the pool with no effect, b) removed
- with loss of redundancy, or c) not removed without data loss.
+In a future version, Stratis needs to be able assign states to each blockdev
+ that reflect whether a) it can be removed from the pool with no effect,
+ b) removed with loss of redundancy, or c) not removed without data loss.
  It should also be able to move active data off a perhaps-failing disk (or
  refuse, if space on other disks in the pool is not sufficient) so that
  the disk then can be removed from the pool.
@@ -631,10 +726,11 @@ Version X+1: Stratis needs to be able assign states to each blockdev that
 \end_layout
 
 \begin_layout Standard
-This layer will support two linear devices made up of segments from L2 devices.
- It will track what L2 devices they are allocated from, allow the two devices
- to grow (and shrink?), and handle the online movement of segments in these
- devices when L2 devices come and go(v2).
+The flexibility layer will support two linear DM devices made up of segments
+ from lower-level devices.
+ It will track what lower-level devices they are allocated from, allow the
+ two devices to grow, and handle the online movement of segments in these
+ devices when lower-level devices come and go.
 \end_layout
 
 \begin_layout Subsubsection
@@ -643,20 +739,20 @@ Layer 4: Thin Provisioning
 
 \begin_layout Standard
 The two linear targets from L3 are used as metadata device and data device
- for a thin pool.
+ for a DM thin pool.
  Stratis manages the thinpool device by extending the two L3 subdevices
  when either runs low on available blocks.
- If we approach a point where we no longer have empty L2 space to extend
- onto, this is when we would need to start setting off alarm bells, remounting
- read-only, throttling writes, that sort of thing.
+ If the pool approaches a point where the pool no longer has empty lower-level
+ space to extend onto, Stratis alerts the user and does what it must to
+ avoid data corruption.
 \end_layout
 
 \begin_layout Subsubsection
-Layer 5: Filesystem
+Layer 5: Thin Volumes
 \end_layout
 
 \begin_layout Standard
-From the thin pool Stratis can create one or more thin volumes.
+From the thin pool Stratis creates one or more thin volumes.
  It will automatically give a new volume a default size, and format it with
  a filesystem
 \begin_inset Note Comment
@@ -675,10 +771,6 @@ xfs is a "default known good" filesystem.
 \end_inset
 
 , and make it available to the user.
- Stratis monitors each filesystem’s fullness vs its capacity and automatically
- extends (using e.g.
- xfs_growfs) them without user intervention.
- Stratis also periodically runs fstrim on each one as well.
 \end_layout
 
 \begin_layout Standard
@@ -686,9 +778,34 @@ Stratis keeps snapshot origin info in its metadata for user informational
  purposes.
 \end_layout
 
+\begin_layout Subsubsection
+Layer 6: Encryption
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+in a future version
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
-Encryption layer (in version 3) could conceivably go on top of thin device,
- making it per-fs.
+Stratis could enable per-filesystem encryption between the thin device and
+ the filesystem.
+\end_layout
+
+\begin_layout Subsubsection
+Layer 7: Filesystem
+\end_layout
+
+\begin_layout Standard
+Stratis monitors each filesystem’s fullness vs its capacity and automatically
+ extends (using e.g.
+ xfs_growfs) them without user intervention.
+ Stratis also periodically runs fstrim on each one as well.
 \end_layout
 
 \begin_layout Subsection
@@ -699,8 +816,8 @@ Data Tier Metadata
 Stratis must track the blockdevs that make up the data tier of the pool
  (L0), integrity parameters (L1), the raidsets that are created from the
  data blockdevs (L2), the two linear targets that span the L2 devices (L3),
- the thinpool device (L4) and the attributes of the thin devices and filesystems
- created from the thinpool (L5).
+ the thinpool device (L4) and the attributes of the thin devices (L5) and
+ filesystems created from the thinpool (L7).
 \end_layout
 
 \begin_layout Subsubsection
@@ -709,7 +826,7 @@ Requirements
 
 \begin_layout Enumerate
 Uniquely identify a blockdev as used by Stratis, which pool it is a member
- of, and parameters needed to recreate upper layers 1-5
+ of, and parameters needed to recreate all layers
 \end_layout
 
 \begin_layout Enumerate
@@ -780,6 +897,23 @@ The BDA consists of a fixed-length Static Header of eight sectors, which
  is specified in the Signature Block.
  These are written to the beginning and end of the blockdev as described
  below.
+\end_layout
+
+\begin_layout Standard
+Sectors are 512 bytes in length
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Historically this is the minimum storage unit of a hard drive.
+ Many Linux kernel APIs assume this value is constant (as does this document),
+ and use another term such as 'block size' for dealing with cases where
+ the minimum storage unit is different.
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1155,7 +1289,7 @@ ASCII hex UUID for the Stratis pool
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1164,7 +1298,7 @@ ASCII hex UUID for the Stratis pool
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1173,7 +1307,7 @@ ASCII hex UUID for the Stratis pool
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1206,7 +1340,7 @@ ASCII hex UUID for the blockdev
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAA UNIX timestamp (seconds since Jan 1 1970) (u64)
+MDAa UNIX timestamp (seconds since Jan 1 1970) (u64)
 \end_layout
 
 \end_inset
@@ -1235,7 +1369,7 @@ MDAA UNIX timestamp (seconds since Jan 1 1970) (u64)
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAA nanoseconds (u32)
+MDAa nanoseconds (u32)
 \end_layout
 
 \end_inset
@@ -1264,7 +1398,7 @@ MDAA nanoseconds (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAA used length in bytes (u32)
+MDAa used length in bytes (u32)
 \end_layout
 
 \end_inset
@@ -1293,14 +1427,14 @@ MDAA used length in bytes (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAA CRC32 over used length
+MDAa CRC32 over used length
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1309,7 +1443,7 @@ MDAA CRC32 over used length
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1318,7 +1452,7 @@ MDAA CRC32 over used length
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1351,7 +1485,7 @@ unused
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAB UNIX timestamp (seconds since Jan 1 1970) (u64)
+MDAb UNIX timestamp (seconds since Jan 1 1970) (u64)
 \end_layout
 
 \end_inset
@@ -1380,7 +1514,7 @@ MDAB UNIX timestamp (seconds since Jan 1 1970) (u64)
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAB nanoseconds (u32)
+MDAb nanoseconds (u32)
 \end_layout
 
 \end_inset
@@ -1409,7 +1543,7 @@ MDAB nanoseconds (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAB used length in bytes (u32)
+MDAb used length in bytes (u32)
 \end_layout
 
 \end_inset
@@ -1438,14 +1572,14 @@ MDAB used length in bytes (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-MDAB CRC32 over used length
+MDAb CRC32 over used length
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1454,7 +1588,7 @@ MDAB CRC32 over used length
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1463,7 +1597,7 @@ MDAB CRC32 over used length
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1573,13 +1707,22 @@ unused
 \end_layout
 
 \begin_layout Itemize
-All 'flags' or 'unused' fields are zeroed.
+No flags are yet defined, so 'flags' field is zeroed.
+\end_layout
+
+\begin_layout Itemize
+All 'unused' fields are zeroed, and are reserved for future use.
 \end_layout
 
 \begin_layout Itemize
 Blockdev metadata area (offset 160) must be an even number of at least 2040
  – combined minimum length of overall BDA (static header and MDA) is 2048
  sectors (1 MiB).
+\end_layout
+
+\begin_layout Itemize
+Reserved space (offset 164) is used by Stratis for temporary storage or
+ other undefined purposes.
 \end_layout
 
 \begin_layout Itemize
@@ -1604,7 +1747,7 @@ reserved space
 \end_layout
 
 \begin_layout Itemize
-The MDA is evenly divided into two areas: MDAA and MDAB.
+The MDA is evenly divided into two areas: MDAa and MDAb.
 \end_layout
 
 \begin_layout Itemize
@@ -1612,7 +1755,7 @@ Data within the metadata areas is stored in JSON format.
 \end_layout
 
 \begin_layout Itemize
-Metadata updates write to the older of the MDAA and MDAB areas.
+Metadata updates write to the older of the MDAa and MDAb areas.
  This is determined by lowest timestamp, and then lowest nanoseconds if
  timestamps are equal.
 \end_layout
@@ -1623,12 +1766,16 @@ The procedure for updating metadata is:
 
 \begin_deeper
 \begin_layout Enumerate
-The JSON metadata is written to either MDAA or MDAB in the start-of-blockdev
- BDA, as determined above.
+Determine which area in the MDA to use (MDAa or MDAb) as described above.
+ Call this area 'MDAx'.
 \end_layout
 
 \begin_layout Enumerate
-The chosen MDA's timestamp, nanosecond, length, and CRC fields in the signature
+The JSON metadata is written to MDAx.
+\end_layout
+
+\begin_layout Enumerate
+MDAx's timestamp, nanosecond, length, and CRC32 fields in the signature
  block are updated: timestamp gets the UNIX timestamp.
  Nanoseconds is the current nanoseconds within the second.
  Length is set to the length of the metadata, and the CRC32 is calculated
@@ -1645,10 +1792,18 @@ The signature block is written and flushed to disk.
  header.
 \end_layout
 
+\begin_layout Enumerate
+The identical MDAx, and then signature block is written to the end-of-blockdev
+ BDA, followed by a flush/FUA.
+\end_layout
+
 \end_deeper
 \begin_layout Itemize
-The identical MDAx and signature block is then written to the end-of-blockdev
- BDA, followed by a flush/FUA.
+Multiple blockdevs being updated with the same metadata must use identical
+ values for MDAx values in the signature block, but which area (MDAa or
+ MDAb) is used may vary, if they have received differing numbers of metadata
+ updates over time.
+ (Corollary: sig block CRC32 must be recalculated for each blockdev.)
 \end_layout
 
 \begin_layout Subsubsection
