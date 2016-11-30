@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.6
+Stratis Software Design: Version 0.7
 \begin_inset Foot
 status collapsed
 
@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 11/14/2016
+Last modified: 11/30/2016
 \end_layout
 
 \begin_layout Standard
@@ -134,7 +134,448 @@ Before saving this file preparatory to a commit, make sure that all insets
 \end_layout
 
 \begin_layout Section*
-Introduction
+Asking Questions and Making Changes to this Document
+\end_layout
+
+\begin_layout Standard
+This document can be found 
+\begin_inset CommandInset href
+LatexCommand href
+name "in the stratis-docs repo"
+target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/design/StratisSoftwareDesign.lyx"
+
+\end_inset
+
+, and is written using \SpecialChar LyX
+ 2.2.2.
+ Please ask any questions by opening an issue, and propose changes as pull
+ requests.
+\end_layout
+
+\begin_layout Section
+Problem Statement
+\end_layout
+
+\begin_layout Standard
+Linux has gained many storage-related features over the years, but each
+ of these features has required the user to manage the configuration of
+ these features in a layered, additive manner.
+ Genuinely new and useful features such as thin provisioning, RAID, and
+ multipath are dependent on the user correctly configuring many different
+ tools to achieve a full-featured result.
+ Furthermore, since storage administration tools are focused on the command-line
+, higher-level management tools must each individually build upon the inherently
+ risky proposition of treating the human-focused syntax and output of CLI
+ tools as a stable programmatic API.
+ This is an unending source of pain.
+\end_layout
+
+\begin_layout Standard
+In the past ten years, volume-managing filesystems (VMFs) such as ZFS and
+ Btrfs have come into vogue, and gained users.
+ These incorporate what would be handled by multiple tools under traditional
+ Linux into a single tool: Redundancy, thin provisioning, volume management,
+ and filesystems become features within a more comprehensive, consistent
+ configuration model.
+ However, ZFS isn't an option Linux can fully embrace due to licensing,
+ and while Btrfs has no licensing issues, after many years of work it still
+ has significant technical issues that may never be resolved.
+ 
+\end_layout
+
+\begin_layout Standard
+VMFs do much to simplify storage on Linux, but existing ones are unsuitable,
+ and writing a new one from scratch is not feasible.
+ Stratis's goal is to satisfy VMF-like requirements by managing existing
+ layers on behalf of the user, so that users can start using an integrated,
+ automated storage solution now, which can over time add capabilities as
+ the underlying technologies grow more capable.
+\end_layout
+
+\begin_layout Subsection
+Goal: Make storage as easy to manage as RAM
+\end_layout
+
+\begin_layout Standard
+Just like virtual memory gives each program its own 
+\begin_inset Quotes eld
+\end_inset
+
+limitless
+\begin_inset Quotes erd
+\end_inset
+
+ address space, thin provisioning makes sizing filesystems mostly a waste
+ of effort by the user.
+ Each filesystem should use only as much actual storage space as the files
+ it contains.
+\end_layout
+
+\begin_layout Subsection
+Requirements
+\end_layout
+
+\begin_layout Enumerate
+Simple and comprehensive command-line interface
+\end_layout
+
+\begin_layout Enumerate
+Programmatic language-neutral API for higher-level management tool integration
+\end_layout
+
+\begin_layout Enumerate
+Monitoring and alerts
+\end_layout
+
+\begin_layout Enumerate
+Eliminate manual resizing of filesystems
+\end_layout
+
+\begin_layout Enumerate
+Make technology like thin-provisioning, snapshots, integrity, redundancy,
+ and a cache tier easy to use
+\end_layout
+
+\begin_layout Enumerate
+Bootable
+\end_layout
+
+\begin_layout Enumerate
+Implementable in 1-2 years
+\end_layout
+
+\begin_layout Section
+Adapting existing solutions
+\end_layout
+
+\begin_layout Standard
+As part of early requirements-gathering, the team looked at existing projects
+ in this space, both as candidates for building upon to create a solution,
+ as well as if an existing project could be extended to meet the requirements.
+\end_layout
+
+\begin_layout Subsection
+SSM
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "SSM"
+target "https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Storage_Administration_Guide/ch-ssm.html"
+
+\end_inset
+
+provides a command line interface to manage storage in existing technologies.
+ Our interest in SSM was to determine if it would be an existing project
+ we could extend to meet our requirements.
+\end_layout
+
+\begin_layout Standard
+SSM provides a unified interface for three different “backends”: LVM, Btrfs,
+ and crypto.
+ However, if we wish to provide a simple, unified experience, the first
+ step would likely be to pick one of the backends and build around its capabilit
+ies.
+ This eliminates complexity from the CLI -- no need for the user to pick
+ a backend or encounter commands that happen to not work based upon the
+ chosen backend, but obviates much of the point of SSM.
+\end_layout
+
+\begin_layout Standard
+SSM does not provide a programmatic API.
+ It internally contains “ssmlib”, which could be enhanced and exposed, but
+ would be Python-only.
+ ssmlib is also built around executing command-line tools, which can cause
+ issues.
+\end_layout
+
+\begin_layout Standard
+SSM is not a daemon.
+ We’d need to modify SSM to operate on a daemon model.
+ An ongoing presence is needed for fault monitoring but also automatic filesyste
+m and thinpool extensions.
+\end_layout
+
+\begin_layout Standard
+SSM doesn’t currently support RAID5/6, thin provisioning, or configuring
+ a cache tier.
+\end_layout
+
+\begin_layout Standard
+SSM is written in Python, which would limit its ability to be used in an
+ early-boot environment.
+\end_layout
+
+\begin_layout Subsubsection*
+Analysis
+\end_layout
+
+\begin_layout Standard
+Basing our development on SSM is not desirable.
+\end_layout
+
+\begin_layout Subsection
+XFS
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "XFS"
+target "https://en.wikipedia.org/wiki/XFS"
+
+\end_inset
+
+is a highly respected non-volume-managing filesystem.
+ To meet the goal of eliminating manual filesystem resizing by the user,
+ Stratis requires the filesystem used have online resize (or at least online
+ grow) capabilities, which XFS does.
+ Use of XFS on top of thin provisioning also makes proper initial sizing
+ important, as well as choosing sizes for XFS on-disk allocations that match
+ those used by the underlying thin-provisioning layer, to ensure behavior
+ with the two layers is optimal.
+\end_layout
+
+\begin_layout Subsubsection*
+Analysis
+\end_layout
+
+\begin_layout Standard
+XFS meets the requirements and currently seems like the best choice.
+\end_layout
+
+\begin_layout Subsection
+Devicemapper
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "Devicemapper"
+target "https://en.wikipedia.org/wiki/Device_mapper"
+
+\end_inset
+
+is a framework provided by the Linux kernel for mapping physical block devices
+ onto higher-level virtual block devices.
+ Its mapping targets include support for RAID, thin provisioning, encryption,
+ multipath devices, caching devices, and more.
+ It provides the ability to configure these capabilities, but no facilities
+ for saving or restoring a configuration.
+ Devicemapper provides 
+\begin_inset CommandInset href
+LatexCommand href
+name "mechanism, but no policy"
+target "http://www.personal.kent.edu/~rmuhamma/OpSystems/Myos/mechanicPolicy.htm"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+LVM2
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "LVM2"
+target "https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)"
+
+\end_inset
+
+is the nearly universally-used volume manager on Linux.
+ It provides the 
+\begin_inset Quotes eld
+\end_inset
+
+policy
+\begin_inset Quotes erd
+\end_inset
+
+ that controls devicemapper.
+ It adds:
+\end_layout
+
+\begin_layout Itemize
+On-disk metadata format to save and restore configuration across boot
+\end_layout
+
+\begin_layout Itemize
+Usage model built on Physical Volume, Volume Group, and Logical Volume (PV,
+ VG, LV) concepts.
+\end_layout
+
+\begin_layout Itemize
+A comprehensive set of command line tools for configuring linear, raid,
+ thinpool, cache, and other devicemapper capabilities
+\end_layout
+
+\begin_layout Itemize
+Monitoring, error handling, and recovery
+\end_layout
+
+\begin_layout Itemize
+LV resize; PVs may be added or removed from a VG
+\end_layout
+
+\begin_layout Itemize
+Snapshots and thin snapshots
+\end_layout
+
+\begin_layout Itemize
+Choice of user-guided or automatic allocation/layout within the VG
+\end_layout
+
+\begin_layout Subsubsection*
+Analysis
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Should we consider extending LVM2 to become a VMF?
+\end_layout
+
+\begin_layout Standard
+Mentioned here only for completeness.
+ There are a number of fundamental design choices in LVM2 that would make
+ this very hard.
+ Add in the risk in changing direction of a mission-critical tool, the difficult
+y of changing a large codebase while maintaining backwards compatibility,
+ and the answer to this question must be no.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Could we use LVM2 
+\begin_inset Quotes eld
+\end_inset
+
+under the covers
+\begin_inset Quotes erd
+\end_inset
+
+, in the implementation of a VMF?
+\end_layout
+
+\begin_layout Standard
+Some issues:
+\end_layout
+
+\begin_layout Itemize
+Policy+mechanism vs policy+policy+mechanism: LVM2 is configurable but has
+ limitations.
+ e.g.
+ we might wish to let the user define a block device as only to be used
+ to replace a failed disk in a raidset.
+ However LVM raid_fault_policy=
+\begin_inset Quotes erd
+\end_inset
+
+allocate
+\begin_inset Quotes erd
+\end_inset
+
+ will use 
+\emph on
+any
+\emph default
+ free PV, not just one explicitly reserved.
+ Other issues like this are undoubtedly present.
+\end_layout
+
+\begin_layout Itemize
+Some other ramifications of LVM2 not being designed to be a used this way:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+LVM2 locking is fine-grained, flock(2)-based, and assumes no centralized
+ daemon
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The default locking type.
+ LVM actually has 5 locking methods but this isn't relevant to the point
+ being made
+\end_layout
+
+\end_inset
+
+.
+ Since Stratis's design incorporates a daemon that would allow easier mutual
+ exclusion, this would be an opportunity lost to simplify this area.
+\end_layout
+
+\begin_layout Itemize
+Must build LVM2 command line input strings, and parse command-line output,
+ which is error prone (Note: lvm-dbus helps, but just moves the issue to
+ a dependency)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+Under the covers
+\begin_inset Quotes erd
+\end_inset
+
+ usage not so under the covers: Stratis-managed LVM2 devices would show
+ up in LVM2 device & volume listings, which would cause user confusion
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Using LVM2 for metadata tracking is good, but only if upper layer has no
+ metadata storage needs of its own.
+ No mechanism to store additional metadata.
+\end_layout
+
+\begin_layout Itemize
+LVM2 metadata format prevents new metadata schemes, such as tracking thin
+ volumes separately from PV metadata
+\end_layout
+
+\begin_layout Itemize
+Use of new devicemapper features delayed by LVM2 implementation and release
+ cycle.
+\end_layout
+
+\begin_layout Itemize
+Unclear whether LVM2 or Stratis would react to resolve DM events.
+ Unclear if the needed info to monitor thin-allocated filesystems could
+ be obtained through LVM2, or if Stratis would still need to talk to Devicemappe
+r.
+\end_layout
+
+\begin_layout Itemize
+Uncertainty over long process time adding new feature or enabling tweaks
+ Stratis needs to LVM2, given large codebase, need for stability, and other
+ competing priorities
+\end_layout
+
+\begin_layout Subsection
+Conclusions
+\end_layout
+
+\begin_layout Standard
+Based on looking at the existing available building blocks, the best option
+ is to build Stratis as a new project, that makes use of XFS and Devicemapper
+ in its implementation.
+ This will require that it implement its own on-disk metadata format and
+ handle some tasks that overlap with LVM2, but this will let Stratis not
+ be constrained by LVM's concepts, and what would otherwise be a requirement
+ to drive devicemapper entirely through LVM, instead of directly.
+\end_layout
+
+\begin_layout Section
+Stratis: Introduction
 \end_layout
 
 \begin_layout Standard
@@ -155,23 +596,39 @@ The goal of Stratis is to provide the conceptual simplicity that volume-managing
  with higher-level storage management frameworks.
 \end_layout
 
-\begin_layout Section*
-Asking Questions and Making Changes to this Document
+\begin_layout Section
+Stratis and the Linux storage stack
 \end_layout
 
 \begin_layout Standard
-This document can be found 
-\begin_inset CommandInset href
-LatexCommand href
-name "in the stratis-docs repo"
-target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/design/StratisSoftwareDesign.lyx"
+Stratis simplifies many aspects of local storage provisioning and configuration.
+ This, along with its API, would let projects dependent on configuring local
+ storage do so much more easily.
+\end_layout
 
+\begin_layout Standard
+For example, installing the OS to a Stratis pool using Anaconda.
+ After selecting the disks to use for the pool, the first benefit would
+ be the complex flow around sizing of filesystems could be omitted.
+ Second, since Stratis has an API, Anaconda could use it directly, instead
+ of needing work in Blivet to build an API on top of command line tools.
+\end_layout
+
+\begin_layout Standard
+Other management tools like Cockpit, virtualization products like RHEV,
+ or container products like Atomic would find it much simpler and less error-pro
+ne to use storage and snapshots with Stratis, for the same two reasons:
+ don't need to worry about per-filesystem sizing (only that the pool has
+ enough 
+\begin_inset Quotes eld
 \end_inset
 
-, and is written using \SpecialChar LyX
- 2.2.1.
- Please ask any questions by opening an issue, and propose changes as pull
- requests.
+backing store
+\begin_inset Quotes erd
+\end_inset
+
+); and the API, which allows better tool-to-tool integration than using
+ CLI programmatically.
 \end_layout
 
 \begin_layout Section
@@ -220,7 +677,7 @@ Stratis supports effectively unlimited blockdevs in a pool, and additional
 
 \begin_layout Standard
 Stratis supports up to 
-\begin_inset Formula $2^{20}$
+\begin_inset Formula $2^{24}$
 \end_inset
 
  filesystems.
@@ -231,59 +688,46 @@ Stratis supports up to
  less space in the pool due to each initially referencing the same set of
  data blocks.
  However, to aid the user informationally, Stratis tracks and reports snapshot
- parents.
-\end_layout
-
-\begin_layout Section
-User Experience
-\end_layout
-
-\begin_layout Standard
-Stratis has a command-line tool that enables the administrator to create
- a Stratis pool from one or more blockdevs, and then allocate filesystems
- from the pool.
-\end_layout
-
-\begin_layout Standard
-See reference implementation at 
-\begin_inset Flex URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://github.com/stratis-storage/stratis-cli
-\end_layout
-
-\end_inset
-
- for the most up-to-date status of the CLI design.
-\end_layout
-
-\begin_layout Section
-D-Bus Programmatic API
-\end_layout
-
-\begin_layout Standard
-The Stratis service process exposes a D-Bus interface, for other programs
- to integrate support for Stratis.
- This is considered the primary Stratis interface.
- The command-line tool uses the D-Bus API.
-\end_layout
-
-\begin_layout Standard
-TODO: Create a separate D-Bus API Reference Doc and link to it here.
+ ancestors.
 \end_layout
 
 \begin_layout Subsection
-D-Bus Access Control
+Known shortcomings
 \end_layout
 
-\begin_layout Subsubsection
-Security Policy
+\begin_layout Standard
+Stratis' goal is to hide the complexity of its implementation from the user,
+ but by using a reuse/layering approach to its implementation, there will
+ be places where Stratis' implementation details will peek through.
+ This could cause user confusion, and also could threaten Stratis integrity
+ if the user makes changes.
 \end_layout
 
-\begin_layout Subsubsection
-Prevent Spoofing
+\begin_layout Itemize
+For Stratis filesystems, 'df' will report the current used and free sizes
+ as seen and reported by XFS.
+ This is not useful information, because the filesystem's actual storage
+ usage will be less due to thin provisioning, and also because Stratis will
+ automatically grow the filesystem if it nears XFS's currently sized capacity.
+\end_layout
+
+\begin_layout Itemize
+Users should not try to reformat or reconfigure XFS filesystems that are
+ managed by Stratis.
+ Stratis has no way to enforce this or warn the user to avoid this, other
+ than in the documentation.
+\end_layout
+
+\begin_layout Itemize
+Stratis will use many Devicemapper devices, which will show up in `dmsetup`
+ listings and /proc/partitions.
+ Similarly, `lsblk`output on a Stratis system will reflect Stratis' internal
+ workings and layers, which ideally would be hidden from the user.
+\end_layout
+
+\begin_layout Itemize
+Stratis requires a userspace daemon, which must remain running at all times
+ for proper monitoring and pool maintenenance.
 \end_layout
 
 \begin_layout Section
@@ -291,7 +735,8 @@ Scalability and Performance Considerations
 \end_layout
 
 \begin_layout Standard
-Stratis assumes three usage models:
+Stratis doesn't worry about optimizing performance within its data tier.
+ Stratis assumes three usage models:
 \end_layout
 
 \begin_layout Enumerate
@@ -301,7 +746,7 @@ name "enu:Disk-only"
 
 \end_inset
 
-Disk only
+Disk only data tier
 \end_layout
 
 \begin_layout Enumerate
@@ -311,7 +756,7 @@ name "enu:Disk-with-SSD"
 
 \end_inset
 
-Disk with SSD caching
+Disk tier with SSD caching tier
 \end_layout
 
 \begin_layout Enumerate
@@ -321,7 +766,22 @@ name "enu:SSD-only"
 
 \end_inset
 
-SSD only
+SSD only data tier
+\end_layout
+
+\begin_layout Standard
+The performance benefits of optimizing layout or other parameters for 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:Disk-only"
+
+\end_inset
+
+ aren't worth it today, compared to just adding a caching tier.
+\end_layout
+
+\begin_layout Subsubsection*
+Discussion
 \end_layout
 
 \begin_layout Standard
@@ -335,7 +795,7 @@ reference "enu:Disk-only"
  are not terribly concerned with IOPs, but are concerned about resiliency,
  integrity, and ease of management.
  This might include large media files that are accessed mostly sequentially,
- or other
+ or other 
 \begin_inset Quotes eld
 \end_inset
 
@@ -404,8 +864,60 @@ stratis implements the command-line interface, and converts commands into
 \begin_layout Standard
 stratisd implements the D-Bus interface, and manages and monitors Stratis
  internal pool blockdevs, as described below.
- It is started by (udev? systemd?) and continues to run as long as Stratis
- pools or blockdevs are present in the system.
+ It is started by the system and continues to run as long as Stratis pools
+ or blockdevs are present in the system.
+\end_layout
+
+\begin_layout Section
+User Experience
+\end_layout
+
+\begin_layout Standard
+Stratis has a command-line tool that enables the administrator to create
+ a Stratis pool from one or more blockdevs, and then allocate filesystems
+ from the pool.
+\end_layout
+
+\begin_layout Standard
+See reference implementation at 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/stratis-storage/stratis-cli
+\end_layout
+
+\end_inset
+
+ for the most up-to-date status of the CLI design.
+\end_layout
+
+\begin_layout Section
+D-Bus Programmatic API
+\end_layout
+
+\begin_layout Standard
+The Stratis service process exposes a D-Bus interface, for other programs
+ to integrate support for Stratis.
+ This is considered the primary Stratis interface.
+ The command-line tool uses the D-Bus API.
+\end_layout
+
+\begin_layout Standard
+TODO: Create a separate D-Bus API Reference Doc and link to it here.
+\end_layout
+
+\begin_layout Subsection
+D-Bus Access Control
+\end_layout
+
+\begin_layout Subsubsection
+Security Policy
+\end_layout
+
+\begin_layout Subsubsection
+Prevent Spoofing
 \end_layout
 
 \begin_layout Section
@@ -413,7 +925,7 @@ Internals
 \end_layout
 
 \begin_layout Standard
-Stratis internals are opaque to the user.
+Stratis internals aim to be opaque to the user.
  This allows its implementation maximum flexibility to do whatever it needs
  in Stratis version 1, as well as to be extended in later versions without
  violating any user-visible expectations.
@@ -423,32 +935,32 @@ Stratis internals are opaque to the user.
 Cache Tier Requirements
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 Caching may be configured for redundancy, or no redundancy.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 Caching may be configured for write-back and write-through modes.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 Stratis concatenates all cache blockdevs and uses the resulting device to
  cache the thinpool device (L4).
  This lets all filesystems benefit from the cache.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 Cache blocksize should match thinpool datablock size.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 The cache tier can be entirely reconfigured without data loss, once flushed
  and in write-through mode, because it’s just a cache.
  To handle configuration changes, we can just drop the cache and recreate
  it with its new configuration.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 (more details to fill in here.)
 \end_layout
 
@@ -533,20 +1045,20 @@ The data tier achieves these requirements by layering Devicemapper (DM)
 \end_layout
 
 \begin_layout Subsubsection
-Layer 0: blockdevs
+Layer 0: Blockdevs
 \end_layout
 
 \begin_layout Standard
 This layer is responsible for discovering existing blockdevs in a pool,
  initializing and labeling new blockdevs unambiguously as part of the pool,
- setting up any disk-specific parameters (TLER?), and storing pool metadata
- on each blockdev.
+ setting up any disk-specific parameters, and storing pool metadata on each
+ blockdev.
  Blockdevs may be in the following states: good-unused, good-used, bad,
  spare.
 \end_layout
 
 \begin_layout Subsubsection
-Layer 1: Integrity
+Layer 1: Integrity (optional)
 \begin_inset Foot
 status collapsed
 
@@ -560,19 +1072,17 @@ in a future version
 \end_layout
 
 \begin_layout Standard
-Identity-mapped immediately above each blockdev in the pool, Stratis uses
- a to-be-developed DM target that allows the detection of incorrect data
- as it is read, by using extra space to record the results of checksum/hash
- functions on the data blocks, and then compare the results with what the
- blockdev actually returned.
+This layer uses a to-be-developed DM target that allows the detection of
+ incorrect data as it is read, by using extra space to record the results
+ of checksum/hash functions on the data blocks, and then compare the results
+ with what the blockdev actually returned.
  This will enable Stratis to detect data corruption when the pool is non-redunda
 nt, and to repair the corruption when the pool is redundant.
- Such a DM target could use DIF information if present, but would also need
- to work with non-DIF blockdevs, perhaps requiring some space for its metadata.
+ Such a DM target could use DIF information if present.
 \end_layout
 
 \begin_layout Subsubsection
-Layer 2: Redundancy
+Layer 2: Redundancy (optional)
 \begin_inset Foot
 status collapsed
 
@@ -595,10 +1105,20 @@ A Stratis pool may optionally be configured to spread data across multiple
 
 \begin_layout Standard
 Since Stratis supports more blockdevs than are RAID-able (generally 8 or
- fewer is best for a raidset IIRC), and differently-sized blockdevs, a redundant
- Stratis pool will likely contain multiple raid sets (all of the same global
- type) Depending on layout, there may be some amount of space in a pool’s
- blockdevs that cannot be used because
+ fewer is best for a raidset
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+citation needed
+\end_layout
+
+\end_inset
+
+), and differently-sized blockdevs, a redundant Stratis pool may contain
+ multiple raid sets (all of the same global type).
+ Depending on layout, there may be some amount of space in a pool’s blockdevs
+ that cannot be used because
 \begin_inset Note Comment
 status collapsed
 
@@ -659,32 +1179,11 @@ in a future version
 \end_layout
 
 \begin_layout Standard
-A pool may also be configured with redundancy level of ‘none’.
- In this case, Stratis may opt to
-\begin_inset Note Comment
-status collapsed
-
-\begin_layout Plain Layout
-Is there a reason why it wouldn't, if more than one device were available?
-\end_layout
-
-\begin_layout Plain Layout
-it would take work to configure striping, which we may or may not want to
- do for our initial version, is the only reason.
-\end_layout
-
-\end_inset
-
- create a striped blockdev (‘raid0’) across all or some part of the blockdevs,
- if there are more than one.
-\end_layout
-
-\begin_layout Standard
 Stratis cannot support redundancy with a single disk, but we may wish to
  reserve the small space for raid metadata and other uses even on one-disk
  Stratis pools.
  This will allow the pool to be made redundant (in the version when we support
- this) without encountering some ugly edge cases.
+ this) without encountering ugly edge cases.
 \end_layout
 
 \begin_layout Subsubsection
@@ -708,9 +1207,9 @@ in a future version
 
 \begin_layout Standard
 Stratis needs to allow adding a blockdev to an existing pool, and use the
- new available to allow its the pool's allocated space to grow.
+ new available space to allow the pool's allocated space to grow.
  (This may involve reshaping one or more raidsets to be wider, or just knowing
- to extend the thinpool onto the blockdev when previous blockdevs are full.)
+ to extend the thinpool onto the new blockdev when other blockdevs are full.)
 \end_layout
 
 \begin_layout Standard
@@ -727,10 +1226,25 @@ In a future version, Stratis needs to be able assign states to each blockdev
 
 \begin_layout Standard
 The flexibility layer will support two linear DM devices made up of segments
- from lower-level devices.
+ from lower-level devices, which will be used by Layer 4 (Thin Provisioning)
+ as metadata and data devices.
  It will track what lower-level devices they are allocated from, allow the
  two devices to grow, and handle the online movement of segments in these
  devices when lower-level devices come and go.
+\end_layout
+
+\begin_layout Standard
+Furthermore, the flexibility layer will support a third linear DM device
+ called the Metadata Device that will be used to store metadata on upper
+ layers.
+\end_layout
+
+\begin_layout Standard
+All three devices in this layer may be built on L0, L1, or L2 devices, depending
+ on configuration.
+ The first two will share a configuration, but the Metadata Device may have
+ a separate configuration (e.g.
+ Metadata Device could be raid1, even as the other two are not).
 \end_layout
 
 \begin_layout Subsubsection
@@ -754,23 +1268,7 @@ Layer 5: Thin Volumes
 \begin_layout Standard
 From the thin pool Stratis creates one or more thin volumes.
  It will automatically give a new volume a default size, and format it with
- a filesystem
-\begin_inset Note Comment
-status collapsed
-
-\begin_layout Plain Layout
-For the foreseeable future this is always xfs?
-\end_layout
-
-\begin_layout Plain Layout
-xfs is a "default known good" filesystem.
- It may or may not be the best choice, but we don't have a comparative analysis
- yet that might give us reason to make a different choice.
-\end_layout
-
-\end_inset
-
-, and make it available to the user.
+ a filesystem, and make it available to the user.
 \end_layout
 
 \begin_layout Standard
@@ -805,7 +1303,7 @@ Layer 7: Filesystem
 Stratis monitors each filesystem’s fullness vs its capacity and automatically
  extends (using e.g.
  xfs_growfs) them without user intervention.
- Stratis also periodically runs fstrim on each one as well.
+ Stratis also periodically runs fstrim to reclaim unused space.
 \end_layout
 
 \begin_layout Subsection
@@ -815,9 +1313,9 @@ Data Tier Metadata
 \begin_layout Standard
 Stratis must track the blockdevs that make up the data tier of the pool
  (L0), integrity parameters (L1), the raidsets that are created from the
- data blockdevs (L2), the two linear targets that span the L2 devices (L3),
- the thinpool device (L4) and the attributes of the thin devices (L5) and
- filesystems created from the thinpool (L7).
+ data blockdevs (L2), the three linear targets that span the L2 devices
+ (L3), the thinpool device (L4) and the attributes of the thin devices (L5)
+ and filesystems created from the thinpool (L7).
 \end_layout
 
 \begin_layout Subsubsection
@@ -830,7 +1328,7 @@ Uniquely identify a blockdev as used by Stratis, which pool it is a member
 \end_layout
 
 \begin_layout Enumerate
-Detect incomplete or corrupted metadata
+Detect incomplete or corrupted metadata and recover via second copy
 \end_layout
 
 \begin_layout Enumerate
@@ -838,8 +1336,19 @@ Allow for blockdevs being expanded underneath Stratis
 \end_layout
 
 \begin_layout Enumerate
-Redundant on each blockdev to tolerate e.g.
- accidental dd
+Redundant on each blockdev to tolerate unreadable sectors
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Recovery from accidental start-of-blockdev overwrite by placing a second
+ copy at the end of the disk was also considered, but raised other issues
+ that outweighed its benefit.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -870,12 +1379,12 @@ Stratis metadata is in three places:
 \end_layout
 
 \begin_layout Enumerate
-Blockdev Data Area
+Blockdev Data Area (BDA)
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-Signature Block
+Signature Block within Static Header
 \end_layout
 
 \begin_layout Enumerate
@@ -884,7 +1393,12 @@ Metadata Area (MDA)
 
 \end_deeper
 \begin_layout Enumerate
-Thin Device 0
+Metadata Device (Flex Layer)
+\end_layout
+
+\begin_layout Standard
+(Specific DM targets such as raid, integrity, and thinpool also place their
+ own metadata on disk.)
 \end_layout
 
 \begin_layout Subsubsection
@@ -892,11 +1406,10 @@ BlockDev Data Area (BDA)
 \end_layout
 
 \begin_layout Standard
-The BDA consists of a fixed-length Static Header of eight sectors, which
- contains the Signature Block; and the metadata area (MDA), whose length
- is specified in the Signature Block.
- These are written to the beginning and end of the blockdev as described
- below.
+The BDA consists of a fixed-length Static Header of sixteen sectors, which
+ contains two copies of the Signature Block; and the metadata area (MDA),
+ whose length is specified in the Signature Block.
+ These are written to the beginning of the blockdev as described below.
 \end_layout
 
 \begin_layout Standard
@@ -917,7 +1430,13 @@ Historically this is the minimum storage unit of a hard drive.
 \end_layout
 
 \begin_layout Standard
-Stratis reserves the first 8 sectors of each blockdev for the Static Header:
+Stratis reserves the first 16 sectors of each blockdev for the Static Header.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Static Header
 \end_layout
 
 \begin_layout Standard
@@ -940,9 +1459,9 @@ backgroundcolor "none"
 status collapsed
 
 \begin_layout Plain Layout
-\align center
+\align left
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
+<lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1028,7 +1547,65 @@ unused
 \begin_inset Text
 
 \begin_layout Plain Layout
-Signature Block
+Signature Block copy 1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unused
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Signature Block copy 2
 \end_layout
 
 \end_inset
@@ -1039,7 +1616,7 @@ Signature Block
 \begin_inset Text
 
 \begin_layout Plain Layout
-2
+10
 \end_layout
 
 \end_inset
@@ -1076,7 +1653,9 @@ unused
 \end_layout
 
 \begin_layout Standard
-The Signature Block consists of:
+
+\emph on
+Signature Block
 \end_layout
 
 \begin_layout Standard
@@ -1099,13 +1678,13 @@ backgroundcolor "none"
 status collapsed
 
 \begin_layout Plain Layout
-\align center
+\align left
 \begin_inset Tabular
-<lyxtabular version="3" rows="20" columns="3">
+<lyxtabular version="3" rows="10" columns="3">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="left" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="60col%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -1154,11 +1733,11 @@ description
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-CRC32 of signature block (bytes at offset 4 length 508)
+IEEE CRC32 of signature block (bytes at offset 4 length 508)
 \end_layout
 
 \end_inset
@@ -1183,7 +1762,7 @@ CRC32 of signature block (bytes at offset 4 length 508)
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1220,7 +1799,7 @@ x41rh'
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1249,7 +1828,7 @@ Device size in 512-byte sectors (u64)
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1278,7 +1857,7 @@ flags
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1289,7 +1868,7 @@ ASCII hex UUID for the Stratis pool
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1298,7 +1877,7 @@ ASCII hex UUID for the Stratis pool
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1331,302 +1910,12 @@ ASCII hex UUID for the blockdev
 \begin_inset Text
 
 \begin_layout Plain Layout
-8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAa UNIX timestamp (seconds since Jan 1 1970) (u64)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-104
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAa nanoseconds (u32)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-108
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAa used length in bytes (u32)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-112
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAa CRC32 over used length
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-116
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-12
 \end_layout
 
 \end_inset
 </cell>
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-unused
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-128
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAb UNIX timestamp (seconds since Jan 1 1970) (u64)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-136
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAb nanoseconds (u32)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-140
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAb used length in bytes (u32)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-144
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MDAb CRC32 over used length
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-148
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-12
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-unused
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-160
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1641,7 +1930,7 @@ sector length of blockdev metadata area (MDA) (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-164
+100
 \end_layout
 
 \end_inset
@@ -1655,7 +1944,7 @@ sector length of blockdev metadata area (MDA) (u32)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1670,7 +1959,7 @@ sector length of reserved space (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-168
+104
 \end_layout
 
 \end_inset
@@ -1679,12 +1968,12 @@ sector length of reserved space (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-344
+408
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1715,49 +2004,292 @@ All 'unused' fields are zeroed, and are reserved for future use.
 \end_layout
 
 \begin_layout Itemize
-Blockdev metadata area (offset 160) must be an even number of at least 2040
- – combined minimum length of overall BDA (static header and MDA) is 2048
- sectors (1 MiB).
+Blockdev metadata area length (offset 96) must be an number divisible by
+ four of at least 2032 – combined minimum length of overall BDA (static
+ header and MDA) is 2048 sectors (1 MiB).
 \end_layout
 
 \begin_layout Itemize
-Reserved space (offset 164) is used by Stratis for temporary storage or
- other undefined purposes.
-\end_layout
-
-\begin_layout Itemize
-The BDA is written to the beginning and end of the blockdev.
- When writing to the beginning of the blockdev, the Static Header is placed
- first (LBA 0), then the MDA starts at LBA 8, then reserved space.
- When writing to the end of the blockdev, the Static Header occupies the
- last 8 sectors of the blockdev, and the MDA 
-\emph on
-precedes
-\emph default
- it.
- (The end-of-blockdev BDA has no reserved space.)
-\end_layout
-
-\begin_layout Itemize
-The BDA at the start of the blockdev is followed immediately by 
+The BDA is followed immediately by 
 \emph on
 reserved space
 \emph default
-, whose size is specified in the signature block (offset 164).
+, whose size is specified in the signature block (offset 100).
+ Reserved space is used by Stratis for temporary storage.
+\end_layout
+
+\begin_layout Standard
+The MDA is divided into four equal-size regions, a, b, c, and d.
+ When updating metadata, identical data is written to either the odd (a
+ and c) or even (b and d) regions, chosen by examining the timestamps and
+ overwriting the older of a&c or b&d.
+\end_layout
+
+\begin_layout Standard
+Each MDA region's update consists of a fixed-length MDA Header, followed
+ by variable-length JSON data.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+MDA Header
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "c"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status collapsed
+
+\begin_layout Plain Layout
+\align left
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="60col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+byte offset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+length (bytes)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IEEE CRC32 covering remainder of MDA header plus JSON data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+length of JSON data in bytes (u32)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UNIX timestamp (seconds since Jan 1 1970) (u64)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nanoseconds (u32)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+unused
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+variable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
-The MDA is evenly divided into two areas: MDAa and MDAb.
-\end_layout
-
-\begin_layout Itemize
-Data within the metadata areas is stored in JSON format.
-\end_layout
-
-\begin_layout Itemize
-Metadata updates write to the older of the MDAa and MDAb areas.
+Metadata updates write to the older of the odd or even MDA regions.
  This is determined by lowest timestamp, and then lowest nanoseconds if
  timestamps are equal.
+\end_layout
+
+\begin_layout Itemize
+MDA updates include the MDA Header, which includes the current time.
+ However, if using the current time would not result in the update having
+ the latest time across all MDA regions on all blockdevs in the pool, instead
+ use a time of one nanosecond later than the latest MDA region time across
+ all blockdevs.
 \end_layout
 
 \begin_layout Itemize
@@ -1766,44 +2298,48 @@ The procedure for updating metadata is:
 
 \begin_deeper
 \begin_layout Enumerate
-Determine which area in the MDA to use (MDAa or MDAb) as described above.
- Call this area 'MDAx'.
+Determine which regions in the MDA to use (odd or even) as described above.
 \end_layout
 
 \begin_layout Enumerate
-The JSON metadata is written to MDAx.
+Write MDA header and JSON data to the first MDA region (a or b)
 \end_layout
 
 \begin_layout Enumerate
-MDAx's timestamp, nanosecond, length, and CRC32 fields in the signature
- block are updated: timestamp gets the UNIX timestamp.
- Nanoseconds is the current nanoseconds within the second.
- Length is set to the length of the metadata, and the CRC32 is calculated
- on the data up to that length.
+Perform a Flush/FUA
 \end_layout
 
 \begin_layout Enumerate
-The signature block's CRC32 is calculated.
+Write MDA header and JSON data to the second MDA region (c or d)
 \end_layout
 
 \begin_layout Enumerate
-The signature block is written and flushed to disk.
- The implementation may choose to write the entire 8 sectors of the static
- header.
+Perform a Flush/FUA
 \end_layout
 
 \begin_layout Enumerate
-The identical MDAx, and then signature block is written to the end-of-blockdev
- BDA, followed by a flush/FUA.
+Repeat for additional blockdevs.
+ Also see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:The-MDA-and"
+
+\end_inset
+
+
 \end_layout
 
 \end_deeper
 \begin_layout Itemize
-Multiple blockdevs being updated with the same metadata must use identical
- values for MDAx values in the signature block, but which area (MDAa or
- MDAb) is used may vary, if they have received differing numbers of metadata
- updates over time.
- (Corollary: sig block CRC32 must be recalculated for each blockdev.)
+Multiple blockdevs being updated with the same metadata must write identical
+ data to each MDA region, but which regions (odd or even) is used may vary,
+ if the blockdevs have received differing numbers of metadata updates over
+ time.
+\end_layout
+
+\begin_layout Itemize
+Software will generally read Signature Block copy 1 and MDA regions a and
+ b, and only reference additional copies if the CRC check fails.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1841,7 +2377,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="4">
+<lyxtabular version="3" rows="7" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2076,7 +2612,7 @@ layout of the data and metadata linear devices (see below)
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2085,7 +2621,7 @@ thinpool_dev
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2094,7 +2630,7 @@ object
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2108,44 +2644,6 @@ y
 
 \begin_layout Plain Layout
 parameters of the thinpool device (see below)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-thin_devs
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-object
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-parameters for thin devices (see below)
 \end_layout
 
 \end_inset
@@ -2422,7 +2920,7 @@ flex_devs
 \begin_inset Quotes erd
 \end_inset
 
- is an object that contains two strings: 
+ is an object that contains three strings: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2430,11 +2928,19 @@ meta_dev
 \begin_inset Quotes erd
 \end_inset
 
- and 
+, 
 \begin_inset Quotes eld
 \end_inset
 
-data_dev
+thin_meta_dev
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+thin_data_dev
 \begin_inset Quotes erd
 \end_inset
 
@@ -2637,23 +3143,6 @@ the length in sectors of the segment
 \end_layout
 
 \begin_layout Standard
-If neither 
-\begin_inset Quotes eld
-\end_inset
-
-integrity_devs
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-raid_devs
-\begin_inset Quotes erd
-\end_inset
-
- sections are present, 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2661,58 +3150,7 @@ parent
 \begin_inset Quotes erd
 \end_inset
 
- is a valid blockdev uuid.
- If only 
-\begin_inset Quotes eld
-\end_inset
-
-integrity_devs
-\begin_inset Quotes erd
-\end_inset
-
- is present, parent refers to an integrity dev uuid.
- If only 
-\begin_inset Quotes eld
-\end_inset
-
-raid_devs
-\begin_inset Quotes erd
-\end_inset
-
- are present, 
-\begin_inset Quotes eld
-\end_inset
-
-parent
-\begin_inset Quotes erd
-\end_inset
-
- refers to a raid dev uuid.
- If both 
-\begin_inset Quotes eld
-\end_inset
-
-integrity_devs
-\begin_inset Quotes erd
-\end_inset
-
- and 
-\begin_inset Quotes eld
-\end_inset
-
-raid_devs
-\begin_inset Quotes erd
-\end_inset
-
- are present, 
-\begin_inset Quotes eld
-\end_inset
-
-parent
-\begin_inset Quotes erd
-\end_inset
-
- refers to a raid dev uuid.
+ may be a valid blockdev, integrity dev, or raid dev uuid.
 \end_layout
 
 \begin_layout Standard
@@ -2748,7 +3186,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="4">
+<lyxtabular version="3" rows="2" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2793,7 +3231,7 @@ description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2802,7 +3240,7 @@ data_block_size
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2811,7 +3249,7 @@ number
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2830,45 +3268,6 @@ the size in sectors of the thinpool data block size
 \end_inset
 </cell>
 </row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-low_water_blocks
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-number
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-the number of free data blocks that dropping below will result in extending
- the data device
-\end_layout
-
-\end_inset
-</cell>
-</row>
 </lyxtabular>
 
 \end_inset
@@ -2881,252 +3280,23 @@ the number of free data blocks that dropping below will result in extending
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-thin_devs
-\begin_inset Quotes erd
-\end_inset
-
- is an object whose strings are ASCII strings (base 10) of 24-bit unsigned
- values, representing in-use thin device numbers.
- The values are objects with these fields:
+\begin_layout Subsubsection
+Metadata Device
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="55col%">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-json type
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-required
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-description
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-fs
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-string
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-the filesystem used to format the thin device.
- The only valid value is 
-\begin_inset Quotes eld
-\end_inset
-
-xfs
-\begin_inset Quotes erd
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-string
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-the name the user has given this filesystem
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-size
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-number
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-the size in sectors of the thin device
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-An entry for thin dev 
-\begin_inset Quotes eld
-\end_inset
-
-0
-\begin_inset Quotes erd
-\end_inset
-
- is required, and is used by Stratis for its purposes (see below).
- Its 
-\begin_inset Quotes eld
-\end_inset
-
-name
-\begin_inset Quotes erd
-\end_inset
-
- field is an empty string.
+The Metadata Device is formatted with an XFS filesystem that is used by
+ Stratis to store information on user-created thin filesystems (L5-L7).
+ This information is stored in the filesystem in TBD format.
 \end_layout
 
 \begin_layout Subsubsection
-Thin Device 0
-\end_layout
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:The-MDA-and"
 
-\begin_layout Standard
-Thin device 0 is an XFS-formatted thin filesystem that is used by Stratis
- to store information on user-created filesystems (L5).
- These are stored in the filesystem in TBD format.
-\end_layout
+\end_inset
 
-\begin_layout Subsubsection
 The MDA and Very Large Pools
 \end_layout
 
@@ -3153,11 +3323,56 @@ To solve the first issue, Stratis caps the number of blockdevs that receive
 To solve the second issue, Stratis monitors how large its most recent serialized
  metadata updates are, and increases the size of MDA areas on newly added
  devices when a fairly low threshold – %50 – is reached in comparison to
- the available MDAx size.
+ the available 
+\end_layout
+
+\begin_layout Standard
+MDA region size.
  This ensures that by the time sufficient blockdevs have been added to the
  pool to be in danger of serialized JSON data being too large, there are
  enough blockdevs with enlarged MDA space so that they can be used for MDA
  writes.
+\end_layout
+
+\begin_layout Subsubsection
+Metadata and Recovery
+\end_layout
+
+\begin_layout Standard
+Bad things happen.
+\end_layout
+
+\begin_layout Standard
+In order to recover from disk errors, Stratis uses CRCs over Stratis-specific
+ critical L0-L4 metadata, and writes duplicate copies to a single blockdev,
+ as well as across multiple blockdevs (when possible).
+ It takes this approach – copies – rather than a mechanism that might make
+ it possible to partially repair corrupted metadata for three reasons.
+ First, this metadata is relatively small – it concerns disks and raidsets,
+ of which the pool will have only a small number, so having multiple entire
+ copies isn't terribly wasteful.
+ Second, partially reconstructed information has limited value.
+ This is due to the layered nature of Stratis.
+ It's not sufficient to know some subset of the device mapping levels.
+ Since they are layered, recovering e.g.
+ L0-L2 layouts allows no data to be recovered without also knowing how L3
+ and L4 are mapped on top, and vice versa.
+ Finally, L0-L4 metadata should require relatively few updates per day,
+ since the changes it would reflect are blockdevs being added/removed from
+ the pool, or thinpool data device expansions.
+ This should reduce the likelihood of corruption.
+\end_layout
+
+\begin_layout Standard
+L5-L7 is stored on the Metadata Device on an XFS filesystem, so partial
+ data recovery of that information is possible.
+\end_layout
+
+\begin_layout Standard
+In addition to Stratis-specific metadata, Devicemapper layers such as cache,
+ raid, thin, as well as XFS filesystems, all have their own metadata.
+ Stratis would rely on running each of their specific repair/fsck tools
+ in case they reported issues.
 \end_layout
 
 \begin_layout Section
