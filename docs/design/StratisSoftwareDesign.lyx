@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.7.1
+Stratis Software Design: Version 0.7.2
 \begin_inset Foot
 status collapsed
 
@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 12/2/2016
+Last modified: 12/06/2016
 \end_layout
 
 \begin_layout Standard
@@ -174,6 +174,49 @@ Linux has gained many storage-related features over the years, but each
  This is an unending source of pain.
 \end_layout
 
+\begin_layout Subsection
+Goal: Bring advanced features to users in a simpler form
+\end_layout
+
+\begin_layout Standard
+The key to enabling users to use advanced features easily is by providing
+ a consistent mental model of related concepts for them to understand its
+ use.
+ Fewer concepts, but at a higher level, can work to shift the administration
+ burden off the user and into the concepts' implementation, which is not
+ visible to the user.
+\end_layout
+
+\begin_layout Standard
+Fewer concepts mean fewer possible configurations, which means fewer things
+ for the user to set up wrong.
+ Fewer chances for the user to wonder, 
+\begin_inset Quotes eld
+\end_inset
+
+what if I do 
+\emph on
+this
+\emph default
+?
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Flexibility has gone down, but if the concepts have been driven by what
+ most users want, the solution can likely meet a new users' wants, too.
+\end_layout
+
+\begin_layout Standard
+It is only the atypical user that needs the most flexibility, but right
+ now all users pay the price in complexity, even if they don't need the
+ flexibility.
+\end_layout
+
+\begin_layout Subsection
+Proposal: Implement a VMF
+\end_layout
+
 \begin_layout Standard
 In the past ten years, 
 \emph on
@@ -184,30 +227,55 @@ volume-managing filesystems
  Linux into a single tool.
  Redundancy, thin provisioning, volume management, and filesystems become
  features within a single comprehensive, consistent configuration system.
- However, ZFS isn't an option Linux can fully embrace due to licensing (although
- the demand for ZFS apparently was sufficient to convince Ubuntu to ship
- it even so).
+ Where a traditional Linux storage stack exposes the layers of block devices
+ to the user to manage, VMFs hide everything in a 
+\emph on
+pool
+\emph default
+.
+ The user puts raw storage in the pool, the VMF manages the storage in the
+ pool, providing the features the user wants, and allows the user to create
+ filesystems from the pool without being concerned with the details.
+\end_layout
+
+\begin_layout Standard
+Unfortunately, existing VMFs aren't ready to use on Linux.
+ ZFS isn't an option Linux can fully embrace due to licensing (Ubuntu notwithsta
+nding).
  And while Btrfs has no licensing issues, after many years of work it still
  has significant technical issues that may never be resolved.
 \end_layout
 
 \begin_layout Standard
-VMFs do much to simplify storage on Linux, but existing ones are unsuitable,
- and writing a new one from scratch is not feasible.
- Stratis's goal is to satisfy VMF-like requirements by managing existing
- layers on behalf of the user, so that users can start using an integrated,
- automated storage solution now, which can over time add capabilities as
- the underlying technologies grow more capable.
-\end_layout
+We can see from the tremendous resources that have gone into these two that
+ writing a VMF is a tremendous, time-consuming effort.
+ Instead of writing a new one from scratch, Stratis proposes to satisfy
+ VMF-like requirements by managing existing technologies on behalf of the
+ user, so that users can manage their storage using high-level concepts
+ like 
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Subsection
-Goal: Deliver a VMF solution for RHEL
+pool
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+filesystem
+\begin_inset Quotes erd
+\end_inset
+
+, and remain blissfully unaware of the daunting stack of layered blockdevs
+ doing all the work under the covers.
 \end_layout
 
 \begin_layout Standard
-This is functionality that RHEL users are asking for.
- Given we're not able to use existing solutions, we need to create one.
- But, we should not just copy ZFS.
+This is also a chance to learn from the benefits and shortcomings of existing
+ solutions.
+ We should not just copy ZFS.
  ZFS is now over a decade old and the storage landscape has changed since
  its design.
  We seek to satisfy the same needs that ZFS does, but also integrate more
@@ -241,7 +309,7 @@ Make technology like thin-provisioning, snapshots, integrity, redundancy,
 \end_layout
 
 \begin_layout Enumerate
-Bootable
+Bootable, initrd-capable
 \end_layout
 
 \begin_layout Enumerate
@@ -398,12 +466,8 @@ Analysis
 \end_layout
 
 \begin_layout Standard
-Mentioned here only for completeness.
- There are a number of fundamental design choices in LVM2 that would make
- this very hard.
- Add in the risk in changing direction of a mission-critical tool, the difficult
-y of changing a large codebase while maintaining backwards compatibility,
- and the answer must be no.
+Adding the capability to manage filesystems to LVM isn't something we have
+ considered up until now, but who knows, maybe we should.
 \end_layout
 
 \begin_layout Subsection
@@ -517,6 +581,17 @@ volume manager meta-framework
 Analysis: Details
 \end_layout
 
+\begin_layout Standard
+Note: This assumes the implementation described in Part 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "part:Implementation"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Itemize
 Policy+mechanism vs policy+policy+mechanism: LVM2 is configurable but has
  limitations.
@@ -536,31 +611,6 @@ allocate
 any
 \emph default
  free PV, not just one explicitly reserved.
- Other issues like this are undoubtedly present.
-\end_layout
-
-\begin_layout Itemize
-Some other ramifications of LVM2 not being designed to be a used this way:
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-LVM2 locking is fine-grained, flock(2)-based, and assumes no centralized
- daemon
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-The default locking type.
- LVM actually has 5 locking methods but this isn't relevant to the point
- being made
-\end_layout
-
-\end_inset
-
-.
- Since Stratis's design incorporates a daemon that would allow easier mutual
- exclusion, this would be an opportunity lost to simplify this area.
 \end_layout
 
 \begin_layout Itemize
@@ -577,27 +627,29 @@ A good API needs the ability to convey meaningful and consistent errors
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Quotes eld
-\end_inset
-
-Under the covers
-\begin_inset Quotes erd
-\end_inset
-
- usage not so under the covers: Stratis-managed LVM2 devices would show
- up in LVM2 device & volume listings, which would cause user confusion
+lvm-dbus cannot be used because it requires Python and D-Bus, neither of
+ which are available in initrd
 \end_layout
 
-\end_deeper
+\begin_layout Itemize
+Stratis-managed LVM2 devices would show up in LVM2 device & volume listings,
+ which would cause user confusion
+\end_layout
+
 \begin_layout Itemize
 Using LVM2 for metadata tracking is good, but only if upper layer has no
  metadata storage needs of its own.
- No mechanism to store additional metadata.
+ What about tags? Tags can't store JSON objects since '[]{},
+\begin_inset Quotes erd
+\end_inset
+
+' are not allowed in tags.
 \end_layout
 
 \begin_layout Itemize
 LVM2 metadata format prevents new metadata schemes, such as tracking thin
- volumes separately from PV metadata
+ volumes separately from PV metadata, or metadata backup copy not also at
+ the tail of the blockdev.
 \end_layout
 
 \begin_layout Itemize
@@ -606,18 +658,101 @@ Use of new devicemapper features delayed by LVM2 implementation and release
 \end_layout
 
 \begin_layout Itemize
-Unclear whether LVM2 or Stratis would react to resolve DM events.
- Unclear if the needed info to monitor thin-allocated filesystems could
- be obtained through LVM2, or if Stratis would still need to talk to Devicemappe
-r.
+One big argument by LVM2 proponents is that LVM2 is a large, long-lived
+ project that has learned many things the hard way, and it would be foolish
+ to throw away all that value and start over.
+ There's clearly some truth to that, but there is a flipside:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Must we use the code, or can we take lessons from LVM2 devs and incorporate
+ them independently? Maybe fix some things that backwards-compatibility
+ makes impossible to fix in LVM2?
 \end_layout
 
 \begin_layout Itemize
-Uncertainty over long process time adding new feature or enabling tweaks
- Stratis needs to LVM2, given large codebase, need for stability, and other
- competing priorities
+Large parts of the codebase don't benefit Stratis:
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+File-based & configurable Locking: not needed since everything is serialized
+ through stratisd
+\end_layout
+
+\begin_layout Itemize
+daemons/*
+\end_layout
+
+\begin_layout Itemize
+Udev: stratisd assumes udev & listens for udev events
+\end_layout
+
+\begin_layout Itemize
+Filter/global_filter
+\end_layout
+
+\begin_layout Itemize
+Caching: not needed, daemon is authoritative
+\end_layout
+
+\begin_layout Itemize
+profiles
+\end_layout
+
+\begin_layout Itemize
+preferred names ordering
+\end_layout
+
+\begin_layout Itemize
+lvm.conf display settings: not needed, up to API client
+\end_layout
+
+\begin_layout Itemize
+dev_manager: Stratis layers are predefined, much simpler
+\end_layout
+
+\begin_layout Itemize
+config_tree
+\end_layout
+
+\begin_layout Itemize
+report: beyond Stratis scope
+\end_layout
+
+\begin_layout Itemize
+Command-line tools, option parsing: handled in cli, reduced in scope
+\end_layout
+
+\begin_layout Itemize
+lib/misc/*: not needed or handled via libraries
+\end_layout
+
+\begin_layout Itemize
+Multi-metadata-format support
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+What would Stratis benefit from?
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+on-disk metadata format
+\end_layout
+
+\begin_layout Itemize
+Best policy for duplicate/absent/corrupted block devices
+\end_layout
+
+\begin_layout Itemize
+(please suggest more LVM2 features that Stratis would use here)
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Subsection
 Conclusions
 \end_layout
@@ -818,6 +953,12 @@ Stratis doesn't optimize performance within its data tier.
 \end_layout
 
 \begin_layout Part
+\begin_inset CommandInset label
+LatexCommand label
+name "part:Implementation"
+
+\end_inset
+
 Implementation
 \end_layout
 
