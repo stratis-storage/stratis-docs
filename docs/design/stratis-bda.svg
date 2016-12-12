@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92pre2 r"
+   sodipodi:docname="stratis-bda.svg">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7817"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path7815"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker7695"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path7693" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker7643"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path7641" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="378.27869"
+     inkscape:cy="587.70327"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2050"
+     inkscape:window-height="1724"
+     inkscape:window-x="902"
+     inkscape:window-y="208"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.30154702;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4468"
+       width="17.488253"
+       height="216.94905"
+       x="89.968956"
+       y="30.613577" />
+    <g
+       id="g9867"
+       transform="matrix(1.0077778,0,0,1.0186652,-5.736491,49.945326)"
+       style="stroke:none;stroke-width:0.296;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+      <rect
+         style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.296;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4470"
+         width="17.415384"
+         height="5.3201485"
+         x="94.952278"
+         y="188.67596" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="68.128983"
+       y="33.960545"
+       id="text4478"><tspan
+         sodipodi:role="line"
+         id="tspan4476"
+         x="68.128983"
+         y="33.960545"
+         style="font-size:4.31266594px;stroke-width:0.26954162px">sector 0</tspan></text>
+    <text
+       id="text4482"
+       y="91.642487"
+       x="82.145164"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:4.31266594px;stroke-width:0.26954162px"
+         y="91.642487"
+         x="82.145164"
+         id="tspan4480"
+         sodipodi:role="line">16</tspan></text>
+    <rect
+       y="30.540655"
+       x="89.896027"
+       height="57.343765"
+       width="17.634096"
+       id="rect4484"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.1556493;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.03144312px;line-height:6.7385397px;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="99.973808"
+       y="13.128147"
+       id="text4488"><tspan
+         sodipodi:role="line"
+         id="tspan4486"
+         x="99.973808"
+         y="13.128147"
+         style="font-size:5.0314436px;text-align:center;text-anchor:middle;stroke-width:0.26954162px">Stratis on-disk Metadata format</tspan><tspan
+         sodipodi:role="line"
+         x="99.973808"
+         y="19.866688"
+         style="font-size:5.0314436px;text-align:center;text-anchor:middle;stroke-width:0.26954162px"
+         id="tspan8709">Blockdev Data Area</tspan><tspan
+         sodipodi:role="line"
+         x="99.973808"
+         y="26.605227"
+         style="font-size:3.59388781px;text-align:center;text-anchor:middle;stroke-width:0.26954162px"
+         id="tspan8707">(not to scale)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.03144312px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="176.1468"
+       y="58.394527"
+       id="text4492"><tspan
+         sodipodi:role="line"
+         id="tspan4490"
+         x="176.1468"
+         y="58.394527"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.03139067px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26954162px">Static</tspan><tspan
+         sodipodi:role="line"
+         x="176.1468"
+         y="65.13308"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.03139067px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26954162px"
+         id="tspan7566">Header</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64.92160034px;line-height:86.94857788px;font-family:Caladea;-inkscape-font-specification:Caladea;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.47794247px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="154.63974"
+       y="77.853485"
+       id="text7304"><tspan
+         sodipodi:role="line"
+         id="tspan7302"
+         x="154.63974"
+         y="77.853485"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Caladea;-inkscape-font-specification:Caladea;stroke-width:3.47794247px">}</tspan></text>
+    <rect
+       style="opacity:1;fill:#ffa4a4;fill-opacity:1;stroke:#000000;stroke-width:0.04178183;stroke-opacity:1"
+       id="rect7552"
+       width="17.698414"
+       height="4.1170435"
+       x="89.863861"
+       y="35.28204" />
+    <rect
+       y="63.853466"
+       x="89.863861"
+       height="4.1170435"
+       width="17.698414"
+       id="rect7554"
+       style="opacity:1;fill:#ffa4a4;fill-opacity:1;stroke:#000000;stroke-width:0.04178183;stroke-opacity:1" />
+    <text
+       id="text7558"
+       y="67.383736"
+       x="82.684242"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:4.31266594px;stroke-width:0.26954162px"
+         y="67.383736"
+         x="82.684242"
+         id="tspan7556"
+         sodipodi:role="line">9</tspan></text>
+    <text
+       id="text7562"
+       y="38.812302"
+       x="82.684242"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:4.31266594px;stroke-width:0.26954162px"
+         y="38.812302"
+         x="82.684242"
+         id="tspan7560"
+         sodipodi:role="line">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="76.754326"
+       y="173.04361"
+       id="text7570"><tspan
+         sodipodi:role="line"
+         id="tspan7568"
+         x="76.754326"
+         y="173.04361"
+         style="font-size:4.31266594px;stroke-width:0.26954162px">2048</tspan></text>
+    <text
+       id="text7574"
+       y="167.65286"
+       x="76.754326"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:4.31266594px;stroke-width:0.26954162px"
+         y="167.65286"
+         x="76.754326"
+         id="tspan7572"
+         sodipodi:role="line">2047</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.31266594px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="82.145164"
+       y="86.790749"
+       id="text7578"><tspan
+         sodipodi:role="line"
+         id="tspan7576"
+         x="82.145164"
+         y="86.790749"
+         style="font-size:4.31266594px;stroke-width:0.26954162px">15</tspan></text>
+    <rect
+       y="87.92411"
+       x="89.864311"
+       height="20.056437"
+       width="17.697529"
+       id="rect7580"
+       style="opacity:1;fill:#e9e9e9;fill-opacity:1;stroke:#000000;stroke-width:0.09221693;stroke-opacity:1" />
+    <rect
+       style="opacity:1;fill:#b7b7b7;fill-opacity:1;stroke:#000000;stroke-width:0.09221693;stroke-opacity:1"
+       id="rect7582"
+       width="17.697529"
+       height="20.056437"
+       x="89.864311"
+       y="108.04981" />
+    <rect
+       y="128.17557"
+       x="89.864311"
+       height="20.056437"
+       width="17.697529"
+       id="rect7584"
+       style="opacity:1;fill:#e9e9e9;fill-opacity:1;stroke:#000000;stroke-width:0.09221693;stroke-opacity:1" />
+    <rect
+       style="opacity:1;fill:#b7b7b7;fill-opacity:1;stroke:#000000;stroke-width:0.09221693;stroke-opacity:1"
+       id="rect7595"
+       width="17.697529"
+       height="20.056437"
+       x="89.864311"
+       y="148.30125" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.72552824px;line-height:4.98954678px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.19958186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="91.167847"
+       y="96.821587"
+       id="text7599"><tspan
+         sodipodi:role="line"
+         id="tspan7597"
+         x="91.167847"
+         y="96.821587"
+         style="stroke-width:0.19958186px">MDA</tspan><tspan
+         sodipodi:role="line"
+         x="91.167847"
+         y="101.81113"
+         style="stroke-width:0.19958186px"
+         id="tspan7601">region 0</tspan></text>
+    <text
+       id="text7607"
+       y="117.30676"
+       x="91.167847"
+       style="font-style:normal;font-weight:normal;font-size:3.72552824px;line-height:4.98954678px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.19958186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.19958186px"
+         y="117.30676"
+         x="91.167847"
+         id="tspan7603"
+         sodipodi:role="line">MDA</tspan><tspan
+         id="tspan7605"
+         style="stroke-width:0.19958186px"
+         y="122.29631"
+         x="91.167847"
+         sodipodi:role="line">region 1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.72552824px;line-height:4.98954678px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.19958186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="91.167847"
+       y="136.71376"
+       id="text7613"><tspan
+         sodipodi:role="line"
+         id="tspan7609"
+         x="91.167847"
+         y="136.71376"
+         style="stroke-width:0.19958186px">MDA</tspan><tspan
+         sodipodi:role="line"
+         x="91.167847"
+         y="141.70331"
+         style="stroke-width:0.19958186px"
+         id="tspan7611">region 2</tspan></text>
+    <text
+       id="text7619"
+       y="157.19865"
+       x="91.167847"
+       style="font-style:normal;font-weight:normal;font-size:3.72552824px;line-height:4.98954678px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.19958186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.19958186px"
+         y="157.19865"
+         x="91.167847"
+         id="tspan7615"
+         sodipodi:role="line">MDA</tspan><tspan
+         id="tspan7617"
+         style="stroke-width:0.19958186px"
+         y="162.1882"
+         x="91.167847"
+         sodipodi:role="line">region 3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.81813741px;line-height:5.11357689px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.20454307px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="109.32545"
+       y="67.117912"
+       id="text7623"><tspan
+         sodipodi:role="line"
+         x="109.32545"
+         y="67.117912"
+         style="stroke-width:0.20454307px"
+         id="tspan7625">Signature Block copy 2</tspan></text>
+    <text
+       id="text7631"
+       y="38.558247"
+       x="109.32545"
+       style="font-style:normal;font-weight:normal;font-size:3.81813741px;line-height:5.11357689px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.20454307px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         id="tspan7629"
+         style="stroke-width:0.20454307px"
+         y="38.558247"
+         x="109.32545"
+         sodipodi:role="line">Signature Block copy 1</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot9851"
+       style="font-style:normal;font-weight:normal;font-size:18.66666603px;line-height:25px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.26954161,0,0,0.26954161,103.86435,-8.9939266)"><flowRegion
+         id="flowRegion9853"><rect
+           id="rect9855"
+           width="255.1523"
+           height="125.25381"
+           x="65.714287"
+           y="601.80542" /></flowRegion><flowPara
+         id="flowPara9857"
+         style="font-style:italic">By default, BDA is 2048 sectors (1 MiB), but may be larger (size of MDA given in Signature block plus 16 for Static Header)</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.03144312px;line-height:6.7385397px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26954162px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="97.095856"
+       y="246.08646"
+       id="text9875"><tspan
+         sodipodi:role="line"
+         id="tspan9873"
+         x="97.095856"
+         y="246.08646"
+         style="stroke-width:0.26954162px">n</tspan></text>
+    <rect
+       y="168.25746"
+       x="89.874702"
+       height="30.143478"
+       width="17.676758"
+       id="rect9877"
+       style="opacity:1;fill:#626262;fill-opacity:1;stroke:#000000;stroke-width:0.11298624;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.48260999px;line-height:4.66421032px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.18656841px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="90.644775"
+       y="181.8116"
+       id="text9883"><tspan
+         sodipodi:role="line"
+         x="90.644775"
+         y="181.8116"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.18656841px"
+         id="tspan9881">Reserved</tspan><tspan
+         sodipodi:role="line"
+         x="90.644775"
+         y="186.47581"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.18656841px"
+         id="tspan9887">Space</tspan></text>
+    <flowRoot
+       transform="matrix(0.26954161,0,0,0.26954161,3.4572329,18.628038)"
+       style="font-style:normal;font-weight:normal;font-size:18.66666603px;line-height:25px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="flowRoot9895"
+       xml:space="preserve"><flowRegion
+         id="flowRegion9891"><rect
+           y="601.80542"
+           x="65.714287"
+           height="51.512646"
+           width="241.01015"
+           id="rect9889" /></flowRegion><flowPara
+         style="font-style:italic"
+         id="flowPara9893">Reserved Space size given in Signature Block</flowPara></flowRoot>    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.28232905;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7817)"
+       d="m 98.627588,205.17068 v 33.06584"
+       id="path9983"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.19734669px;line-height:5.62144661px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.22485788px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="178.07561"
+       y="164.08395"
+       id="text10561"><tspan
+         sodipodi:role="line"
+         id="tspan10559"
+         x="178.07561"
+         y="164.08395"
+         style="stroke-width:0.22485788px">                           </tspan></text>
+    <text
+       id="text10602"
+       y="91.570038"
+       x="-69.732445"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:102.33301544px;line-height:137.05314636px;font-family:Caladea;-inkscape-font-specification:Caladea;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.48212528px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"
+       transform="scale(-0.63441496,1.5762554)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Caladea;-inkscape-font-specification:Caladea;stroke-width:5.48212528px"
+         y="91.570038"
+         x="-69.732445"
+         id="tspan10600"
+         sodipodi:role="line">}</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;line-height:12.23388958px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48935559px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="2.7153893"
+       y="101.87257"
+       id="text10606"><tspan
+         sodipodi:role="line"
+         id="tspan10604"
+         x="2.7153893"
+         y="101.87257"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.48935559px">BDA</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot10614"
+       style="font-style:normal;font-weight:normal;font-size:18.66666603px;line-height:25px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.26954161,0,0,0.26954161,104.52815,50.770549)"><flowRegion
+         id="flowRegion10610"><rect
+           id="rect10608"
+           width="241.01015"
+           height="51.512646"
+           x="65.714287"
+           y="601.80542" /></flowRegion><flowPara
+         id="flowPara10612"
+         style="font-style:italic">Rest of blockdev, usable by upper layers</flowPara></flowRoot>    <text
+       id="text10678"
+       y="129.30678"
+       x="-94.613426"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:77.17592621px;line-height:103.36062622px;font-family:Caladea;-inkscape-font-specification:Caladea;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:4.13442421px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"
+       transform="scale(-0.84121567,1.1887558)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Caladea;-inkscape-font-specification:Caladea;stroke-width:4.13442421px"
+         y="129.30678"
+         x="-94.613426"
+         id="tspan10676"
+         sodipodi:role="line">}</tspan></text>
+    <text
+       id="text10682"
+       y="130.97668"
+       x="37.111237"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;line-height:12.23388958px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48935559px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.48935559px"
+         y="130.97668"
+         x="37.111237"
+         id="tspan10680"
+         sodipodi:role="line">MDA</tspan></text>
+  </g>
+</svg>
