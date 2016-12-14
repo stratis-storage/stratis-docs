@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.7.2
+Stratis Software Design: Version 0.7.3
 \begin_inset Foot
 status collapsed
 
@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 12/06/2016
+Last modified: 12/14/2016
 \end_layout
 
 \begin_layout Standard
@@ -152,6 +152,39 @@ target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/design/
  requests.
 \end_layout
 
+\begin_layout Section*
+Executive Summary
+\end_layout
+
+\begin_layout Standard
+Stratis is a new tool that meets the needs of Red Hat Enterprise Linux (RHEL)
+ users calling for an easily configured, tightly integrated volume management
+ and filesystem solution that works within the existing Red Hat storage
+ management stack.
+ To achieve this, Stratis prioritizes a straightforward command-line experience,
+ a rich API, and a fully automated, externally-opaque approach to storage
+ management.
+ Built on device-mapper and the XFS filesystem, Stratis's architecture facilitat
+es rapid feature development.
+ Extending or building on SSM 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:SSM"
+
+\end_inset
+
+ or LVM 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:LVM2"
+
+\end_inset
+
+ was carefully considered, but did not meet the design needs for a low-maintenan
+ce, rapidly configurable local storage solution for the modern DevOps environmen
+t now in use by Red Hat customers.
+\end_layout
+
 \begin_layout Part
 Background
 \end_layout
@@ -161,17 +194,19 @@ Problem Statement
 \end_layout
 
 \begin_layout Standard
-Linux has gained many storage-related features over the years, but each
- of these features has required the user to manage the configuration of
- these features in a layered, additive manner.
+RHEL has gained many storage-related features over the years, but each of
+ these features has required the user to manage the configuration of these
+ features in a layered, additive manner.
  Genuinely new and useful features such as thin provisioning, RAID, and
  multipath are dependent on the user correctly configuring many different
  tools to achieve a complete result.
  Furthermore, since storage administration tools are focused on the command-line
 , higher-level management tools must each individually build upon the inherently
- risky proposition of treating the human-focused syntax and output of CLI
- tools as a stable programmatic API.
- This is an unending source of pain.
+ risky proposition of treating the human-focused syntax and output of command-li
+ne interface (CLI) tools as a stable programmatic API.
+ This causes a waste of effort and opportunity for bugs, as each administration
+ tool builds its own internal API for the feature on top of the lower level
+ tool's CLI.
 \end_layout
 
 \begin_layout Subsection
@@ -179,42 +214,32 @@ Goal: Bring advanced features to users in a simpler form
 \end_layout
 
 \begin_layout Standard
-The key to enabling users to use advanced features easily is by providing
- a consistent mental model of related concepts for them to understand its
- use.
- Fewer concepts, but at a higher level, can work to shift the administration
- burden off the user and into the concepts' implementation, which is not
- visible to the user.
+Linux storage features are modular and stackable.
+ This promotes flexibility but leads to a huge number of possible configurations.
+ This requires the user manage the stack because there's not enough commonality
+ to enable automation.
 \end_layout
 
 \begin_layout Standard
-Fewer concepts mean fewer possible configurations, which means fewer things
- for the user to set up wrong.
- Fewer chances for the user to wonder, 
-\begin_inset Quotes eld
-\end_inset
-
-what if I do 
-\emph on
-this
-\emph default
-?
-\begin_inset Quotes erd
-\end_inset
-
-.
- Flexibility has gone down, but if the concepts have been driven by what
- most users want, the solution can likely meet a new users' wants, too.
+However, for most use cases, there's One Right Way to do it (or a small
+ number).
+ By assuming a fixed layering of storage features (some of which may be
+ optional), we enable software to effectively manage these on behalf of
+ the user.
 \end_layout
 
 \begin_layout Standard
-It is only the atypical user that needs the most flexibility, but right
- now all users pay the price in complexity, even if they don't need the
- flexibility.
+Once this is done, the details of how the solution is implemented are less
+ of a concern to the user.
+ The user can express what remains – what hardware resources to use, what
+ features are desired, how should the storage be logically presented – using
+ a small number of object types with well-defined relations.
+ This leaves software in a good position to manage the stack and handle
+ most issues without user involvement.
 \end_layout
 
 \begin_layout Subsection
-Proposal: Implement a VMF
+Proposal: Implement a hybrid Volume Managing Filesystem
 \end_layout
 
 \begin_layout Standard
@@ -222,7 +247,8 @@ In the past ten years,
 \emph on
 volume-managing filesystems
 \emph default
- (VMFs) such as ZFS and Btrfs have come into vogue, and gained users.
+ (VMFs) such as ZFS and Btrfs have come into vogue and gained users, after
+ being previously available only in other UNIX-based operating systems.
  These incorporate what would be handled by multiple tools under traditional
  Linux into a single tool.
  Redundancy, thin provisioning, volume management, and filesystems become
@@ -239,17 +265,20 @@ pool
 \end_layout
 
 \begin_layout Standard
-Unfortunately, existing VMFs aren't ready to use on Linux.
- ZFS isn't an option Linux can fully embrace due to licensing (Ubuntu notwithsta
-nding).
- And while Btrfs has no licensing issues, after many years of work it still
- has significant technical issues that may never be resolved.
+Unfortunately, existing VMFs aren't easily used on RHEL.
+ ZFS isn't an option RHEL can embrace due to licensing (Ubuntu notwithstanding.)
+ Btrfs has no licensing issues, but after many years of work it still has
+ significant technical issues that may never be resolved.
 \end_layout
 
 \begin_layout Standard
-We can see from the tremendous resources that have gone into these two that
- writing a VMF is a tremendous, time-consuming effort.
- Instead of writing a new one from scratch, Stratis proposes to satisfy
+We can see from the tremendous resources that have gone into these two projects
+ that writing a VMF is a tremendous, time-consuming effort.
+ We also hear our users demanding their features and ease of use.
+\end_layout
+
+\begin_layout Standard
+Rather than writing a new VMF from scratch, Stratis proposes to satisfy
  VMF-like requirements by managing existing technologies on behalf of the
  user, so that users can manage their storage using high-level concepts
  like 
@@ -268,19 +297,20 @@ filesystem
 \begin_inset Quotes erd
 \end_inset
 
-, and remain blissfully unaware of the daunting stack of layered blockdevs
- doing all the work under the covers.
+, and remain unconcerned with the sizable stack of layered blockdevs doing
+ all the work under the covers.
 \end_layout
 
 \begin_layout Standard
 This is also a chance to learn from the benefits and shortcomings of existing
  solutions.
  We should not just copy ZFS.
- ZFS is now over a decade old and the storage landscape has changed since
+ ZFS is now fifteen years old and the storage landscape has changed since
  its design.
  We seek to satisfy the same needs that ZFS does, but also integrate more
- tightly into today's increasingly automated storage management solutions,
+ tightly into today's increasingly automated storage management solutions
  that span the data center as well as the local machine.
+ This is made possible by a hybrid, userspace-based approach.
 \end_layout
 
 \begin_layout Subsection
@@ -288,34 +318,225 @@ Requirements
 \end_layout
 
 \begin_layout Enumerate
+
+\emph on
+Make features easier to use in combination with each other
+\emph default
+: thin provisioning, snapshots, integrity, redundancy, multipath, encryption,
+ hardware reconfiguration, monitoring, and a caching tier
+\end_layout
+
+\begin_layout Enumerate
 Simple and comprehensive command-line interface
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+Simple
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Single way to do things
+\end_layout
+
+\begin_layout Enumerate
+Do not expose internal implementation details.
+ Distracting, and of little value since Stratis's internals are too complex
+ to make the user 
+\begin_inset Quotes eld
+\end_inset
+
+lifting the hood
+\begin_inset Quotes erd
+\end_inset
+
+ to fix things themselves practical
+\end_layout
+
+\begin_layout Enumerate
+User typically will not use on a daily basis
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Consistent commands that a user can guess at, and probably be right
+\end_layout
+
+\begin_layout Enumerate
+Require explicitness from the user for potentially data-losing operations
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+Comprehensive
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+User must know only one tool
+\end_layout
+
+\begin_layout Enumerate
+Steers user away from using other tools with a Stratis pool
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Enumerate
 Programmatic language-neutral API for higher-level management tool integration
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+A clear next step for users after hitting the limitations of scripting the
+ CLI
+\end_layout
+
+\begin_layout Enumerate
+Encourages tight integration and use of all features by other tools
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Event-driven monitoring and alerts
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+Consume low system resources
+\end_layout
+
+\begin_layout Enumerate
+Make sure alerts are heeded by only alerting when action really is needed
+\end_layout
+
+\begin_layout Enumerate
+Fail gracefully if alerts are unheeded
+\end_layout
+
+\end_deeper
 \begin_layout Enumerate
 Eliminate manual resizing of filesystems
 \end_layout
 
+\begin_deeper
 \begin_layout Enumerate
-Make technology like thin-provisioning, snapshots, integrity, redundancy,
- and a cache tier easy to use
+Numerous problem reports throughout the years indicate that resizing filesystems
+ is an area where users feel unease, due to potential data loss if a mistake
+ is made.
+ No real reason to require the user do this any more.
 \end_layout
 
 \begin_layout Enumerate
-Bootable, initrd-capable
+Simpler for DevOps
 \end_layout
 
+\begin_layout Enumerate
+Makes storage 
+\begin_inset Quotes eld
+\end_inset
+
+demand-allocated
+\begin_inset Quotes erd
+\end_inset
+
+, similar to virtual memory.
+ Current technology allows us to manage a filesystem's actual usage up (growfs)
+ or down (thin provisioning).
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Initrd-capable
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Limited environment – no Python or DBus – but can use device-mapper
+\end_layout
+
+\begin_layout Enumerate
+Allows root fs, all other filesystems except /boot to use Stratis
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Bootable (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Stratis-version-4.0"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Feels like a 
+\begin_inset Quotes eld
+\end_inset
+
+real
+\begin_inset Quotes erd
+\end_inset
+
+ filesystem if no secondary filesystem is needed for boot
+\end_layout
+
+\begin_layout Enumerate
+Enables Stratis features to be used by system image, e.g.
+ booting from a snapshot, and allowing /boot to grow
+\end_layout
+
+\begin_layout Enumerate
+Requires explicit support in bootloader (Grub2)
+\end_layout
+
+\begin_layout Enumerate
+device-mapper not available
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Adaptable to emerging storage technologies
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Persistent memory
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Block-appearing pmem can be used by Stratis
+\end_layout
+
+\begin_layout Enumerate
+byte-addressible pmem see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Stratis-version-4.0"
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Enumerate
 Implementable in 1-2 years
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+We're already behind, waiting another 10 years isn't an option
+\end_layout
+
+\end_deeper
 \begin_layout Section
 Adapting existing solutions
 \end_layout
@@ -331,10 +552,17 @@ Extending an existing project
 \end_layout
 
 \begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:SSM"
+
+\end_inset
+
 SSM
 \end_layout
 
 \begin_layout Standard
+System Storage Manager (
 \begin_inset CommandInset href
 LatexCommand href
 name "SSM"
@@ -342,7 +570,7 @@ target "https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7
 
 \end_inset
 
- provides a command line interface to manage storage in existing technologies.
+) provides a command line interface to manage storage in existing technologies.
  Our interest in SSM was to determine if it would be an existing project
  we could extend to meet our requirements.
 \end_layout
@@ -374,7 +602,7 @@ m and thinpool extensions.
 \end_layout
 
 \begin_layout Standard
-SSM doesn’t currently support RAID5/6, thin provisioning, or configuring
+SSM doesn't currently support RAID5/6, thin provisioning, or configuring
  a cache tier.
 \end_layout
 
@@ -396,21 +624,21 @@ Analysis
 \end_layout
 
 \begin_layout Standard
-Basing our development on SSM is not desirable.
+Extending SSM does not meet the requirements.
 \end_layout
 
 \begin_layout Subsubsection
-LVM2
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:LVM2"
 
 \end_inset
 
-
+LVM2
 \end_layout
 
 \begin_layout Standard
+Logical Volume Manager (
 \begin_inset CommandInset href
 LatexCommand href
 name "LVM2"
@@ -418,7 +646,7 @@ target "https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)"
 
 \end_inset
 
- is the nearly universally-used volume manager on Linux.
+) is the nearly universally-used volume manager on Linux.
  It provides the 
 \begin_inset Quotes eld
 \end_inset
@@ -427,7 +655,7 @@ policy
 \begin_inset Quotes erd
 \end_inset
 
- that controls devicemapper.
+ that controls device-mapper.
  It adds:
 \end_layout
 
@@ -442,7 +670,7 @@ Usage model built on Physical Volume, Volume Group, and Logical Volume (PV,
 
 \begin_layout Itemize
 A comprehensive set of command line tools for configuring linear, raid,
- thinpool, cache, and other devicemapper capabilities
+ thinpool, cache, and other device-mapper capabilities
 \end_layout
 
 \begin_layout Itemize
@@ -466,8 +694,11 @@ Analysis
 \end_layout
 
 \begin_layout Standard
-Adding the capability to manage filesystems to LVM isn't something we have
- considered up until now, but who knows, maybe we should.
+Adding the capability to manage filesystems to LVM isn't something that
+ has been much considered.
+ Extending LVM2 would make it very hard to achieve simplicity of interface,
+ given the conflicting requirement to maintain backwards compatibility with
+ what LVM provides now.
 \end_layout
 
 \begin_layout Subsection
@@ -505,7 +736,7 @@ XFS meets the requirements and currently seems like the best choice.
 \end_layout
 
 \begin_layout Subsubsection
-Devicemapper
+device-mapper
 \end_layout
 
 \begin_layout Standard
@@ -522,7 +753,7 @@ target "https://en.wikipedia.org/wiki/Device_mapper"
  multipath devices, caching devices, and more.
  It provides the ability to configure these capabilities, but no facilities
  for saving or restoring a configuration.
- Devicemapper provides 
+ device-mapper provides 
 \begin_inset CommandInset href
 LatexCommand href
 name "mechanism, but no policy"
@@ -653,7 +884,7 @@ LVM2 metadata format prevents new metadata schemes, such as tracking thin
 \end_layout
 
 \begin_layout Itemize
-Use of new devicemapper features delayed by LVM2 implementation and release
+Use of new device-mapper features delayed by LVM2 implementation and release
  cycle.
 \end_layout
 
@@ -682,7 +913,7 @@ File-based & configurable Locking: not needed since everything is serialized
 \end_layout
 
 \begin_layout Itemize
-daemons/*
+daemons/* including clvmd
 \end_layout
 
 \begin_layout Itemize
@@ -748,7 +979,11 @@ Best policy for duplicate/absent/corrupted block devices
 \end_layout
 
 \begin_layout Itemize
-(please suggest more LVM2 features that Stratis would use here)
+fault tolerance/recovery
+\end_layout
+
+\begin_layout Itemize
+pool/snapshot monitoring
 \end_layout
 
 \end_deeper
@@ -759,12 +994,12 @@ Conclusions
 
 \begin_layout Standard
 Based on looking at the existing available building blocks, the best option
- is to build Stratis as a new project, that makes use of XFS and Devicemapper
+ is to build Stratis as a new project, that makes use of XFS and device-mapper
  in its implementation.
  This will require that it implement its own on-disk metadata format and
  handle some tasks that overlap with LVM2, but this will avoid Stratis being
  constrained by LVM's concepts, and what would otherwise be a requirement
- to drive devicemapper entirely through LVM, instead of directly.
+ to drive device-mapper entirely through LVM, instead of directly.
 \end_layout
 
 \begin_layout Part
@@ -778,58 +1013,17 @@ Introduction
 \begin_layout Standard
 Stratis is a local storage solution that lets multiple logical filesystems
  share a pool of storage that is allocated from one or more block devices.
- This is roughly equivalent to what volume-managing filesystems like ZFS
- and Btrfs do, but differs in implementation.
- Instead of an entirely in-kernel approach, Stratis uses a hybrid user/kernel
- approach that builds upon existing block capabilities like devicemapper,
- existing filesystem capabilities like XFS, and a user space daemon for
- monitoring and control.
+ Instead of an entirely in-kernel approach like ZFS or Btrfs, Stratis uses
+ a hybrid user/kernel approach that builds upon existing block capabilities
+ like device-mapper, existing filesystem capabilities like XFS, and a user
+ space daemon for monitoring and control.
 \end_layout
 
 \begin_layout Standard
-The goal of Stratis is to provide the conceptual simplicity that volume-managing
- filesystems offer as well as many of their features, but also surpass them
- in areas like monitoring and notification, automatic reconfiguration, and
- integration with higher-level storage management frameworks.
-\end_layout
-
-\begin_layout Subsection
-Known shortcomings
-\end_layout
-
-\begin_layout Standard
-Stratis' goal is to hide the complexity of its implementation from the user,
- but by using a reuse/layering approach to its implementation, there will
- be places where Stratis' implementation details will peek through.
- This could cause user confusion, and also could threaten Stratis integrity
- if the user makes changes.
-\end_layout
-
-\begin_layout Itemize
-For Stratis filesystems, 'df' will report the current used and free sizes
- as seen and reported by XFS.
- This is not useful information, because the filesystem's actual storage
- usage will be less due to thin provisioning, and also because Stratis will
- automatically grow the filesystem if it nears XFS's currently sized capacity.
-\end_layout
-
-\begin_layout Itemize
-Users should not try to reformat or reconfigure XFS filesystems that are
- managed by Stratis.
- Stratis has no way to enforce this or warn the user to avoid this, other
- than in the documentation.
-\end_layout
-
-\begin_layout Itemize
-Stratis will use many Devicemapper devices, which will show up in `dmsetup`
- listings and /proc/partitions.
- Similarly, `lsblk`output on a Stratis system will reflect Stratis' internal
- workings and layers, which ideally would be hidden from the user.
-\end_layout
-
-\begin_layout Itemize
-Stratis requires a userspace daemon, which must remain running at all times
- for proper monitoring and pool maintenenance.
+The goal of Stratis is to provide the conceptual simplicity of volume-managing
+ filesystems, and surpass them in areas such as monitoring and notification,
+ automatic reconfiguration, and integration with higher-level storage management
+ frameworks.
 \end_layout
 
 \begin_layout Section
@@ -865,6 +1059,51 @@ backing store
 
 ); and the API, which allows better tool-to-tool integration than using
  CLI programmatically.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename stratis-interactions.svg
+	scale 80
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Stratis in the Linux Storage Management Stack
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are existing libraries that handle CLI-to-API for both Anaconda and
+ Cockpit.
+ These could be extended to support Stratis, or not.
 \end_layout
 
 \begin_layout Section
@@ -1021,6 +1260,45 @@ This component is not required to be installed, in cases such as an appliance
  API directly.
 \end_layout
 
+\begin_layout Subsection
+Known shortcomings
+\end_layout
+
+\begin_layout Standard
+Stratis' goal is to hide the complexity of its implementation from the user,
+ but by using a reuse/layering approach to its implementation, there will
+ be places where Stratis' implementation details will peek through.
+ This could cause user confusion, and also could threaten Stratis integrity
+ if the user makes changes.
+\end_layout
+
+\begin_layout Itemize
+For Stratis filesystems, 'df' will report the current used and free sizes
+ as seen and reported by XFS.
+ This is not useful information, because the filesystem's actual storage
+ usage will be less due to thin provisioning, and also because Stratis will
+ automatically grow the filesystem if it nears XFS's currently sized capacity.
+\end_layout
+
+\begin_layout Itemize
+Users should not try to reformat or reconfigure XFS filesystems that are
+ managed by Stratis.
+ Stratis has no way to enforce this or warn the user to avoid this, other
+ than in the documentation.
+\end_layout
+
+\begin_layout Itemize
+Stratis will use many device-mapper devices, which will show up in `dmsetup`
+ listings and /proc/partitions.
+ Similarly, `lsblk`output on a Stratis system will reflect Stratis' internal
+ workings and layers, which ideally would be hidden from the user.
+\end_layout
+
+\begin_layout Itemize
+Stratis requires a userspace daemon, which must remain running at all times
+ for proper monitoring and pool maintenenance.
+\end_layout
+
 \begin_layout Section
 D-Bus Programmatic API
 \end_layout
@@ -1057,57 +1335,6 @@ Stratis internals aim to be opaque to the user.
  This allows its implementation maximum flexibility to do whatever it needs
  in Stratis version 1, as well as to be extended in later versions without
  violating any user-visible expectations.
-\end_layout
-
-\begin_layout Subsection
-Cache Tier Requirements
-\end_layout
-
-\begin_layout Enumerate
-Caching may be configured for redundancy, or no redundancy.
-\end_layout
-
-\begin_layout Enumerate
-Caching may be configured for write-back and write-through modes.
-\end_layout
-
-\begin_layout Enumerate
-Stratis concatenates all cache blockdevs and uses the resulting device to
- cache the thinpool device (L4).
- This lets all filesystems benefit from the cache.
-\end_layout
-
-\begin_layout Enumerate
-Cache blocksize should match thinpool datablock size.
-\end_layout
-
-\begin_layout Enumerate
-The cache tier can be entirely reconfigured without data loss, once flushed
- and in write-through mode, because it’s just a cache.
- To handle configuration changes, we can just drop the cache and recreate
- it with its new configuration.
-\end_layout
-
-\begin_layout Enumerate
-(more details to fill in here.)
-\end_layout
-
-\begin_layout Subsection
-Cache Tier Metadata
-\end_layout
-
-\begin_layout Subsubsection
-Cache Tier Metadata Requirements
-\end_layout
-
-\begin_layout Enumerate
-Identify all blockdevs part of the pool's cache tier, the configured redundancy
- level, and other cache-specific configuration parameters (e.g.
- WT/WB, block size, cache policy)
-\end_layout
-
-\begin_layout Enumerate
-Cache tier supports up to 8 devices.
 \end_layout
 
 \begin_layout Subsection
@@ -1160,12 +1387,16 @@ in a future version
 
 \end_layout
 
+\begin_layout Enumerate
+Encryption
+\end_layout
+
 \begin_layout Subsection
 Data Tier
 \end_layout
 
 \begin_layout Standard
-The data tier achieves these requirements by layering Devicemapper (DM)
+The data tier achieves these requirements by layering device-mapper (DM)
  devices on top of the pool's blockdevs, culminating in a thin devices allocated
  from a thinpool.
  Stratis initializes these thin devices with a filesystem, and manages the
@@ -1192,7 +1423,7 @@ status collapsed
 
 \begin_layout Plain Layout
 in a future version.
- This will require a new Devicemapper target be developed.
+ This will require a new device-mapper target be developed.
 \end_layout
 
 \end_inset
@@ -1227,9 +1458,18 @@ in a future version
 \begin_layout Standard
 A Stratis pool may optionally be configured to spread data across multiple
  physical disks, so that the loss of any one disk does not cause data loss.
- Stratis uses conventional RAID technology (1, 5, 6, 10) as specified, and
- converts Layer 0 blockdevs into a smaller-sized amount of storage with
- the specified raid properties.
+ Stratis uses conventional RAID technology (1, 5, 6, 10, 1E
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+See ‘linux/Documentation/device-mapper/dm-raid.txt’ for more info
+\end_layout
+
+\end_inset
+
+) as specified, and converts Layer 0 blockdevs into a smaller-sized amount
+ of storage with the specified raid properties.
 \end_layout
 
 \begin_layout Standard
@@ -1239,7 +1479,8 @@ Since Stratis supports more blockdevs than are RAID-able (generally 8 or
 status collapsed
 
 \begin_layout Plain Layout
-citation needed
+More are supported by DM, but too many increase the likelihood of individual
+ failures.
 \end_layout
 
 \end_inset
@@ -1260,7 +1501,8 @@ in a future version
 \end_inset
 
 .
- Stratis may use dm-raid’s reshape capabilities when possible.
+ Stratis may use dm-raid’s reshape capabilities when possible, although
+ this changes the stripe size and could cause issues.
 \end_layout
 
 \begin_layout Standard
@@ -1298,20 +1540,10 @@ Stratis must allow adding a blockdev to an existing pool, and use it to
 \end_layout
 
 \begin_layout Standard
-In a future version, Stratis will assign states to each blockdev that reflect
- whether
-\end_layout
-
-\begin_layout Itemize
-It can be removed from the pool with no effect
-\end_layout
-
-\begin_layout Itemize
-Removed with loss of redundancy
-\end_layout
-
-\begin_layout Itemize
-Not removed without data loss.
+In a future version, Stratis will calculate if a blockdev can be removed
+ from the pool with no effect, removed with loss of redundancy, or not removed
+ without data loss, and allow, allow-and-warn, or disallow removal, as appropria
+te.
 \end_layout
 
 \begin_layout Standard
@@ -1356,8 +1588,10 @@ The two linear targets from L3 are used as metadata device and data device
  Stratis manages the thinpool device by extending the two L3 subdevices
  when either runs low on available blocks.
  If the pool approaches a point where the pool no longer has empty lower-level
- space to extend onto, Stratis alerts the user and does what it must to
- avoid data corruption.
+ space to extend onto, Stratis alerts the user and takes action to avoid
+ data corruption.
+ Actions could include switching filesystems to read-only mode, running
+ fstrim, or progressively throttling writes.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1365,14 +1599,17 @@ Layer 5: Thin Volumes
 \end_layout
 
 \begin_layout Standard
-From the thin pool Stratis creates one or more thin volumes.
+Stratis creates one or more thin volumes from the thin pool.
  It will automatically give a new volume a default size, and format it with
  a filesystem, and make it available to the user.
 \end_layout
 
 \begin_layout Standard
-Stratis keeps snapshot origin info in its metadata for user informational
- purposes.
+Stratis also enables creating a new volume as a read/write snapshot of an
+ existing volume.
+ Althouth the underlying implementation does not track a snapshot's origin
+ (not needed), Stratis keeps snapshot origin info in its metadata for user
+ informational purposes.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1400,9 +1637,12 @@ Layer 7: Filesystem
 
 \begin_layout Standard
 Stratis monitors each filesystem’s fullness vs its capacity and automatically
- extends (using e.g.
+ extends (changing the thin dev's logical size and then using e.g.
  xfs_growfs) them without user intervention.
- Stratis also periodically will run fstrim to reclaim unused space.
+ Stratis also periodically will run fstrim to reclaim unused space during
+ idle periods.
+ Idle periods will be detected based upon current and historical system
+ I/O activity levels.
 \end_layout
 
 \begin_layout Subsection
@@ -1496,8 +1736,52 @@ Metadata Device (Flex Layer)
 \end_layout
 
 \begin_layout Standard
-(Specific DM targets such as raid, integrity, and thinpool also place their
- own metadata on disk.)
+Specific DM targets such as raid, integrity, and thinpool also place their
+ own metadata on disk.
+\end_layout
+
+\begin_layout Standard
+Choosing to split metadata storage into two schemes allows upper layers'
+ metadata to be free of limitations that would apply if a single scheme
+ was used.
+ On-disk metadata formats find it hard to support runtime size extension,
+ may keep redundant copies to ensure reliability, and aggressively check
+ for corruption.
+ This can work well with small amounts of data that is infrequently changed,
+ but has trouble as data grows, or we wish to do updates in-place.
+\end_layout
+
+\begin_layout Standard
+Storing upper-level metadata via another method puts fewer requirements
+ on the lower-level metadata.
+ Upper-level metadata can achieve redundancy and integrity by building on
+ the preexisting lower layers, and work under looser restrictions around
+ updating in place, and the total size to which it may grow.
+ It can use existing, well-tested solutions for solving data organization
+ and storage issues, such as a general-purpose filesystem.
+ This is the approach Stratis takes
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+It would also be possible to store lower-level metadata on a /boot partition.
+ This would still enable Stratis to be used for the root and other core
+ filesystems, but would prevent /boot from being 
+\emph on
+in
+\emph default
+ Stratis.
+ This has to be weighed against the work required to define a new on-disk
+ metadata format.
+ Our hope is that the split-metadata design allows the on-disk metadata
+ format's implementation to be easy enough that we can avoid the dependency
+ on a non-Stratis /boot partition.
+ 
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1810,7 +2094,7 @@ status collapsed
 \begin_layout Plain Layout
 \align left
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="3">
+<lyxtabular version="3" rows="11" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top" width="0pt">
@@ -1962,7 +2246,7 @@ Device size in 512-byte sectors (u64)
 \begin_inset Text
 
 \begin_layout Plain Layout
-flags
+unused
 \end_layout
 
 \end_inset
@@ -2040,7 +2324,7 @@ ASCII hex UUID for the blockdev
 \begin_inset Text
 
 \begin_layout Plain Layout
-4
+8
 \end_layout
 
 \end_inset
@@ -2049,7 +2333,7 @@ ASCII hex UUID for the blockdev
 \begin_inset Text
 
 \begin_layout Plain Layout
-sector length of blockdev metadata area (MDA) (u32)
+sector length of blockdev metadata area (MDA) (u64)
 \end_layout
 
 \end_inset
@@ -2057,35 +2341,6 @@ sector length of blockdev metadata area (MDA) (u32)
 </row>
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-100
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-sector length of reserved space (u32)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2094,11 +2349,69 @@ sector length of reserved space (u32)
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sector length of reserved space (u64)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+112
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+flags (u64)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-408
+124
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+392
 \end_layout
 
 \end_inset
@@ -2144,7 +2457,7 @@ The BDA is followed immediately by
 \emph on
 reserved space
 \emph default
-, whose size is specified in the signature block (offset 100).
+, whose size is specified in the signature block (offset 104).
  Reserved space is used by Stratis for temporary storage.
 \end_layout
 
@@ -2188,7 +2501,7 @@ status collapsed
 \begin_layout Plain Layout
 \align left
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="3">
+<lyxtabular version="3" rows="8" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2270,11 +2583,11 @@ IEEE CRC32 covering remainder of MDA header plus JSON data
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-length of JSON data in bytes (u32)
+unused
 \end_layout
 
 \end_inset
@@ -2286,6 +2599,35 @@ length of JSON data in bytes (u32)
 
 \begin_layout Plain Layout
 8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+length of JSON data in bytes (u64)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16
 \end_layout
 
 \end_inset
@@ -2314,7 +2656,7 @@ UNIX timestamp (seconds since Jan 1 1970) (u64)
 \begin_inset Text
 
 \begin_layout Plain Layout
-16
+24
 \end_layout
 
 \end_inset
@@ -2343,7 +2685,7 @@ nanoseconds (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-20
+28
 \end_layout
 
 \end_inset
@@ -2352,7 +2694,7 @@ nanoseconds (u32)
 \begin_inset Text
 
 \begin_layout Plain Layout
-12
+4
 \end_layout
 
 \end_inset
@@ -3515,10 +3857,62 @@ L5-L7 is stored on the Metadata Device on an XFS filesystem, so partial
 \end_layout
 
 \begin_layout Standard
-In addition to Stratis-specific metadata, Devicemapper layers such as cache,
+In addition to Stratis-specific metadata, device-mapper layers such as cache,
  raid, thin, as well as XFS filesystems, all have their own metadata.
  Stratis would rely on running each of their specific repair/fsck tools
  in case they reported errors.
+\end_layout
+
+\begin_layout Subsection
+Cache Tier Requirements
+\end_layout
+
+\begin_layout Enumerate
+Caching may be configured for redundancy, or no redundancy.
+\end_layout
+
+\begin_layout Enumerate
+Caching may be configured for write-back and write-through modes.
+\end_layout
+
+\begin_layout Enumerate
+Stratis concatenates all cache blockdevs and uses the resulting device to
+ cache the thinpool device (L4).
+ This lets all filesystems benefit from the cache.
+\end_layout
+
+\begin_layout Enumerate
+Cache blocksize should match thinpool datablock size.
+\end_layout
+
+\begin_layout Enumerate
+Removing cache tier comes with performance hit and “rewarming” phase 
+\end_layout
+
+\begin_layout Enumerate
+For write-back caching, Cache tier must be redundant if data tier is redundant.
+\end_layout
+
+\begin_layout Enumerate
+(more details to fill in here.)
+\end_layout
+
+\begin_layout Subsection
+Cache Tier Metadata
+\end_layout
+
+\begin_layout Subsubsection
+Cache Tier Metadata Requirements
+\end_layout
+
+\begin_layout Enumerate
+Identify all blockdevs that are part of the pool's cache tier, the configured
+ redundancy level, and other cache-specific configuration parameters (e.g.
+ WT/WB, block size, cache policy)
+\end_layout
+
+\begin_layout Enumerate
+Cache tier supports up to 8 devices.
 \end_layout
 
 \begin_layout Part
@@ -3579,7 +3973,7 @@ Error handling
 \end_layout
 
 \begin_layout Itemize
-Libraries available for DBus, Devicemapper, JSON serialization, and CRC
+Libraries available for DBus, device-mapper, JSON serialization, and CRC
 \end_layout
 
 \begin_layout Itemize
@@ -3824,6 +4218,12 @@ Raid write log (on ssd? To eliminate raid write hole)
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Stratis-version-4.0"
+
+\end_inset
+
 Stratis version 4.0
 \end_layout
 
@@ -3854,6 +4254,10 @@ Tag-based blockdev and filesystem classification/grouping
 \begin_layout Enumerate
 Mirroring across partitions within a pool, for multi-site or across hw failure
  domains (shelves/racks)
+\end_layout
+
+\begin_layout Enumerate
+Support for byte-addressible persistent memory
 \end_layout
 
 \begin_layout Section
