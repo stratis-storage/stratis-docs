@@ -1256,7 +1256,7 @@ https://github.com/stratis-storage/stratis-cli
 
 \begin_layout Standard
 This component is not required to be installed, in cases such as an appliance
- where a higher-level application such as Cockput or Ansible uses the D-Bus
+ where a higher-level application such as Cockpit or Ansible uses the D-Bus
  API directly.
 \end_layout
 
@@ -1617,7 +1617,7 @@ Stratis creates thin volumes from the thin pool.
 \begin_layout Standard
 Stratis also enables creating a new volume as a read/write snapshot of an
  existing volume.
- Althouth the underlying implementation does require maintaining an explicit
+ Although the underlying implementation does require maintaining an explicit
  link between a snapshot and its origin, Stratis keeps snapshot origin info
  in its metadata for user informational purposes.
 \end_layout
