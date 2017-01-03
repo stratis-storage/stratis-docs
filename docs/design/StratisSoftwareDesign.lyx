@@ -1144,38 +1144,30 @@ Since a single system may have multiple pools, each pool has a name, as
 \end_layout
 
 \begin_layout Standard
-Stratis supports effectively unlimited blockdevs in a pool, and additional
- blockdevs may be added after the pool is created.
+Stratis supports unlimited blockdevs and 
+\begin_inset Formula $2^{24}$
+\end_inset
+
+filesystems per pool.
+ However, practical limits on these values may compell users to restrict
+ themselves to significantly smaller numbers of blockdevs and filesystems.
+\end_layout
+
+\begin_layout Standard
+A pool must be created with an initial set of blockdevs in order to be usable.
+ Additional blockdevs may be added after the pool is created.
  Blockdevs may also be removed from a pool, if certain preparations are
  performed and conditions are met.
 \end_layout
 
 \begin_layout Standard
-Stratis supports up to 
-\begin_inset Formula $2^{24}$
-\end_inset
-
- filesystems
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Theoretical maximum.
- We would support a smaller number for this and other values (max blockdevs,
- max filesystem size) based upon what we had actually been able to test.
-\end_layout
-
-\end_inset
-
-.
- New filesystems may be created from an existing filesystem (i.e.
- a read/write snapshot), or created from scratch.
- After creation, Stratis treats all filesystems identically; a filesystem
- and its snapshot have no dependencies on each other, but simply take up
- less space in the pool due to each initially referencing the same set of
- data blocks.
- However, to aid the user informationally, Stratis tracks and reports snapshot
- ancestors.
+A new filesystem is either a new empty filesystem or a snapshot of an existing
+ filesystem within the pool.
+ Immediately after creation a snapshot and its origin will reference the
+ same set of data blocks.
+ Although Stratis does not distinguish between snapshots and filesystems,
+ treating both as first-class filesystems, Stratis will maintain the relation
+ between the snapshot and its origin to aid users.
 \end_layout
 
 \begin_layout Section
