@@ -1,0 +1,221 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Stratis Coding Style Guidelines
+\end_layout
+
+\begin_layout Date
+Last modified: 01/05/2017
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Asking Questions and Making Changes to this Document
+\end_layout
+
+\begin_layout Standard
+This document can be found 
+\begin_inset CommandInset href
+LatexCommand href
+name "in the stratis-docs repo"
+target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/style/StratisStyleGuidelines.lyx"
+
+\end_inset
+
+, and is written using \SpecialChar LyX
+ 2.2.2.
+ Please ask any questions by opening an issue, and propose changes as pull
+ requests.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+A consistent style helps legibility and saves developers from needing to
+ think about issues that are not really important.
+\end_layout
+
+\begin_layout Standard
+In order to promote this, this document specifies some coding conventions
+ that go beyond the standard Rust coding style, as enforced by 
+\emph on
+rustfmt
+\emph default
+.
+\end_layout
+
+\begin_layout Section
+Style (Rust)
+\end_layout
+
+\begin_layout Enumerate
+rustfmt (
+\begin_inset CommandInset href
+LatexCommand href
+name "link"
+target "https://crates.io/crates/rustfmt"
+
+\end_inset
+
+) defines spacing, brace placement, and other formatting, and should be
+ followed (or automatically applied) for new Stratis code.
+\end_layout
+
+\begin_layout Enumerate
+All new files must start with the 3-line license as a comment.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+use
+\begin_inset Quotes erd
+\end_inset
+
+ declarations within a module (such as a source file) should be grouped
+ into three sections:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+declarations from 
+\begin_inset Quotes eld
+\end_inset
+
+std
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+declarations from other external dependencies
+\end_layout
+
+\begin_layout Enumerate
+declarations from other modules in the same crate
+\end_layout
+
+\begin_layout Standard
+as needed, separated by blank lines.
+ Alphabetical ordering of declarations within each group is recommended
+ but not required.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+When importing multiple items from a module, whether to group these with
+ 
+\begin_inset Quotes eld
+\end_inset
+
+{}
+\begin_inset Quotes erd
+\end_inset
+
+ on a single line, or across multiple declarations, is not yet specified.
+\end_layout
+
+\begin_layout Enumerate
+TBD: Recommendations on when it's time to break up a single module (file)
+ into submodules
+\end_layout
+
+\begin_layout Enumerate
+TBD: Recommendations on when to define const variables versus when to use
+ string literals
+\end_layout
+
+\begin_layout Section
+Style (Python)
+\end_layout
+
+\begin_layout Standard
+TBD
+\end_layout
+
+\end_body
+\end_document
