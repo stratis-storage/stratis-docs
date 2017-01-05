@@ -4078,6 +4078,11 @@ Initial disk labeling and on-disk metadata format
 Error handling for missing, corrupted, or duplicate blockdevs in a pool
 \end_layout
 
+\begin_layout Enumerate
+thin/cache metadata validation/check (i.e.
+ call thin_check & cache_check)
+\end_layout
+
 \begin_layout Subsection
 Stratis version 0.5
 \end_layout
@@ -4172,11 +4177,6 @@ Cache redundancy level: raid1
 
 \begin_layout Enumerate
 Write-through caching enabled
-\end_layout
-
-\begin_layout Enumerate
-thin/cache metadata validation/check (i.e.
- call thin_check & cache_check)
 \end_layout
 
 \begin_layout Enumerate
