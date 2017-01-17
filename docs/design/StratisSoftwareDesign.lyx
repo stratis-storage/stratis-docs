@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.7.4
+Stratis Software Design: Version 0.7.5
 \begin_inset Foot
 status collapsed
 
@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 12/19/2016
+Last modified: 01/17/2017
 \end_layout
 
 \begin_layout Standard
@@ -1707,7 +1707,7 @@ Handle million+ filesystems in a pool and updates without writing to each
 \end_layout
 
 \begin_layout Enumerate
-Extensible/upgradeable metadata format
+Extensible/upgradable metadata format
 \end_layout
 
 \begin_layout Subsubsection
@@ -2472,6 +2472,11 @@ reserved space
  Reserved space is used by Stratis for temporary storage.
 \end_layout
 
+\begin_layout Itemize
+When a blockdev is removed from a pool, or is part of a pool that is destroyed,
+ Stratis wipes the Static Header.
+\end_layout
+
 \begin_layout Standard
 The MDA is divided into four equal-size regions, numbered 0-3.
  When updating metadata, identical data is written to either the odd (1
@@ -2480,14 +2485,14 @@ The MDA is divided into four equal-size regions, numbered 0-3.
 \end_layout
 
 \begin_layout Standard
-Each MDA region's update consists of a fixed-length MDA Header, followed
+Each MDA region's update consists of a fixed-length MDA Region Header, followed
  by variable-length JSON data.
 \end_layout
 
 \begin_layout Standard
 
 \emph on
-MDA Header
+MDA Region Header
 \end_layout
 
 \begin_layout Standard
@@ -2569,7 +2574,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-IEEE CRC32 covering remainder of MDA header plus JSON data
+IEEE CRC32 covering remainder of MDA header
 \end_layout
 
 \end_inset
@@ -2598,7 +2603,7 @@ IEEE CRC32 covering remainder of MDA header plus JSON data
 \begin_inset Text
 
 \begin_layout Plain Layout
-unused
+IEEE CRC32 covering JSON data
 \end_layout
 
 \end_inset
