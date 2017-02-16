@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.7.5
+Stratis Software Design: Version 0.8.0
 \begin_inset Foot
 status collapsed
 
@@ -105,7 +105,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 01/17/2017
+Last modified: 02/16/2017
 \end_layout
 
 \begin_layout Standard
@@ -165,7 +165,8 @@ Stratis is a new tool that meets the needs of Red Hat Enterprise Linux (RHEL)
  management.
  It builds upon elements of the existing storage stack as much as possible,
  to enable delivery within 1-2 years.
- Specifically, Stratis plans to use device-mapper and the XFS filesystem.
+ Specifically, Stratis initially plans to use device-mapper and the XFS
+ filesystem.
  Extending or building on SSM 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -180,9 +181,9 @@ reference "subsec:LVM2"
 
 \end_inset
 
- was carefully considered, but did not meet the design needs for a low-maintenan
-ce, rapidly configurable local storage solution for the modern DevOps environmen
-t now in use by Red Hat customers.
+ was carefully considered.
+ SSM did not meet the design requirements, but building upon LVM may be
+ possible with some development effort.
 \end_layout
 
 \begin_layout Part
@@ -787,8 +788,14 @@ reference "subsec:LVM2"
  for a description of LVM2 capabilities.
 \end_layout
 
+\begin_layout Standard
+LVM is a mature software project that implements volume management.
+ For Stratis, the question is whether the benefits of internally using LVM2
+ outweigh the costs.
+\end_layout
+
 \begin_layout Subsubsection*
-Analysis: Details
+Issues with Building on LVM2
 \end_layout
 
 \begin_layout Standard
@@ -799,7 +806,11 @@ reference "part:Implementation"
 
 \end_inset
 
+.
+\begin_inset Newline newline
+\end_inset
 
+Note: lvm-team has raised objections to items on this list.
 \end_layout
 
 \begin_layout Itemize
@@ -870,8 +881,7 @@ Use of new device-mapper features delayed by LVM2 implementation and release
 \begin_layout Itemize
 One big argument by LVM2 proponents is that LVM2 is a large, long-lived
  project that has learned many things the hard way, and it would be foolish
- to throw away all that value and start over.
- There's clearly some truth to that, but there is a flipside:
+ to abandon all that value by starting over.
 \end_layout
 
 \begin_deeper
@@ -968,24 +978,14 @@ pool/snapshot monitoring
 \end_deeper
 \end_deeper
 \begin_layout Subsubsection*
-Analysis: Summary
+Analysis
 \end_layout
 
 \begin_layout Standard
-Stratis needs volume management capabilities, and LVM is a volume manager.
- But LVM is not a 
-\begin_inset Quotes eld
-\end_inset
-
-volume manager framework
-\begin_inset Quotes erd
-\end_inset
-
- – a tool for writing other volume managers.
- All the issues above stem from asking LVM to work as a modular part of
- something else – a way it was not designed to work – and to hide its complexity
- from the user, which is also contrary to LVM's original and current design
- philosophy.
+While we cannot dismiss using LVM as an option for the future, currently
+ there are some areas that it does not meet Stratis requirements.
+ There are also questions about the best way to interface with LVM that
+ need to be resolved prior to its adoption.
 \end_layout
 
 \begin_layout Subsection
@@ -994,12 +994,14 @@ Conclusions
 
 \begin_layout Standard
 Based on looking at the existing available building blocks, the best option
- is to build Stratis as a new project, that makes use of XFS and device-mapper
- in its implementation.
- This will require that it implement its own on-disk metadata format and
- handle some tasks that overlap with LVM2, but this will avoid Stratis being
- constrained by LVM design decisions, and what would otherwise be a requirement
- to drive device-mapper entirely through LVM, instead of directly.
+ is to build Stratis as a new project that initially makes use of XFS and
+ device-mapper in its implementation.
+ In parallel, request enhancements to LVM2 to enable its substitution for
+ device-mapper when the enhancements are implemented.
+ This lets Stratis proceed without delay to a point where it can be placed
+ in prospective users' hands to start getting feedback, and will allow Stratis
+ to eventually use LVM2, and avoid duplicating functionality that LVM2 already
+ provides.
 \end_layout
 
 \begin_layout Part
