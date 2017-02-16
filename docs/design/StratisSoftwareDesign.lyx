@@ -1416,6 +1416,7 @@ This layer is responsible for discovering existing blockdevs in a pool,
  blockdev.
  Blockdevs may be in the following states: good-unused, good-used, bad,
  spare.
+ Minimum blockdev size Stratis will use is 1 GiB.
 \end_layout
 
 \begin_layout Subsubsection
