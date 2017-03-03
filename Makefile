@@ -8,6 +8,7 @@ website-distrib: check
 
 check:
 	cd ./docs/design ; $(MAKE) check && cd -
+	cd ./docs/dbus ; $(MAKE) check && cd -
 
 clean:
 	- rm -Rf $(SITE)

@@ -1,0 +1,531 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Stratisd D-Bus API Reference Manual
+\end_layout
+
+\begin_layout Author
+Anne Mulhern
+\end_layout
+
+\begin_layout Date
+Last modified: 12/22/2016
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Before saving this file preparatory to a commit, make sure that all insets
+ are closed.
+ If you are able to read this note, you haven't performed this essential
+ step.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Asking Questions and Making Changes to this Document
+\end_layout
+
+\begin_layout Standard
+This document can be found
+\begin_inset CommandInset href
+LatexCommand href
+name "in the stratis-docs repo"
+target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/dbus/DBusAPIReference.lyx"
+
+\end_inset
+
+, and is written using \SpecialChar LyX
+ 2.2.2.
+ Please ask any questions by opening an issue, and propose changes as pull
+ requests.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+This document describes the D-Bus API for the Stratis daemon.
+ The D-Bus API constitutes the only public API of the Stratis daemon at
+ the time of this writing.
+ The public methods of the daemon's engine do not constitute part of the
+ public API.
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Standard
+The D-Bus API is a thin layer which receives message on the D-Bus, processes
+ them, transmits them to the Stratis engine, receives the results from the
+ engine, and transmits a response on the D-Bus.
+ 
+\end_layout
+
+\begin_layout Subsection
+General Principles
+\end_layout
+
+\begin_layout Subsubsection
+D-Bus layer as a thin interface
+\end_layout
+
+\begin_layout Standard
+The D-Bus layer is a thin interface which does the minimum amount of processing
+ necessary to invoke the methods of the underlying engine and to place the
+ results on the D-Bus.
+ When processing method calls, its responsibilities are confined to:
+\end_layout
+
+\begin_layout Itemize
+Receiving arguments and verifying if they conform to the signature of the
+ invoked method.
+\end_layout
+
+\begin_layout Itemize
+Transforming method arguments received on the D-Bus to arguments of the
+ appropriate type to be passed to engine methods.
+\end_layout
+
+\begin_layout Itemize
+Converting tuple arguments used to represent non-mandatory arguments to
+ values which inhabit the Rust Option type.
+\end_layout
+
+\begin_layout Itemize
+Invoking the appropriate engine methods and capturing their return values.
+\end_layout
+
+\begin_layout Itemize
+Marshalling the appropriate values to place on the D-Bus or returning an
+ error code and message as appropriate.
+\end_layout
+
+\begin_layout Itemize
+Adding or removing objects from the D-Bus tree.
+\end_layout
+
+\begin_layout Standard
+When generating property values, it need not process arguments, since there
+ are none, nor does it add or remove objects from the D-Bus tree.
+ It may still invoke engine methods in order to obtain the property values.
+\end_layout
+
+\begin_layout Subsubsection
+org.freedesktop.dbus.ObjectManager interface
+\end_layout
+
+\begin_layout Standard
+The top level D-Bus object implements the org.freedesktop.dbus.ObjectManager
+ interface.
+ This interface defines the GetManagedObjects() method, which returns a
+ view of the objects that the D-Bus layer has in its tree.
+ This view constitutes a summary of the state of the pools, devices, and
+ filesystem which Stratis manages.
+ The objects are identified primarily by their D-Bus object paths.
+ However, depending on the interface which an object supports it may also
+ support certain identifying properties.
+ For example, all objects that represent pools support an interface which
+ implements a Name and a Uuid property which may be used by the client to
+ identify a pool.
+\end_layout
+
+\begin_layout Standard
+In invoking methods, or obtaining the values of properties, the client must
+ identify existing objects by means of their object paths, either implicitly
+ by invoking a method on an object constructed from an object path, or explicitl
+y, by passing object paths as arguments to a method.
+ For example, the API's DestroyPool() method requires two object paths:
+\end_layout
+
+\begin_layout Itemize
+the object path of the Manager object, on which to invoke the DestroyPool
+ method
+\end_layout
+
+\begin_layout Itemize
+the object path of the pool object, which is passed as an argument to the
+ DestroyPool method
+\end_layout
+
+\begin_layout Standard
+It is expected that the client will identify the object path of the pool
+ object by locating it using its Name or Uuid property.
+\end_layout
+
+\begin_layout Subsubsection
+Introspection
+\end_layout
+
+\begin_layout Standard
+All objects support the org.freedesktop.dbus.Introspectable interface.
+ This interface has one method, Introspect(), which return an XML description
+ of the object's interfaces, methods, and properties.
+\end_layout
+
+\begin_layout Subsubsection
+Constants
+\end_layout
+
+\begin_layout Standard
+The top level D-Bus object exports lists of certain constant values that
+ it uses via properties.
+ This allows the client to identify the constants by their name rather than
+ by their number and be robust to changes in ordering or the addition of
+ new constants by the daemon.
+\end_layout
+
+\begin_layout Subsection
+Implementation
+\end_layout
+
+\begin_layout Subsubsection
+Emulating an Option type
+\end_layout
+
+\begin_layout Standard
+The D-Bus specification reserves a signature code for a 
+\begin_inset Quotes eld
+\end_inset
+
+maybe
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+option
+\begin_inset Quotes erd
+\end_inset
+
+ type, but this type is not available
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://dbus.freedesktop.org/doc/dbus-specification.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Nonetheless, it is desirable to have a way of representing a 
+\begin_inset Quotes eld
+\end_inset
+
+don't care
+\begin_inset Quotes erd
+\end_inset
+
+ condition when invoking D-Bus methods.
+ Certain methods accept a pair argument that mimics such a type.
+ The first item is a boolean.
+ If the value is false, then the pair represents None.
+ If the value is true, then the pair represents Some(x) where x is the second
+ item of the pair.
+\end_layout
+
+\begin_layout Subsubsection
+Dependencies
+\end_layout
+
+\begin_layout Standard
+The D-Bus API is implemented using the dbus-rs library
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/diwic/dbus-rs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Interfaces and Methods
+\end_layout
+
+\begin_layout Standard
+Each kind of object implements an identifying interface, i.e., pools implement
+ a pool interface, filesystems implement a filesystem interface, etc.
+ There is a top level manager interface that implements management tasks.
+ The following is a description of the interfaces and their methods and
+ properties.
+ Some more detailed information can be obtained from the introspection informati
+on that can be queried for each object, including the signatures of all
+ methods and properties.
+ All methods return a return code and an accompanying message.
+ Some methods also return a result.
+ If a method does return a result, then the result is the first element
+ in a triple, otherwise the returned value is just a pair of the return
+ code and the message.
+\end_layout
+
+\begin_layout Subsection
+Manager interface
+\end_layout
+
+\begin_layout Standard
+The manager interface is the top level interface.
+ It manages the creation and destruction of pools and also exports various
+ global properties.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+ConfigureSimulator This method is solely used to configure the simulator
+ engine.
+ Invoking it on the real engine is a no-op.
+\end_layout
+
+\begin_layout Description
+CreatePool This method creates a single pool with the specified name and
+ blockdevs.
+ Its result is the object path of the constructed pool and the device nodes
+ of the blockdevs added to the pool.
+ Its redundancy argument is a tuple representing a 
+\begin_inset Quotes eld
+\end_inset
+
+maybe
+\begin_inset Quotes erd
+\end_inset
+
+ type, allowing the caller to accept the default redundancy.
+ If its force argument is true, the method will claim all devices specified,
+ regardless of whether they seem to belong to another application.
+\end_layout
+
+\begin_layout Description
+DestroyPool This method destroys the specified pool.
+ Its result is a boolean value, which is true if an action was taken by
+ the engine.
+ If the pool had already been destroyed, no action would need to be taken.
+\end_layout
+
+\begin_layout Subsubsection*
+Properties
+\end_layout
+
+\begin_layout Description
+ErrorValues These are the values that are used as return codes by all the
+ methods.
+ This property is an array of pairs of names and corresponding numeric values.
+\end_layout
+
+\begin_layout Description
+RedundancyValues This property specifies the redundancy values that stratisd
+ supports.
+ It has the same format as the ErrorValues property.
+\end_layout
+
+\begin_layout Description
+Version The current stratisd version, as a string.
+\end_layout
+
+\begin_layout Subsection
+pool interface
+\end_layout
+
+\begin_layout Standard
+The pool interface manages the devices and filesystems within a pool.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+AddDevs This method allows additional devices to be added to the pool after
+ it is created.
+ Its result is an array of device nodes of the blockdevs added.
+\end_layout
+
+\begin_layout Description
+CreateFilesystems This method allows creating multiple filesystems, specified
+ by name, on a pool.
+ Its result is an array of object path/name pairs, identifying the filesystems
+ created.
+\end_layout
+
+\begin_layout Description
+DestroyFilesystems This method allows destroying multiple filesystems, specified
+ by object path.
+ Its result is an array of the names of the filesystems that were destroyed.
+\end_layout
+
+\begin_layout Description
+SetName This allows setting the name of the pool.
+ Its result is a boolean value, which is true if the name was actually changed.
+\end_layout
+
+\begin_layout Subsubsection*
+Properties
+\end_layout
+
+\begin_layout Description
+Name The name of the pool.
+\end_layout
+
+\begin_layout Description
+Uuid The UUID of the pool.
+ This property is constant.
+\end_layout
+
+\begin_layout Subsection
+filesystem interface
+\end_layout
+
+\begin_layout Standard
+The fileystem interface manages the properties of individual filesystems.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+CreateSnapshot This method allows a snapshot to be created from an existing
+ filesystem.
+ Its result is the object path of the newly created filesystem.
+\end_layout
+
+\begin_layout Description
+SetName This allows setting the name of the filesystem.
+ Its result is a boolean value, which is true if the name was actually changed.
+\end_layout
+
+\begin_layout Subsubsection*
+Properties
+\end_layout
+
+\begin_layout Description
+Name The name of the filesystem.
+\end_layout
+
+\begin_layout Description
+Pool The object path of the parent pool.
+ This property is constant.
+\end_layout
+
+\begin_layout Description
+Uuid The UUID of the filesystem.
+ This property is constant.
+\end_layout
+
+\end_body
+\end_document
