@@ -1,4 +1,5 @@
 *.lyx~
 *.lyx#
 *.pdf
+*.swp
 _site
