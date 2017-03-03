@@ -5,6 +5,8 @@ website-distrib: check
 	cp -R ./website/* $(SITE)
 	cd ./docs/design ; $(MAKE) StratisSoftwareDesign.pdf; cd -
 	cp ./docs/design/StratisSoftwareDesign.pdf $(SITE)
+	cd ./docs/dbus; $(MAKE) DBusAPIReference.pdf; cd -
+	cp ./docs/dbus/DBusAPIReference.pdf $(SITE)
 
 check:
 	cd ./docs/design ; $(MAKE) check && cd -
