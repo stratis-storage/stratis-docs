@@ -1401,8 +1401,8 @@ Data Tier
 
 \begin_layout Standard
 The data tier achieves these requirements by layering device-mapper (DM)
- devices on top of the pool's blockdevs, culminating in a thin devices allocated
- from a thinpool.
+ devices on top of the pool's blockdevs.
+ The topmost layer consists of thin devices allocated from a thinpool.
  Stratis initializes these thin devices with a filesystem, and manages the
  DM devices and filesystems to meet the above requirements.
 \end_layout
