@@ -1304,8 +1304,79 @@ The Stratis service process exposes a D-Bus interface, for other programs
  The command-line tool uses the D-Bus API.
 \end_layout
 
+\begin_layout Subsection
+Overview
+\end_layout
+
 \begin_layout Standard
-TODO: Create a separate D-Bus API Reference Doc and link to it here.
+The D-Bus API is a thin layer which receives message on the D-Bus, processes
+ them, transmits them to the Stratis engine, receives the results from the
+ engine, and transmits a response on the D-Bus.
+ It does the minimum amount of processing necessary to invoke the methods
+ of the underlying engine and to place the results on the D-Bus.
+ When processing method calls, its responsibilities are confined to:
+\end_layout
+
+\begin_layout Itemize
+Receiving arguments and verifying that they conform to the signature of
+ the invoked method.
+\end_layout
+
+\begin_layout Itemize
+Transforming method arguments received on the D-Bus to arguments of the
+ appropriate type to be passed to engine methods.
+\end_layout
+
+\begin_layout Itemize
+Converting tuple arguments used to represent non-mandatory arguments to
+ values which inhabit the Rust Option type.
+\end_layout
+
+\begin_layout Itemize
+Invoking the appropriate engine methods and capturing their return values.
+\end_layout
+
+\begin_layout Itemize
+Marshalling the appropriate return values to place on the D-Bus along with
+ the return code and message.
+\end_layout
+
+\begin_layout Itemize
+Adding or removing objects from the D-Bus tree.
+\end_layout
+
+\begin_layout Standard
+When generating property values, it need not process arguments, since there
+ are none, nor does it add or remove objects from the D-Bus tree.
+ It may still invoke engine methods in order to obtain the property values.
+\end_layout
+
+\begin_layout Standard
+The D-Bus API is implemented using the dbus-rs library
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/diwic/dbus-rs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The Stratisd D-Bus API Reference Manual contains a description of the API.
 \end_layout
 
 \begin_layout Subsection
