@@ -9,56 +9,59 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="193.10168mm"
+   height="238.40797mm"
+   viewBox="0 0 193.10168 238.40797"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92pre2 r"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="stratis-bda.svg">
   <defs
      id="defs2">
     <marker
        inkscape:stockid="Arrow1Lend"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="marker7817"
-       style="overflow:visible;"
+       style="overflow:visible"
        inkscape:isstock="true">
       <path
          id="path7815"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
-         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:isstock="true"
        style="overflow:visible"
        id="marker7695"
-       refX="0.0"
-       refY="0.0"
+       refX="0"
+       refY="0"
        orient="auto"
        inkscape:stockid="Arrow1Lstart">
       <path
-         transform="scale(0.8) translate(12.5,0)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         id="path7693" />
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         id="path7693"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:isstock="true"
        style="overflow:visible"
        id="marker7643"
-       refX="0.0"
-       refY="0.0"
+       refX="0"
+       refY="0"
        orient="auto"
        inkscape:stockid="Arrow1Lstart">
       <path
-         transform="scale(0.8) translate(12.5,0)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         id="path7641" />
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         id="path7641"
+         inkscape:connector-curvature="0" />
     </marker>
   </defs>
   <sodipodi:namedview
@@ -69,16 +72,21 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="378.27869"
-     inkscape:cy="587.70327"
+     inkscape:cx="210.12252"
+     inkscape:cy="251.4413"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2050"
-     inkscape:window-height="1724"
-     inkscape:window-x="902"
-     inkscape:window-y="208"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="1918"
+     inkscape:window-height="1166"
+     inkscape:window-x="1951"
+     inkscape:window-y="20"
+     inkscape:window-maximized="0"
+     inkscape:showpageshadow="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -94,7 +102,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-3.5539348,-9.3054292)">
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.30154702;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4468"
@@ -174,11 +183,11 @@
          id="tspan4490"
          x="176.1468"
          y="58.394527"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.03139067px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26954162px">Static</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.03139067px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26954162px">Static</tspan><tspan
          sodipodi:role="line"
          x="176.1468"
-         y="65.13308"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.03139067px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26954162px"
+         y="65.133064"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.03139067px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26954162px"
          id="tspan7566">Header</tspan></text>
     <text
        xml:space="preserve"
@@ -434,7 +443,7 @@
          style="font-style:italic"
          id="flowPara9893">Reserved Space size given in Signature Block</flowPara></flowRoot>    <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.28232905;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7817)"
-       d="m 98.627588,205.17068 v 33.06584"
+       d="m 98.627588,205.17068 0,33.06584"
        id="path9983"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
@@ -448,7 +457,7 @@
          id="tspan10559"
          x="178.07561"
          y="164.08395"
-         style="stroke-width:0.22485788px">                           </tspan></text>
+         style="stroke-width:0.22485788px" /></text>
     <text
        id="text10602"
        y="91.570038"
@@ -463,7 +472,7 @@
          sodipodi:role="line">}</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;line-height:12.23388958px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48935559px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;line-height:12.23388958px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48935559px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="2.7153893"
        y="101.87257"
        id="text10606"><tspan
@@ -471,7 +480,7 @@
          id="tspan10604"
          x="2.7153893"
          y="101.87257"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.48935559px">BDA</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.48935559px">BDA</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot10614"
@@ -500,9 +509,9 @@
        id="text10682"
        y="130.97668"
        x="37.111237"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;line-height:12.23388958px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48935559px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;line-height:12.23388958px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48935559px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.48935559px"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.13479424px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.48935559px"
          y="130.97668"
          x="37.111237"
          id="tspan10680"
