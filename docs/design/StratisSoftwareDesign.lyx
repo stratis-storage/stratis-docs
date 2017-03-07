@@ -4163,7 +4163,7 @@ Stratis version 0.5
 \end_layout
 
 \begin_layout Standard
-Add cache tier
+Add cache tier & basic snapshot support
 \end_layout
 
 \begin_layout Enumerate
@@ -4180,6 +4180,10 @@ Remove cache blockdevs
 
 \begin_layout Enumerate
 Write-through caching only
+\end_layout
+
+\begin_layout Enumerate
+Create/destroy primary snapshots
 \end_layout
 
 \begin_layout Subsection
