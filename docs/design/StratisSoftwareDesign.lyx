@@ -1683,9 +1683,9 @@ Stratis creates thin volumes from the thin pool.
 \begin_layout Standard
 Stratis also enables creating a new volume as a read/write snapshot of an
  existing volume.
- Although the underlying implementation does require maintaining an explicit
- link between a snapshot and its origin, Stratis keeps snapshot origin info
- in its metadata for user informational purposes.
+ Although the underlying implementation does not require maintaining an
+ explicit link between a snapshot and its origin, Stratis keeps snapshot
+ origin info in its metadata for user informational purposes.
 \end_layout
 
 \begin_layout Subsubsection
