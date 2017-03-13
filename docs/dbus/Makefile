@@ -1,4 +1,4 @@
-StratisSoftwareDesign.pdf: StratisSoftwareDesign.lyx
+DBusAPIReference.pdf: DBusAPIReference.lyx
 	lyx -batch --export pdf $<
 
 clean:
