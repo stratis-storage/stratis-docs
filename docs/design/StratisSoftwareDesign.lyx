@@ -3337,7 +3337,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-the entry in /dev where this blockdev was last available
+the blockdev's most recently recorded device node
 \end_layout
 
 \end_inset
