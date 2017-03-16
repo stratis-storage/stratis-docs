@@ -3451,8 +3451,8 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-uniquely identifying information for the block device, such as SCSI VPD83
- or serial number
+uniquely identifying information for the blockdev, such as SCSI VPD83 or
+ serial number
 \end_layout
 
 \end_inset
