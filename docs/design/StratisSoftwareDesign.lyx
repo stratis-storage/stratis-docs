@@ -2916,8 +2916,16 @@ The MDA contains a JSON object that represents the pool's overall configuration
  of blockdevs, from L0 to L4.
 \end_layout
 
-\begin_layout Standard
-Top level objects:
+\begin_layout Description
+Top
+\begin_inset space \space{}
+\end_inset
+
+level
+\begin_inset space \space{}
+\end_inset
+
+objects:
 \end_layout
 
 \begin_layout Standard
@@ -3226,16 +3234,9 @@ parameters of the thinpool device (see below)
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-block_devs
-\begin_inset Quotes erd
-\end_inset
-
- is an object whose strings are 32-byte ASCII hex uuids and whose values
- are objects with the following strings:
+\begin_layout Description
+block_devs: an object whose strings are 32-byte ASCII hex uuids and whose
+ values are objects with the following strings:
 \end_layout
 
 \begin_layout Standard
@@ -3469,23 +3470,16 @@ uniquely identifying information for the block device, such as SCSI VPD83
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Description
 integrity_devs: TBD
 \end_layout
 
-\begin_layout Standard
+\begin_layout Description
 raid_devs: TBD
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-flex_devs
-\begin_inset Quotes erd
-\end_inset
-
- is an object that contains three strings: 
+\begin_layout Description
+flex_devs: an object that contains three strings: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3707,26 +3701,12 @@ the length in sectors of the segment
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-parent
-\begin_inset Quotes erd
-\end_inset
-
- may be a valid blockdev, integrity dev, or raid dev uuid.
+\begin_layout Description
+parent: may be a valid blockdev, integrity dev, or raid dev uuid.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-thinpool_dev
-\begin_inset Quotes erd
-\end_inset
-
- is an object with the following values:
+\begin_layout Description
+thinpool_dev: an object with the following values:
 \end_layout
 
 \begin_layout Standard
