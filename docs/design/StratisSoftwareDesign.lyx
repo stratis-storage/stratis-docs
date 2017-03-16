@@ -3235,7 +3235,7 @@ parameters of the thinpool device
 \end_layout
 
 \begin_layout Description
-block_devs: an object whose strings are 32-byte ASCII hex uuids and whose
+block_devs: an object whose strings are 32-byte ASCII hex UUIDs and whose
  values are objects with the following strings:
 \end_layout
 
@@ -3607,7 +3607,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-32 byte ASCII hex uuid of the lower-layered device the segment is in
+32 byte ASCII hex UUID of the lower-layered device the segment is in
 \end_layout
 
 \end_inset
@@ -3702,7 +3702,7 @@ the length in sectors of the segment
 \end_layout
 
 \begin_layout Description
-parent: may be a valid blockdev, integrity dev, or raid dev uuid.
+parent: may be a valid blockdev, integrity dev, or raid dev UUID.
 \end_layout
 
 \begin_layout Description
