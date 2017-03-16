@@ -2916,8 +2916,16 @@ The MDA contains a JSON object that represents the pool's overall configuration
  of blockdevs, from L0 to L4.
 \end_layout
 
-\begin_layout Standard
-Top level objects:
+\begin_layout Description
+Top
+\begin_inset space \space{}
+\end_inset
+
+level
+\begin_inset space \space{}
+\end_inset
+
+objects:
 \end_layout
 
 \begin_layout Standard
@@ -2953,7 +2961,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -2962,7 +2970,7 @@ name
 \begin_inset Text
 
 \begin_layout Plain Layout
-json type
+JSON type
 \end_layout
 
 \end_inset
@@ -3018,7 +3026,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the name of the Stratis pool
+the name of the pool
 \end_layout
 
 \end_inset
@@ -3056,7 +3064,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the block devices in the pool (see below)
+the block devices in the pool
 \end_layout
 
 \end_inset
@@ -3094,7 +3102,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-info on integrity devices & layout (TBD)
+info on integrity devices & layout 
 \end_layout
 
 \end_inset
@@ -3132,7 +3140,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-layout of the raid devices (TBD)
+layout of the raid devices
 \end_layout
 
 \end_inset
@@ -3170,7 +3178,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-layout of the data and metadata linear devices (see below)
+layout of the data and metadata linear devices
 \end_layout
 
 \end_inset
@@ -3208,7 +3216,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-parameters of the thinpool device (see below)
+parameters of the thinpool device
 \end_layout
 
 \end_inset
@@ -3226,16 +3234,9 @@ parameters of the thinpool device (see below)
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-block_devs
-\begin_inset Quotes erd
-\end_inset
-
- is an object whose strings are 32-byte ASCII hex uuids and whose values
- are objects with the following strings:
+\begin_layout Description
+block_devs: an object with 32-byte ASCII hex UUID keys and object values
+ with the following structure:
 \end_layout
 
 \begin_layout Standard
@@ -3271,7 +3272,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3280,7 +3281,7 @@ name
 \begin_inset Text
 
 \begin_layout Plain Layout
-json type
+JSON type
 \end_layout
 
 \end_inset
@@ -3336,7 +3337,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-the entry in /dev where this blockdev was last available
+the blockdev's most recently recorded device node
 \end_layout
 
 \end_inset
@@ -3450,8 +3451,8 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-uniquely identifying information for the block device, such as SCSI VPD83
- or serial number
+uniquely identifying information for the blockdev, such as SCSI VPD83 or
+ serial number
 \end_layout
 
 \end_inset
@@ -3469,23 +3470,16 @@ uniquely identifying information for the block device, such as SCSI VPD83
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Description
 integrity_devs: TBD
 \end_layout
 
-\begin_layout Standard
+\begin_layout Description
 raid_devs: TBD
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-flex_devs
-\begin_inset Quotes erd
-\end_inset
-
- is an object that contains three strings: 
+\begin_layout Description
+flex_devs: an object with three keys: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3510,9 +3504,9 @@ thin_data_dev
 \end_inset
 
 .
- Each of these values are arrays of objects.
- These define the linear segments that make up each.
- Each segment object has the following strings:
+ Each corresponding value is an array of objects.
+ These objects define the linear segments that make up each device.
+ Each segment object has the following structure:
 \end_layout
 
 \begin_layout Standard
@@ -3548,7 +3542,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3557,7 +3551,7 @@ name
 \begin_inset Text
 
 \begin_layout Plain Layout
-json type
+JSON type
 \end_layout
 
 \end_inset
@@ -3613,7 +3607,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-32 byte ASCII hex uuid of the lower-layered device the segment is in
+32 byte ASCII hex UUID of the lower-layered device the segment is in
 \end_layout
 
 \end_inset
@@ -3707,26 +3701,12 @@ the length in sectors of the segment
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-parent
-\begin_inset Quotes erd
-\end_inset
-
- may be a valid blockdev, integrity dev, or raid dev uuid.
+\begin_layout Description
+parent: may be a valid blockdev, integrity dev, or raid dev UUID.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-thinpool_dev
-\begin_inset Quotes erd
-\end_inset
-
- is an object with the following values:
+\begin_layout Description
+thinpool_dev: an object with the following structure:
 \end_layout
 
 \begin_layout Standard
@@ -3762,7 +3742,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3771,7 +3751,7 @@ name
 \begin_inset Text
 
 \begin_layout Plain Layout
-json type
+JSON type
 \end_layout
 
 \end_inset
@@ -3827,7 +3807,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the size in sectors of the thinpool data block size
+the size in sectors of the thinpool data block
 \end_layout
 
 \end_inset
