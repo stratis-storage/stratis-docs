@@ -2961,7 +2961,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3026,7 +3026,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the name of the Stratis pool
+the name of the pool
 \end_layout
 
 \end_inset
@@ -3235,8 +3235,8 @@ parameters of the thinpool device
 \end_layout
 
 \begin_layout Description
-block_devs: an object whose strings are 32-byte ASCII hex UUIDs and whose
- values are objects with the following strings:
+block_devs: an object with 32-byte ASCII hex UUID keys and object values
+ with the following structure:
 \end_layout
 
 \begin_layout Standard
@@ -3272,7 +3272,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3479,7 +3479,7 @@ raid_devs: TBD
 \end_layout
 
 \begin_layout Description
-flex_devs: an object that contains three strings: 
+flex_devs: an object with three keys: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3504,9 +3504,9 @@ thin_data_dev
 \end_inset
 
 .
- Each of these values are arrays of objects.
- These define the linear segments that make up each.
- Each segment object has the following strings:
+ Each corresponding value is an array of objects.
+ These objects define the linear segments that make up each device.
+ Each segment object has the following structure:
 \end_layout
 
 \begin_layout Standard
@@ -3542,7 +3542,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3706,7 +3706,7 @@ parent: may be a valid blockdev, integrity dev, or raid dev UUID.
 \end_layout
 
 \begin_layout Description
-thinpool_dev: an object with the following values:
+thinpool_dev: an object with the following structure:
 \end_layout
 
 \begin_layout Standard
@@ -3742,7 +3742,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-name
+key
 \end_layout
 
 \end_inset
@@ -3807,7 +3807,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the size in sectors of the thinpool data block size
+the size in sectors of the thinpool data block
 \end_layout
 
 \end_inset
