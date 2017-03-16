@@ -3064,7 +3064,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the block devices in the pool (see below)
+the block devices in the pool
 \end_layout
 
 \end_inset
@@ -3102,7 +3102,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-info on integrity devices & layout (TBD)
+info on integrity devices & layout 
 \end_layout
 
 \end_inset
@@ -3140,7 +3140,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-layout of the raid devices (TBD)
+layout of the raid devices
 \end_layout
 
 \end_inset
@@ -3178,7 +3178,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-layout of the data and metadata linear devices (see below)
+layout of the data and metadata linear devices
 \end_layout
 
 \end_inset
@@ -3216,7 +3216,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-parameters of the thinpool device (see below)
+parameters of the thinpool device
 \end_layout
 
 \end_inset
