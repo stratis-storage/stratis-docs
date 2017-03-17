@@ -2914,6 +2914,14 @@ Metadata Area (MDA)
 \begin_layout Standard
 The MDA contains a JSON object that represents the pool's overall configuration
  of blockdevs, from L0 to L4.
+ See Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:JSON-Schema-for"
+
+\end_inset
+
+ for the formal JSON schema.
 \end_layout
 
 \begin_layout Description
@@ -4406,6 +4414,57 @@ Journald interactions
 
 \begin_layout Paragraph
 Nfs interactions
+\end_layout
+
+\begin_layout Part*
+\start_of_appendix
+Appendices
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:JSON-Schema-for"
+
+\end_inset
+
+JSON Schema for MDA
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+
+\size tiny
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "mda.schema.json"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
