@@ -1788,6 +1788,46 @@ Extensible/upgradable metadata format
 \end_layout
 
 \begin_layout Subsubsection
+Conventions
+\end_layout
+
+\begin_layout Standard
+Sectors are 512 bytes in length
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Historically this is the minimum storage unit of a hard drive.
+ Many Linux kernel APIs assume this value is constant (as does this document),
+ and use another term such as 'block size' for dealing with cases where
+ the minimum storage unit is different.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+All UUIDs are written as un-hyphenated ASCII encodings of their lower-case
+ hexadecimal representation
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+UUIDs are 128-bit values and therefore require only 16 bytes to represent
+ their numeric value.
+ However, since each ASCII value requires a byte, and the hexadecimal representa
+tion of an 128-bit value requires 32 hexadecimal digits, the chosen encoding
+ requires 32 bytes.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
 Design Overview
 \end_layout
 
@@ -1912,23 +1952,6 @@ The BDA consists of a fixed-length Static Header of sixteen sectors, which
  contains two copies of the Signature Block; and the metadata area (MDA),
  whose length is specified in the Signature Block.
  These are written to the beginning of the blockdev as described below.
-\end_layout
-
-\begin_layout Standard
-Sectors are 512 bytes in length
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Historically this is the minimum storage unit of a hard drive.
- Many Linux kernel APIs assume this value is constant (as does this document),
- and use another term such as 'block size' for dealing with cases where
- the minimum storage unit is different.
-\end_layout
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -2363,7 +2386,7 @@ unused
 \begin_inset Text
 
 \begin_layout Plain Layout
-ASCII hex UUID for the Stratis pool
+UUID of the Stratis pool
 \end_layout
 
 \end_inset
@@ -2392,7 +2415,7 @@ ASCII hex UUID for the Stratis pool
 \begin_inset Text
 
 \begin_layout Plain Layout
-ASCII hex UUID for the blockdev
+UUID of the blockdev
 \end_layout
 
 \end_inset
@@ -3243,8 +3266,8 @@ parameters of the thinpool device
 \end_layout
 
 \begin_layout Description
-block_devs: an object with 32-byte ASCII hex UUID keys and object values
- with the following structure:
+block_devs: an object with UUID keys and object values with the following
+ structure:
 \end_layout
 
 \begin_layout Standard
@@ -3615,7 +3638,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-32 byte ASCII hex UUID of the lower-layered device the segment is in
+UUID of the lower-layered device the segment is in
 \end_layout
 
 \end_inset
@@ -4448,7 +4471,7 @@ separation "3pt"
 shadowsize "4pt"
 framecolor "black"
 backgroundcolor "none"
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
