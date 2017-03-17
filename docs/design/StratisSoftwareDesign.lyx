@@ -3357,7 +3357,7 @@ size
 \begin_inset Text
 
 \begin_layout Plain Layout
-number
+integer
 \end_layout
 
 \end_inset
@@ -3627,7 +3627,7 @@ start
 \begin_inset Text
 
 \begin_layout Plain Layout
-number
+integer
 \end_layout
 
 \end_inset
@@ -3665,7 +3665,7 @@ length
 \begin_inset Text
 
 \begin_layout Plain Layout
-number
+integer
 \end_layout
 
 \end_inset
@@ -3789,7 +3789,7 @@ data_block_size
 \begin_inset Text
 
 \begin_layout Plain Layout
-number
+integer
 \end_layout
 
 \end_inset
