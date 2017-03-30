@@ -1,0 +1,90 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Stratis Variable Length On-Disk Metadata",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "User selected name"
+        },
+        "block_devs": {
+            "type": "object",
+            "description": "Block devices in pool",
+            "patternProperties": {
+                "^[0-9a-f]{32}$": {
+                    "type": "string",
+                    "description": "Device",
+                    "required": ["size"],
+                    "properties": {
+                        "dev": {
+                            "type": "string",
+                            "pattern": "^/dev/.*$",
+                            "description" : "Most recently recorded device node"
+                        },
+                        "size": {
+                            "type": "integer",
+                            "description": "Size in sectors",
+                            "minimum": 0
+                        },
+                        "location": {
+                            "type": "string",
+                            "description": "User provided tracking information"
+                        },
+                        "disk_id": {
+                            "type": "string",
+                            "description": "Uniquely identifying id"
+                        }
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "flex_devs": {
+            "type": "object",
+            "properties": {
+                "meta_dev": { "$ref": "#/definitions/flexDevice"},
+                "thin_meta_dev": { "$ref": "#/definitions/flexDevice"},
+                "thin_data_dev": { "$ref": "#/definitions/flexDevice"}
+            },
+            "required": ["meta_dev", "thin_meta_dev", "thin_data_dev"],
+            "additionalProperties": false
+        },
+        "thin_pool_dev": {
+            "type": "object",
+            "properties": {
+                "data_block_size": {
+                    "type": "integer",
+                    "description": "Size of thinpool data blocks in sectors",
+                    "minimum": 1
+                }
+            },
+            "required": ["data_block_size"],
+            "additionalProperties": false
+        }
+    },
+    "required": ["name", "block_devs", "flex_devs", "thin_pool_dev"],
+    "additionalProperties": false,
+    "definitions": {
+        "flexDevice": {
+            "properties": {
+                "parent": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "description": "UUID of the segment's device"
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "the starting sector offset",
+                    "minimum": 0
+                },
+                "length": {
+                    "type": "integer",
+                    "description": "the length in sectors",
+                    "minimum": 0
+                }
+            },
+            "required": ["parent", "start", "length"],
+            "additionalProperties": false
+        }
+    }
+}
