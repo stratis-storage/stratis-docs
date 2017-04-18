@@ -180,9 +180,77 @@ declarations from other modules in the same crate
 
 \begin_layout Standard
 as needed, separated by blank lines.
- Alphabetical ordering of declarations within each group is recommended
- but not required.
+ Ordering within blocks is alphabetical.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Use 
+\begin_inset Quotes eld
+\end_inset
+
+expect()
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+unwrap()
+\begin_inset Quotes erd
+\end_inset
+
+ to unwrap things that should always succeed.
  
+\begin_inset Quotes eld
+\end_inset
+
+unwrap()
+\begin_inset Quotes erd
+\end_inset
+
+ is not allowed in new code.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Output from Linux kernel APIs is considered 
+\begin_inset Quotes eld
+\end_inset
+
+super-stable
+\begin_inset Quotes erd
+\end_inset
+
+ and should be 
+\begin_inset Quotes eld
+\end_inset
+
+expect
+\begin_inset Quotes erd
+\end_inset
+
+ed instead of returning a parse error.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+expect()
+\begin_inset Quotes erd
+\end_inset
+
+ text should say what 
+\begin_inset Quotes eld
+\end_inset
+
+should never fail
+\begin_inset Quotes erd
+\end_inset
+
+ condition was not met to trigger it.
 \end_layout
 
 \end_deeper
