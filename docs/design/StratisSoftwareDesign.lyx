@@ -4120,10 +4120,6 @@ Create a filesystem
 \end_layout
 
 \begin_layout Enumerate
-Create a filesystem from existing filesystem (a r/w snapshot)
-\end_layout
-
-\begin_layout Enumerate
 Destroy a filesystem
 \end_layout
 
