@@ -4019,10 +4019,6 @@ Identify all blockdevs that are part of the pool's cache tier, the configured
 Cache tier supports up to 8 devices.
 \end_layout
 
-\begin_layout Part
-Development Plan
-\end_layout
-
 \begin_layout Section
 Implementation Details
 \end_layout
@@ -4881,6 +4877,10 @@ Layer 6: Encryption
 
 \begin_layout Standard
 TBD
+\end_layout
+
+\begin_layout Part
+Development Plan
 \end_layout
 
 \begin_layout Section
