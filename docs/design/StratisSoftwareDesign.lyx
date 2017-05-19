@@ -4418,7 +4418,7 @@ Name of the role of the device within the layer
 \begin_inset Text
 
 \begin_layout Plain Layout
-layer-unique-id
+role-unique-id
 \end_layout
 
 \end_inset
@@ -4436,7 +4436,7 @@ layer-unique-id
 \begin_inset Text
 
 \begin_layout Plain Layout
-Layer-specific unique differentiator between multiple devices within the
+Role-specific unique differentiator between multiple devices within the
  layer with the same role
 \end_layout
 
@@ -4532,7 +4532,7 @@ layer-role
 \begin_inset Text
 
 \begin_layout Plain Layout
-layer-unique-id
+role-unique-id
 \end_layout
 
 \end_inset
@@ -4707,7 +4707,7 @@ layer-role
 \begin_inset Text
 
 \begin_layout Plain Layout
-layer-unique-id
+role-unique-id
 \end_layout
 
 \end_inset
@@ -4806,7 +4806,7 @@ layer-role
 \begin_inset Text
 
 \begin_layout Plain Layout
-layer-unique-id
+role-unique-id
 \end_layout
 
 \end_inset
