@@ -1632,26 +1632,40 @@ It should also move active data off a perhaps-failing disk (or refuse, if
 \end_layout
 
 \begin_layout Standard
-The flexibility layer will support two linear DM devices made up of segments
- from lower-level devices, which will be used by Layer 4 (Thin Provisioning)
- as metadata and data devices.
- It will track what lower-level devices they are allocated from, allow the
- two devices to grow, and handle the online movement of segments in these
- devices when lower-level devices come and go.
+The flexibility layer will support four linear DM devices made up of segments
+ from lower-level devices.
+ The first two will be used by Layer 4 (Thin Provisioning) as metadata and
+ data devices.
+ The flex layer will track what lower-level devices they are allocated from,
+ allow the two devices to grow, and handle the online movement of segments
+ in these devices when lower-level devices come and go.
 \end_layout
 
 \begin_layout Standard
-Furthermore, the flexibility layer will support a third linear DM device
- called the Metadata Device that will be used to store metadata about upper
- layers.
+The third linear DM device is a spare metadata device to be used in the
+ case that the metadata device requires offline repair.
+ It will not usually be instantiated on the system, but guarantees there
+ is room if needed.
+ This device's size tracks the size of the metadata device, both as initially
+ allocated, and as the metadata device is extended.
 \end_layout
 
 \begin_layout Standard
-All three devices in this layer may be built on L0, L1, or L2 devices, depending
+Finally, the fourth linear DM device is used for the Metadata Volume (MDV,
+ see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Metadata-Volume-(MDV)"
+
+\end_inset
+
+).
+ The MDV is used to store metadata about upper layers.
+\end_layout
+
+\begin_layout Standard
+All devices in this layer may be built on L0, L1, or L2 devices, depending
  on configuration.
- The first two will share a configuration, but the Metadata Device may have
- a separate configuration (i.e.
- Metadata Device could be redundant, even while the other two are not).
 \end_layout
 
 \begin_layout Subsubsection
@@ -1850,7 +1864,7 @@ Metadata Area (MDA)
 
 \end_deeper
 \begin_layout Enumerate
-Metadata Device (Flex Layer)
+Metadata Volume (MDV)
 \end_layout
 
 \begin_layout Standard
@@ -1868,7 +1882,7 @@ Information on levels 0-4 is duplicated across all blockdevs within a on-disk
 \end_layout
 
 \begin_layout Standard
-The Metadata Device stores metadata on Layers 5 and up in a conventional
+The Metadata Volume stores metadata on Layers 5 and up in a conventional
  block device and filesystem that is built on top of the layers beneath
  it.
  Choosing to split metadata storage into two schemes allows upper layers'
@@ -1883,11 +1897,11 @@ The Metadata Device stores metadata on Layers 5 and up in a conventional
 
 \begin_layout Standard
 Upper-level metadata can achieve redundancy and integrity by building on
- the preexisting lower layers, and work under looser restrictions around
+ the pre-existing lower layers, and work under looser restrictions around
  updating in place, and the total size to which it may grow.
- It can apply existing, well-tested solutions for solving data organization
- and storage issues, such as a general-purpose filesystem.
- This is the approach Stratis takes
+ It reuses an existing, well-tested solution for solving data organization
+ and storage issues – a general-purpose filesystem.
+ 
 \begin_inset Foot
 status collapsed
 
@@ -1909,7 +1923,7 @@ in
 
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3510,7 +3524,7 @@ raid_devs: TBD
 \end_layout
 
 \begin_layout Description
-flex_devs: an object with three keys: 
+flex_devs: an object with four keys: 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3523,6 +3537,14 @@ meta_dev
 \end_inset
 
 thin_meta_dev
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+thin_meta_dev_spare
 \begin_inset Quotes erd
 \end_inset
 
@@ -3857,6 +3879,12 @@ the size in sectors of the thinpool data block
 \end_layout
 
 \begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Metadata-Volume-(MDV)"
+
+\end_inset
+
 Metadata Volume (MDV)
 \end_layout
 
@@ -3956,8 +3984,8 @@ citation needed?
 \end_layout
 
 \begin_layout Standard
-L5-L7 is stored on the Metadata Device on an XFS filesystem, so partial
- data recovery of that information is possible.
+L5-L7 is stored on the Metadata Volume on an XFS filesystem.
+ Partial data recovery of that information is possible.
 \end_layout
 
 \begin_layout Standard
