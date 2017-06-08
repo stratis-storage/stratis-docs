@@ -642,6 +642,12 @@ Properties
 \end_layout
 
 \begin_layout Description
+Devnode The device node of the filesystem's corresponding thin device.
+ This property is constant.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
 Name The name of the filesystem.
  Signature: s.
 \end_layout
