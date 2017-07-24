@@ -575,6 +575,23 @@ Name The name of the pool.
 \end_layout
 
 \begin_layout Description
+TotalPhysicalSize The total physical size of the pool in sectors.
+ These sectors may be used by the pool for many purposes, so there are always
+ fewer sectors than this that can be used to store user data.
+ This is the largest physical size that can be meaningfully associated with
+ a pool.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+TotalPhysicalUsed All the sectors in use by the pool for any purpose whatsoever.
+ These purposes include storage of user data as well as recording of pool
+ metadata and other pool administration.
+ This value may never exceed TotalPhysicalSize.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
 Uuid The UUID of the pool.
  This property is constant.
  Signature: s.
