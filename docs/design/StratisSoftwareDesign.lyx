@@ -5016,6 +5016,10 @@ Write-through caching only
 Create/destroy primary snapshots
 \end_layout
 
+\begin_layout Enumerate
+Working D-Bus signals
+\end_layout
+
 \begin_layout Subsection
 Stratis version 1.0
 \end_layout
