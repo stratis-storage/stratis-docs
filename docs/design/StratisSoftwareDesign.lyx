@@ -4907,6 +4907,82 @@ Layer 6: Encryption
 TBD
 \end_layout
 
+\begin_layout Subsection
+OS Integration: Boot and initrd
+\end_layout
+
+\begin_layout Standard
+Since we want to allow Stratis to be used for system files, Stratis needs
+ to run in the initrd preboot environment.
+ This allows it to activate pools and filesystems so that they can be mounted
+ and accessible during the transition to the main phase of operation.
+\end_layout
+
+\begin_layout Standard
+The use of D-Bus is not possible in the preboot environment.
+ Therefore, Stratis must tolerate its absence.
+\end_layout
+
+\begin_layout Standard
+The most likely implementation of these requirements is a 
+\begin_inset Quotes eld
+\end_inset
+
+boot-init
+\begin_inset Quotes erd
+\end_inset
+
+ mode for Stratis, in which it discovers blockdevs and activates pools,
+ but does not connect to D-Bus, and then exits.
+ Then, as part of the systems main phase, Stratis will run again and stay
+ running, in order to handle pool monitoring and commands over D-Bus, as
+ normal.
+\end_layout
+
+\begin_layout Subsection
+OS Integration: udev
+\end_layout
+
+\begin_layout Standard
+On boot, Stratis probes all block devices for Stratis signatures, and activates
+ pools that are complete.
+ Later, during the main running phase, Stratis monitors udev events for
+ newly-added block devices, so that if missing pool members are connected
+ to complete a pool, the pool can be activated and used.
+\end_layout
+
+\begin_layout Subsection
+OS Integration: /dev entries
+\end_layout
+
+\begin_layout Standard
+Stratis allows the user to create filesystems, which then can be mounted
+ and used via mount(8) and the fstab(5).
+ Stratisd creates a /dev/stratis directory.
+ It creates /dev/stratis/<poolname> for each pool present on the system,
+ and /dev/stratis/<poolname>/<filesystemname> for each filesystem within
+ the pool.
+ Changes such as creations, removals, and renames are reflected in the entries
+ under /dev/stratis.
+ These entries give the user a well-known path to a device to use for mounting
+ the Stratis filesystem.
+\end_layout
+
+\begin_layout Subsection
+Partial Pool Activation
+\end_layout
+
+\begin_layout Standard
+Stratis must handle if some blockdevs that make up a pool are not present.
+ Its initial policy is not to activate a pool until all members are present.
+ However, there are scenarios where this may not be strictly necessary,
+ such as a blockdev that has not had any Flex Layer allocations on it, or
+ (in Stratis 2.0) if redundancy allows the RAID Layer to function in a degraded
+ state.
+ The initial policy will likely be modified over the course of development
+ to accommodate these cases.
+\end_layout
+
 \begin_layout Part
 Development Plan
 \end_layout
