@@ -2775,7 +2775,7 @@ length of JSON data in bytes (u64)
 \begin_inset Text
 
 \begin_layout Plain Layout
-UNIX timestamp (seconds since Jan 1 1970) (u64)
+UNIX timestamp (seconds since Jan 1 1970) using UTC (u64)
 \end_layout
 
 \end_inset
