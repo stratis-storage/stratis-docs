@@ -1677,6 +1677,11 @@ All devices in this layer may be built on L0, L1, or L2 devices, depending
  on configuration.
 \end_layout
 
+\begin_layout Standard
+All flex layer devices should be sized to fit within a single blockdev of
+ the minimum size (1 GiB).
+\end_layout
+
 \begin_layout Subsubsection
 Layer 4: Thin Provisioning
 \end_layout
