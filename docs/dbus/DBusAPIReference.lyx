@@ -681,5 +681,156 @@ Uuid The UUID of the filesystem.
  Signature: s.
 \end_layout
 
+\begin_layout Subsection
+blockdev interface
+\end_layout
+
+\begin_layout Standard
+The blockdev interface manages the properties of individual blockdevs.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+SetUserId This allows setting identifying information for the blockdev by
+ the user.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+id The free-form information to set.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: true if the Id was actually changed, otherwise false.
+ Signature: bqs.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Properties
+\end_layout
+
+\begin_layout Description
+Devnode The device node of the blockdev.
+ This property is constant.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+HardwareId The hardware-derived ID for this blockdev.
+ May be empty.
+ This property is constant.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+InitializationTime
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Time that Stratis initialized this blockdev, in ISO 8601 text format (UTC).
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+TotalPhysicalSize The total physical size of the blockdev in sectors.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+Pool The object path of the parent pool.
+ This property is constant.
+ Signature: o.
+\end_layout
+
+\begin_layout Description
+State The current state of the blockdev.
+ These are defined in section 10.2.1 (
+\begin_inset Quotes eld
+\end_inset
+
+Layer 0: Blockdevs
+\begin_inset Quotes erd
+\end_inset
+
+) of the Design Doc.
+ Examples include: 
+\begin_inset Quotes eld
+\end_inset
+
+Missing
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+In-use
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Not-in-use
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+Bad
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+UserId The user-defined ID for this blockdev.
+ May be empty.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+Uuid The UUID of the blockdev.
+ This property is constant.
+ Signature: s.
+\end_layout
+
 \end_body
 \end_document
