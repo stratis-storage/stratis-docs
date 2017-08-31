@@ -2302,7 +2302,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-IEEE CRC32 of signature block (bytes at offset 4 length 508)
+IEEE CRC32C of signature block (bytes at offset 4 length 508)
 \end_layout
 
 \end_inset
