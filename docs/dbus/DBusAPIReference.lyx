@@ -105,7 +105,7 @@ Anne Mulhern
 \end_layout
 
 \begin_layout Date
-Version 0.1
+Version 0.2
 \begin_inset ERT
 status collapsed
 
@@ -120,7 +120,7 @@ status collapsed
 
 \end_inset
 
-Last modified: 03/06/2017
+Last modified: 09/07/2017
 \end_layout
 
 \begin_layout Standard
@@ -270,7 +270,7 @@ The top level D-Bus object implements the org.freedesktop.dbus.ObjectManager
  This interface defines the GetManagedObjects() method, which returns a
  view of the objects that the D-Bus layer has in its tree.
  This view constitutes a summary of the state of the pools, devices, and
- filesystem which Stratis manages.
+ filesystems that Stratis manages.
  The objects are identified primarily by their D-Bus object paths.
  However, depending on the interface which an object supports it may also
  support certain identifying properties.
@@ -325,11 +325,29 @@ Each kind of object implements an identifying interface, i.e., pools implement
  Some more detailed information can be obtained from the introspection informati
 on that can be queried for each object, including the signatures of all
  methods and properties.
- All methods return a return code and an accompanying message.
- Some methods also return a result.
- If a method does return a result, then the result is the first element
- in a triple, otherwise the returned value is just a pair of the return
- code and the message.
+ All methods return a return code and an accompanying message, with type
+ signature 
+\begin_inset Quotes eld
+\end_inset
+
+qs
+\begin_inset Quotes erd
+\end_inset
+
+, and may also return data.
+ If a method does return data, then the data is the first element in a triple,
+ followed by the return code and message.
+ The data may be a 
+\begin_inset CommandInset href
+LatexCommand href
+name "container type"
+target "https://dbus.freedesktop.org/doc/dbus-specification.html#container-types"
+
+\end_inset
+
+ such as a struct or an array.
+ Otherwise, if the method returns no data, the returned value is just a
+ pair of the return code and message.
 \end_layout
 
 \begin_layout Subsection
