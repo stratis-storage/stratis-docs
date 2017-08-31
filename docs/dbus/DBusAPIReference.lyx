@@ -405,9 +405,9 @@ devices device nodes of devices to form the pool.
 
 \end_deeper
 \begin_layout Description
-Returns: the object path of the constructed pool and the device nodes of
+Returns: the object path of the constructed pool and the object paths of
  the blockdevs added to the pool.
- Signature: (oas)qs.
+ Signature: (oa(o))qs.
 \end_layout
 
 \end_deeper
@@ -492,8 +492,8 @@ devices this argument has the same meaning as the device argument of CreatePool.
 
 \end_deeper
 \begin_layout Description
-Returns: the device nodes of the blockdevs added to the pool.
- Signature: asqs.
+Returns: a list of object paths of the blockdevs added to the pool.
+ Signature: a(o)qs.
 \end_layout
 
 \end_deeper
