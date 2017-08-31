@@ -733,7 +733,13 @@ target "https://en.wikipedia.org/wiki/XFS"
  To meet the goal of eliminating manual filesystem resizing by the user,
  Stratis requires the filesystem used have online resize (or at least online
  grow) capabilities, which XFS does.
- Use of XFS on top of thin provisioning also makes proper initial sizing
+ In the absence of online shrink, Stratis would rely on trim to reclaim
+ space from an enlarged but mostly empty filesystem, and return it to the
+ thin pool for use by other filesystems.
+\end_layout
+
+\begin_layout Standard
+Use of XFS on top of thin provisioning also makes proper initial sizing
  important, as well as choosing sizes for XFS on-disk allocations that match
  those used by the underlying thin-provisioning layer, to ensure behavior
  with the two layers is optimal.
