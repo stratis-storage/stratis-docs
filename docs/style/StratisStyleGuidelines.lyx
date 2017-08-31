@@ -75,7 +75,7 @@ Stratis Coding Style Guidelines
 \end_layout
 
 \begin_layout Date
-Last modified: 01/05/2017
+Last modified: 08/31/2017
 \end_layout
 
 \begin_layout Standard
@@ -154,7 +154,7 @@ use
 \end_inset
 
  declarations within a module (such as a source file) should be grouped
- into three sections:
+ into up to four sections:
 \end_layout
 
 \begin_deeper
@@ -171,7 +171,11 @@ std
 \end_layout
 
 \begin_layout Enumerate
-declarations from other external dependencies
+declarations from other external dependencies except for devicemapper
+\end_layout
+
+\begin_layout Enumerate
+devicemapper dependencies
 \end_layout
 
 \begin_layout Enumerate
