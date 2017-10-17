@@ -105,7 +105,7 @@ Anne Mulhern
 \end_layout
 
 \begin_layout Date
-Version 0.2
+Version 0.2.1
 \begin_inset ERT
 status collapsed
 
@@ -120,7 +120,7 @@ status collapsed
 
 \end_inset
 
-Last modified: 09/07/2017
+Last modified: 10/10/2017
 \end_layout
 
 \begin_layout Standard
@@ -745,7 +745,7 @@ Devnode The device node of the blockdev.
 \end_layout
 
 \begin_layout Description
-HardwareId The hardware-derived ID for this blockdev.
+HardwareInfo The hardware-derived ID for this blockdev.
  May be empty.
  This property is constant.
  Signature: s.
@@ -839,7 +839,7 @@ Bad
 \end_layout
 
 \begin_layout Description
-UserId The user-defined ID for this blockdev.
+UserInfo The user-defined string associated with this blockdev.
  May be empty.
  Signature: s.
 \end_layout
