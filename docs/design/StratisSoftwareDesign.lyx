@@ -3793,7 +3793,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-dev
+devnode
 \end_layout
 
 \end_inset
@@ -4549,7 +4549,7 @@ Globally unique
 \end_layout
 
 \begin_layout Itemize
-Maximum 128 characters
+Maximum 127 characters
 \end_layout
 
 \begin_layout Itemize
