@@ -187,18 +187,6 @@ Technical Notes
 \end_layout
 
 \begin_layout Subsubsection
-Constants
-\end_layout
-
-\begin_layout Standard
-The top level D-Bus object exports lists of certain constant values that
- it uses via properties.
- This allows the client to identify the constants by their name rather than
- by their number and be robust to changes in ordering or the addition of
- new constants by the daemon.
-\end_layout
-
-\begin_layout Subsubsection
 Emulating an Option type
 \end_layout
 
@@ -454,20 +442,6 @@ Returns: true if it was necessary to take an action, otherwise false.
 \end_deeper
 \begin_layout Subsubsection*
 Properties
-\end_layout
-
-\begin_layout Description
-ErrorValues These are the values that are used as return codes by all the
- methods.
- This property is an array of pairs of names and corresponding numeric values.
- Signature: a(sq).
-\end_layout
-
-\begin_layout Description
-RedundancyValues This property specifies the redundancy values that stratisd
- supports.
- It has the same format as the ErrorValues property.
- Signature: a(sq).
 \end_layout
 
 \begin_layout Description
