@@ -557,6 +557,33 @@ Returns: true if the name was actually changed, otherwise false.
 \end_layout
 
 \end_deeper
+\begin_layout Description
+SnapshotFilesystem This method allows a snapshot to be created from an existing filesystem
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+origin the object path of the source filesystem of the snapshot.
+ Signature: o.
+\end_layout
+
+\begin_layout Description
+snapshot_name the name of the newly created snapshot.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: the object path of the newly created snapshot.
+ Signature: oqs.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection*
 Properties
 \end_layout
@@ -601,29 +628,6 @@ The fileystem interface manages the properties of individual filesystems.
 Methods
 \end_layout
 
-\begin_layout Description
-CreateSnapshot This method allows a snapshot to be created from an existing
- filesystem.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-name The name of the snapshot.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Results: the object path of the newly created filesystem.
- Signature: oqs.
-\end_layout
-
-\end_deeper
 \begin_layout Description
 SetName This allows setting the name of the filesystem.
 \end_layout
