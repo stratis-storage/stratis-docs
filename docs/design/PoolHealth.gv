@@ -1,0 +1,24 @@
+digraph G {
+   size ="20,20";
+   graph [rankdir=TD]
+   /* State Definitions */
+   Start [shape=doublecircle, color=lightgrey, style=filled];
+   PoolOk [shape=Mrecord, label="Pool Ok", color=lightgrey, style=filled];
+   PoolRepair [shape=Mrecord, label="Pool Repair", color=lightgrey, style=filled];
+   MetaExtendNeeded [shape=Mrecord, label="Meta Extend", color=lightgrey, style=filled];
+   DataExtendNeeded [shape=Mrecord, label="Data Extend", color=lightgrey, style=filled];
+   Error [shape=Mrecord, label="Error", color=lightgrey, style=filled];
+
+   /* State Transitions */
+   Start -> PoolOk [label="thin_check\nok", color=darkgreen, fontcolor=darkgreen];
+   Start -> PoolRepair [label="thin_check\nfailed", color=orange, fontcolor=orange];
+   PoolRepair -> PoolOk [label="thin_repair\nok", color=darkgreen, fontcolor=darkgreen];
+   PoolRepair -> Error [label="thin_repair\nfailed", color=red, fontcolor=red];
+   PoolOk -> MetaExtendNeeded [label="meta space\nbelow threshold", color=orange, fontcolor=orange];
+   PoolOk -> DataExtendNeeded [label="data space\nbelow threshold", color=orange, fontcolor=orange];
+   MetaExtendNeeded -> PoolOk [label="meta extended", color=darkgreen, fontcolor=darkgreen];
+   MetaExtendNeeded -> Error [label="meta extend\nfailed", color=red, fontcolor=red];
+   DataExtendNeeded -> PoolOk [label="data extended", color=darkgreen, fontcolor=darkgreen];
+   DataExtendNeeded -> Error [label="data extend\nfailed", color=red, fontcolor=red];
+   Error -> Start [label="repair tools?", color=orange, fontcolor=orange];
+}

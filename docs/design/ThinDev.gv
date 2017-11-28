@@ -1,0 +1,16 @@
+digraph G {
+   size ="20,20";
+   /* State Definitions */
+   Start [shape=doublecircle, color=lightgrey, style=filled];
+   ThinDevExtendNeeded [shape=Mrecord, color=lightgrey, style=filled];
+   ThinDevOk [shape=Mrecord, color=lightgrey, style=filled];
+   Error [shape=Mrecord, color=lightgrey, style=filled];
+
+   /* State Transitions */
+   Start -> ThinDevOk [label="thindev ok", color=darkgreen, fontcolor=darkgreen];
+   Start -> ThinDevExtendNeeded [label="thindev space\nbelow threshold", color=red, fontcolor=red];
+   ThinDevExtendNeeded -> Error [label="extend failed", color=red, fontcolor=red];
+   ThinDevExtendNeeded -> ThinDevOk [label="extended", color=darkgreen, fontcolor=darkgreen];
+   ThinDevOk -> ThinDevExtendNeeded [label="thindev space\nbelow threshold", color=red, fontcolor=red];
+   Error -> Start [label="restart", color=red, fontcolor=red];
+}

@@ -1,0 +1,62 @@
+digraph G {
+
+   size ="20,20";
+   graph [rankdir=TB]
+   node [shape=record, style=rounded, rankdir=TB];
+
+   /* State Definitions */
+   Start [shape=doublecircle, label="Start", color=lightgrey, style=filled];
+   MetaDataOk [label="Metadata Ok", color=lightgrey, style=filled];
+   LabelsValid [label="Labels Valid", color=lightgrey, style=filled];
+   LabelsUnique [label="Labels Unique", color=lightgrey, style=filled];
+   MembersOk [label="All Members Available", color=lightgrey, style=filled];
+   Ok [label="Pool Assembled", color=lightgrey, style=filled];
+   Error [label="Pool Error", color=lightgrey, style=filled];
+   InvalidMetaData [label="Invalid Meta Data", color=grey];
+   InvalidLabel [label="Invalid Label", color=grey];
+   DuplicateLabel [label="Duplicate Label", color=grey];
+   MissingMember [label="Missing Pool\nMemember", color=grey];
+   
+   /* State Transitions */
+   Start -> MetaDataOk [label="metadata ok", color=darkgreen, fontcolor=darkgreen];
+   Start -> InvalidMetaData [label="invalid metadata", color=red, fontcolor=red];
+   Error -> Start [label="restart", color=red, fontcolor=red];
+   InvalidMetaData -> MetaDataOk [label="metadata repaired", color=darkgreen, fontcolor=darkgreen];
+   InvalidMetaData -> Error [label="repair failed", color=red, fontcolor=red];
+   MetaDataOk -> LabelsValid [label="labels valid", color=darkgreen, fontcolor=darkgreen];
+   MetaDataOk -> InvalidLabel [label="labels invalid", color=red, fontcolor=red];
+   InvalidLabel -> LabelsValid [label="labels fixed", color=darkgreen, fontcolor=darkgreen];
+   InvalidLabel -> Error [label="repair failed", color=red, fontcolor=red];
+   LabelsValid -> LabelsUnique [label="labels unique", color=darkgreen, fontcolor=darkgreen];
+   LabelsValid -> DuplicateLabel [label="duplicate labels discovered", color=red, fontcolor=red];
+   DuplicateLabel -> LabelsUnique [label="duplicate resolved", color=darkgreen, fontcolor=darkgreen];
+   LabelsUnique -> MembersOk [label="pool members online", color=darkgreen, fontcolor=darkgreen];
+   LabelsUnique -> MissingMember [label="pool members missing", color=red, fontcolor=red];
+   MembersOk -> Ok [label="pool complete", color=darkgreen, fontcolor=darkgreen];
+   MembersOk -> MissingMember [label="member offline", color=red, fontcolor=red];
+   MissingMember -> MembersOk [label="pool members online", color=darkgreen, fontcolor=darkgreen];
+
+   subgraph clusterRecovery {
+       shape = oval;
+       rank=same;
+       rankdir=TB;
+       InvalidMetaData;
+       InvalidLabel;
+       DuplicateLabel;
+       MissingMember;
+       bgcolor=gray60;
+       label="Recovery";
+   }
+
+   subgraph clusterOk {
+       shape = oval;
+       rank=same;
+       rankdir=TB;
+       MetaDataOk;
+       LabelsValid;
+       LabelsUnique;
+       MembersOk;
+       bgcolor=gray60;
+       label="Validation";
+   }
+}

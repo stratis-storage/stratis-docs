@@ -4,4 +4,5 @@
 *.pdf
 *.swp
 *.tex
+*.svg
 _site

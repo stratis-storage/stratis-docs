@@ -1,0 +1,36 @@
+digraph G {
+   size ="20,20";
+   graph [rankdir=TD]
+   /* State Definitions */
+   Start [shape=doublecircle, color=lightgrey, style=filled];
+   Good [shape=Mrecord, label="{<f0> Good|<f1>pool online\n}", color=lightgrey, style=filled];
+   Warning [shape=Mrecord, label="{<f0> Warning|<f1>available space below warning threshold\n}", color=lightgrey, style=filled];
+   Critical [shape=Mrecord, label="{<f0>Critical|<f1>available space below critical threshold\npool ofline\n}", color=lightgrey, style=filled];
+
+
+   /* State Transitions */
+   Start -> Good [label="pool space ok", color=darkgreen, fontcolor=darkgreen];
+   Start -> Warning [label="pool physical space low", color=yellow, fontcolor=yellow];
+   Start -> Critical [label="pool physical space critical", color=red, fontcolor=red];
+   Good -> Warning [label="pool physical space low", color=yellow, fontcolor=yellow];
+   Good -> Critical [label="pool physical space critical", color=red, fontcolor=red];
+   Good -> Good [label="periodic fstrim", color=darkgreen, fontcolor=darkgreen];
+   Warning -> Good [label="space added", color=darkgreen, fontcolor=darkgreen];
+   Warning -> Good [label="space\nfreed up", color=darkgreen, fontcolor=darkgreen];
+   Warning -> Warning [label="space added\npool physical space low", color=yellow, fontcolor=yellow];
+   Warning -> Critical [label="pool physical space critical", color=red, fontcolor=red];
+   Critical -> Good [label="space added", color=darkgreen, fontcolor=darkgreen];
+   Critical -> Good [label="space\nfreed up", color=darkgreen, fontcolor=darkgreen];
+   Critical -> Warning [label="space\nfreed up", color=yellow, fontcolor=yellow];
+   Critical -> Warning [label="pool physical space low", color=yellow, fontcolor=yellow];
+   Critical -> Critical [label="pool physical space critical", color=red, fontcolor=red];
+
+   subgraph clusterLowPhysicalSpace {
+       shape = rect;
+       rank=same;
+       Warning;
+       Critical;
+       bgcolor=gray60;
+       label="Physical Space Needed";
+   }
+}
