@@ -1,5 +1,7 @@
+*.bib.bak
 *.lyx~
 *.lyx#
 *.pdf
 *.swp
+*.tex
 _site
