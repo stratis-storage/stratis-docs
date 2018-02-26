@@ -162,32 +162,16 @@ Executive Summary
 
 \begin_layout Standard
 Stratis is a new tool that meets the needs of Red Hat Enterprise Linux (RHEL)
- users calling for an easily configured, tightly integrated solution for
- storage that works within the existing Red Hat storage management stack.
+ users (among others) calling for an easily configured, tightly integrated
+ solution for storage that works within the existing Linux storage management
+ stack.
  To achieve this, Stratis prioritizes a straightforward command-line experience,
  a rich API, and a fully automated, externally-opaque approach to storage
  management.
  It builds upon elements of the existing storage stack as much as possible,
  to enable delivery within 1-2 years.
  Specifically, Stratis initially plans to use device-mapper and the XFS
- filesystem.
- Extending or building on SSM 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:SSM"
-
-\end_inset
-
- or LVM 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:LVM2"
-
-\end_inset
-
- was carefully considered.
- SSM did not meet the design requirements, but building upon LVM may be
- possible with some development effort.
+ filesystem, but may incorporate other technology in the future.
 \end_layout
 
 \begin_layout Part
@@ -199,17 +183,16 @@ Problem Statement
 \end_layout
 
 \begin_layout Standard
-RHEL has gained many storage-related features over the years, but each of
- these features has required the user to manage the configuration of these
- features in a layered, additive manner.
+Linux has gained many storage-related features over the years, but each
+ of these features has required the user to manage the configuration of
+ these features in a layered, additive manner.
  Genuinely new and useful features such as thin provisioning, RAID, and
  multipath are dependent on the user correctly configuring many different
- tools to achieve a complete result.
- Furthermore, since storage administration tools are focused on the command-line
-, higher-level management tools must each individually build upon the inherently
- risky proposition of treating the human-focused syntax and output of command-li
-ne interface (CLI) tools as a stable programmatic API.
- This causes a waste of effort and opportunity for bugs, as each administration
+ layers via different tools to achieve a complete result.
+ Furthermore, since each layer's configuration tool only has a command-line
+ interface (CLI), higher-level management tools must each construct input
+ and parse the human-oriented output for each these layers' CLI.
+ This causes a waste of effort and opportunity for bugs, as each higher-level
  tool builds its own internal API for the feature on top of the lower level
  tool's CLI.
 \end_layout
@@ -220,26 +203,31 @@ Goal: Bring advanced features to users in a simpler form
 
 \begin_layout Standard
 Linux storage features are modular and stackable.
- This promotes flexibility but leads to a huge number of possible configurations.
+ This promotes flexibility and allows independent development efforts, but
+ leads to a huge number of possible configurations.
  This requires the user manage the stack because there's not enough commonality
- to enable automation.
+ to enable effective automation.
 \end_layout
 
 \begin_layout Standard
-However, there is generally a single design that can work for most use cases.
- By assuming a fixed layering of storage features (some of which may be
- optional), we enable software to effectively manage these on behalf of
+But really, there 
+\emph on
+is
+\emph default
+ a single configuration that can work for most use cases.
+ By assuming a fixed layering of storage features (some perhaps optional),
+ we enable software to effectively manage these on behalf of the user.
+\end_layout
+
+\begin_layout Standard
+Automated management then leads to less administrative burden placed on
  the user.
-\end_layout
-
-\begin_layout Standard
-Once this is done, the details of how the solution is implemented are less
- of a concern to the user.
- The user can express what remains – what hardware resources to use, what
- features are desired, how storage should be logically presented – using
- a small number of object types with well-defined relations.
- This leaves software in a good position to manage the stack and handle
- most issues without user involvement.
+ The user still specifies resources, desired features, and results – what
+ hardware resources to use, what features to enable, how storage should
+ be logically presented – using a smaller number of concepts with well-defined
+ relations.
+ Software manages the rest, and handles most runtime issues without user
+ involvement.
 \end_layout
 
 \begin_layout Subsection
@@ -269,15 +257,16 @@ pool
 \end_layout
 
 \begin_layout Standard
-Unfortunately, existing VMFs aren't easily used on RHEL.
- ZFS isn't an option RHEL can embrace due to licensing (Ubuntu notwithstanding.)
+Unfortunately, existing VMFs aren't easily used on enterprise Linux distribution
+s like RHEL.
+ ZFS isn't an option RHEL can embrace due to licensing, Ubuntu notwithstanding.
  Btrfs has no licensing issues, but after many years of work it still has
  significant technical issues that may never be resolved.
 \end_layout
 
 \begin_layout Standard
-We can see from the tremendous resources that have gone into these two projects
- that writing a VMF is a tremendous, time-consuming effort.
+We can see from the many developer-years of effort that have gone into these
+ two projects that writing a VMF is a tremendous, time-consuming undertaking.
  We also can hear our users demanding their features and ease of use.
 \end_layout
 
@@ -301,8 +290,7 @@ filesystem
 \begin_inset Quotes erd
 \end_inset
 
-, and remain unconcerned with the sizable stack of layered blockdevs doing
- all the work under the covers.
+, and remain unconcerned with the more complex details under the covers.
 \end_layout
 
 \begin_layout Standard
@@ -653,6 +641,10 @@ There are existing libraries that handle CLI-to-API for both Anaconda and
 Conceptual Model
 \end_layout
 
+\begin_layout Subsection
+Blockdevs, pools, and filesystems
+\end_layout
+
 \begin_layout Standard
 Stratis’s conceptual model consists of 
 \emph on
@@ -667,50 +659,68 @@ pools
 filesystems
 \emph default
 .
- A pool is created from one or more blockdevs (block devices), after which
- filesystems may be created from the pool.
+ A pool is created from one or more blockdevs (block devices), and then
+ filesystems are created from the pool.
  Filesystems are mountable hierarchical collections of files that allocate
- backing storage from the pool on an as-needed basis.
+ backing storage from the pool as it is needed.
  The key difference between a Stratis filesystem and a conventional Unix
- filesystem is that Stratis filesystem sizes are not managed by the user,
- but by Stratis.
+ filesystem is that Stratis filesystem sizing and maintenance are not managed
+ by the user, but by Stratis.
+\end_layout
+
+\begin_layout Subsection
+Attributes and features of a pool
+\end_layout
+
+\begin_layout Standard
+A pool is created with an initial set of one or more blockdevs.
+ Blockdevs may also be added after the pool is created.
+ Blockdevs may eventually be removable from a pool, if certain preparations
+ are performed and conditions are met.
+ The pool's primary collection of blockdevs is called the 
+\emph on
+data tier
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+A pool also optionally has a 
+\emph on
+cache tier
+\emph default
+ that uses a separate collection of faster blockdevs to improve performance
+ instead of increase the pool's capacity.
+\end_layout
+
+\begin_layout Standard
+Both tiers have their own independent data redundancy level.
+ which may be none, raid1, raid5, raid6, or raid10 (the default is none).
 \end_layout
 
 \begin_layout Standard
 Since a single system may have multiple pools, each pool has a name, as
  does each filesystem within a pool.
- Each pool has a data redundancy level, which may be none, raid1, raid5,
- raid6, or raid10.
- The default is none.
- The pool’s cache also has a redundancy level that also defaults to none.
- This redundancy level applies to all storage allocated within the pool.
+ These are both settable by the user.
+ Blockdevs, pools, and filesystems also have UUIDs, which are not settable
+ by the user.
 \end_layout
 
 \begin_layout Standard
-Stratis supports unlimited blockdevs and 
+Stratis supports large numbers of blockdevs and up to 
 \begin_inset Formula $2^{24}$
 \end_inset
 
 filesystems per pool.
  However, practical limits on these values may compell users to restrict
- themselves to significantly smaller numbers of blockdevs and filesystems.
-\end_layout
-
-\begin_layout Standard
-A pool must be created with an initial set of blockdevs in order to be usable.
- Additional blockdevs may be added after the pool is created.
- Blockdevs may also be removed from a pool, if certain preparations are
- performed and conditions are met.
+ themselves to smaller numbers of blockdevs and filesystems.
 \end_layout
 
 \begin_layout Standard
 A new filesystem is either a new empty filesystem or a snapshot of an existing
  filesystem within the pool.
- Immediately after creation a snapshot and its origin will reference the
- same set of data blocks.
- Although Stratis does not distinguish between snapshots and filesystems,
- treating both as first-class filesystems, Stratis will maintain the relation
- between the snapshot and its origin to aid users.
+ Stratis currently does not distinguish between snapshots and filesystems.
+ (May change.)
 \end_layout
 
 \begin_layout Section
@@ -718,12 +728,10 @@ Scalability and Performance Considerations
 \end_layout
 
 \begin_layout Standard
-Stratis doesn't optimize performance within its data tier.
- The justification is that adding an SSD caching tier, or even moving to
- all-SSD storage, is likely to be a better solution if performance is a
- consideration.
- Stratis therefore focuses only on resiliency, integrity, and ease of management
- in the data tier.
+Stratis doesn't optimize performance within its data tier, instead focusing
+ there on flexibility and integrity.
+ Improved performance is the job of caching tier, or perhaps building the
+ pool using blockdevs with higher IOPs, such as SSDs.
 \end_layout
 
 \begin_layout Part
@@ -826,7 +834,7 @@ Users should not try to reformat or reconfigure XFS filesystems that are
 Stratis will use many device-mapper devices, which will show up in `dmsetup`
  listings and /proc/partitions.
  Similarly, `lsblk` output on a Stratis system will reflect Stratis' internal
- workings and layers, which ideally would be hidden from the user.
+ workings and layers.
 \end_layout
 
 \begin_layout Itemize
@@ -850,11 +858,10 @@ Overview
 \end_layout
 
 \begin_layout Standard
-The D-Bus API is a thin layer which receives message on the D-Bus, processes
- them, transmits them to the Stratis engine, receives the results from the
- engine, and transmits a response on the D-Bus.
- It does the minimum amount of processing necessary to invoke the methods
- of the underlying engine and to place the results on the D-Bus.
+The D-Bus API is part of stratisd.
+ It is a thin layer that receives messages on the D-Bus, processes them,
+ transmits them to the Stratis engine, receives the results from the engine,
+ and returns the result to the invoker of the API.
  When processing method calls, its responsibilities are confined to:
 \end_layout
 
@@ -884,12 +891,6 @@ Marshalling the appropriate return values to place on the D-Bus along with
 
 \begin_layout Itemize
 Adding or removing objects from the D-Bus tree.
-\end_layout
-
-\begin_layout Standard
-When generating property values, it need not process arguments, since there
- are none, nor does it add or remove objects from the D-Bus tree.
- It may still invoke engine methods in order to obtain the property values.
 \end_layout
 
 \begin_layout Standard
@@ -926,6 +927,10 @@ D-Bus Access Control
 
 \begin_layout Subsubsection
 Security Policy
+\end_layout
+
+\begin_layout Standard
+Stratis D-Bus methods require root permissions.
 \end_layout
 
 \begin_layout Subsubsection

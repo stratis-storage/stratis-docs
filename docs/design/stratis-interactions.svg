@@ -15,7 +15,7 @@
    viewBox="0 0 153.0327 94.91577"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.1 r"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="stratis-interactions.svg">
   <defs
      id="defs2">
@@ -270,9 +270,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
-     inkscape:cx="196.53375"
-     inkscape:cy="212.66892"
+     inkscape:zoom="1.979899"
+     inkscape:cx="247.5891"
+     inkscape:cy="115.48381"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -293,7 +293,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -454,15 +454,15 @@
          style="opacity:1;fill:#c6eeee;fill-opacity:1;stroke:#000000;stroke-width:0.25659826;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <text
          id="text4742"
-         y="57.671444"
-         x="34.276913"
+         y="58.07235"
+         x="35.613262"
          style="font-style:normal;font-weight:normal;font-size:3.91207671px;line-height:5.23938847px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c6eeee;fill-opacity:1;stroke:none;stroke-width:0.20957555px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
            style="fill:#000000;fill-opacity:1;stroke-width:0.20957555px"
-           y="57.671444"
-           x="34.276913"
+           y="58.07235"
+           x="35.613262"
            id="tspan4740"
-           sodipodi:role="line">Storaged</tspan></text>
+           sodipodi:role="line">Udisks2</tspan></text>
     </g>
     <g
        id="g4847"
@@ -585,22 +585,6 @@
        d="m 46.278723,58.489484 38.48668,7.349905"
        id="path12473"
        inkscape:connector-curvature="0" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:4.93888855px;line-height:6.61458302px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="61.712399"
-       y="47.531414"
-       id="text13879"><tspan
-         sodipodi:role="line"
-         id="tspan13877"
-         x="61.712399"
-         y="47.531414"
-         style="stroke-width:0.26458332px">direct or</tspan><tspan
-         sodipodi:role="line"
-         x="61.712399"
-         y="54.145996"
-         style="stroke-width:0.26458332px"
-         id="tspan15655">via lib?</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.40000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker13891)"
@@ -613,22 +597,6 @@
        d="m 166.87171,58.489484 -37.4177,7.21627"
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.40000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker14683)"
        sodipodi:nodetypes="cc" />
-    <text
-       id="text15661"
-       y="47.531414"
-       x="131.03322"
-       style="font-style:normal;font-weight:normal;font-size:4.93888855px;line-height:6.61458302px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.26458332px"
-         y="47.531414"
-         x="131.03322"
-         id="tspan15657"
-         sodipodi:role="line">direct or</tspan><tspan
-         id="tspan15659"
-         style="stroke-width:0.26458332px"
-         y="54.145996"
-         x="131.03322"
-         sodipodi:role="line">via lib?</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot15663"
