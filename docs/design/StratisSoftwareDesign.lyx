@@ -4839,6 +4839,15 @@ TBD
 \end_layout
 
 \begin_layout Subsection
+device-mapper minimum version
+\end_layout
+
+\begin_layout Standard
+Stratisd device-mapper minor version 37 or greater, for DM event poll()
+ support and support for event_nr in list_devices ioctl.
+\end_layout
+
+\begin_layout Subsection
 OS Integration: Boot and initrd
 \end_layout
 
