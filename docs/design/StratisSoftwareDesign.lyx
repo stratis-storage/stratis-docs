@@ -4914,6 +4914,38 @@ Stratis must handle if some blockdevs that make up a pool are not present.
  to accommodate these cases.
 \end_layout
 
+\begin_layout Subsection
+Snapshots
+\end_layout
+
+\begin_layout Standard
+Stratis's current snapshot implementation is characterized by a few traits:
+\end_layout
+
+\begin_layout Itemize
+A snapshot and its origin are not linked in lifetime.
+ i.e.
+ a snapshotted filesystem may live longer than the filesystem it was created
+ from.
+\end_layout
+
+\begin_layout Itemize
+A snapshot of a filesystem is another filesystem.
+\end_layout
+
+\begin_layout Itemize
+A filesystem may be snapshotted while it is mounted or unmounted.
+\end_layout
+
+\begin_layout Itemize
+Each snapshot uses around half a gigabyte of actual backing storage, which
+ is needed for the XFS filesystem's log.
+\end_layout
+
+\begin_layout Standard
+These may change in the future.
+\end_layout
+
 \begin_layout Part
 Development Plan
 \end_layout
