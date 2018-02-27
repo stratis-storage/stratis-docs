@@ -302,7 +302,7 @@ target "https://www.python.org/dev/peps/pep-0008/"
 \end_layout
 
 \begin_layout Enumerate
-Minumum supported Python version is 3.4.
+Minimum supported Python version is 3.4.
 \end_layout
 
 \begin_layout Enumerate
