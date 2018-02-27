@@ -285,8 +285,58 @@ TBD: Recommendations on when to define const variables versus when to use
 Style (Python)
 \end_layout
 
-\begin_layout Standard
-TBD
+\begin_layout Enumerate
+Follow PEP 8 (
+\begin_inset CommandInset href
+LatexCommand href
+name "link"
+target "https://www.python.org/dev/peps/pep-0008/"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
+Minumum supported Python version is 3.4.
+\end_layout
+
+\begin_layout Enumerate
+Use list comprehensions instead of for-loops when possible.
+ In places where they can be used, comprehensions more clearly communicate
+ the code's intent to filter and/or map a list into another list.
+ Same goes for generator, dict, and set comprehensions.
+\end_layout
+
+\begin_layout Enumerate
+Do not use boolean overloading in conditionals unless the type of the object
+ is unknown.
+ If the type of the object is known, use an explicit comparison such as
+ 
+\begin_inset Quotes eld
+\end_inset
+
+is None
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+== []
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This way, if an object of an unexpected type arrives, the comparison will
+ generate an error instead of a latent bug.
+\end_layout
+
+\begin_layout Enumerate
+Use os.path methods when assembling or deconstructing paths.
+ We are not concerned with cross-platform usage, so this is for clarity,
+ to make it clear that it's a path, not a string.
 \end_layout
 
 \end_body
