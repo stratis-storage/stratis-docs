@@ -272,6 +272,11 @@ When importing multiple items from a module, whether to group these with
 \end_layout
 
 \begin_layout Enumerate
+When implementing a trait, the methods should be ordered as they are ordered
+ in the trait definition.
+\end_layout
+
+\begin_layout Enumerate
 TBD: Recommendations on when it's time to break up a single module (file)
  into submodules
 \end_layout
