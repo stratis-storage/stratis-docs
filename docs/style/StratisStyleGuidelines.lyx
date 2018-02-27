@@ -116,12 +116,11 @@ A consistent style helps legibility and saves developers from needing to
 \end_layout
 
 \begin_layout Standard
-In order to promote this, this document specifies some coding conventions
- that go beyond the standard Rust coding style, as enforced by 
-\emph on
-rustfmt
-\emph default
-.
+For both Rust and Python, there are standard coding conventions, as well
+ as tools that help keep code consistent with these conventions that we
+ will try to use as much as possible.
+ There are also some additional project-specific style guidelines, which
+ we will document here to help developers new to the project.
 \end_layout
 
 \begin_layout Section
