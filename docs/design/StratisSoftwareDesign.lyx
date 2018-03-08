@@ -712,7 +712,7 @@ Stratis supports large numbers of blockdevs and up to
 \end_inset
 
 filesystems per pool.
- However, practical limits on these values may compell users to restrict
+ However, practical limits on these values may compel users to restrict
  themselves to smaller numbers of blockdevs and filesystems.
 \end_layout
 
