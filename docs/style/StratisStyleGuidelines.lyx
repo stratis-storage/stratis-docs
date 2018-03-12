@@ -276,6 +276,15 @@ When implementing a trait, the methods should be ordered as they are ordered
 \end_layout
 
 \begin_layout Enumerate
+The devicemapper context should be instantiated at the highest possible
+ level in the strat engine implementation.
+ This means that the devicemapper context should not be instantiated in
+ any internal strat engine implementation module.
+ It may be instantiated in any part of the implementation of an engine trait,
+ e.g., Pool or Engine.
+\end_layout
+
+\begin_layout Enumerate
 TBD: Recommendations on when it's time to break up a single module (file)
  into submodules
 \end_layout
