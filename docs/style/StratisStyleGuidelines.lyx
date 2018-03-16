@@ -276,6 +276,19 @@ When implementing a trait, the methods should be ordered as they are ordered
 \end_layout
 
 \begin_layout Enumerate
+The 
+\begin_inset Quotes eld
+\end_inset
+
+?
+\begin_inset Quotes erd
+\end_inset
+
+ character should be avoided in comments; it is a single character with
+ a very important meaning in Rust and its occurrence in comments is a nuisance.
+\end_layout
+
+\begin_layout Enumerate
 TBD: Recommendations on when it's time to break up a single module (file)
  into submodules
 \end_layout
