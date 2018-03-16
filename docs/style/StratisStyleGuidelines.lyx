@@ -145,6 +145,19 @@ All new files must start with the 3-line license as a comment.
 \end_layout
 
 \begin_layout Enumerate
+Ordering of 
+\begin_inset Quotes eld
+\end_inset
+
+use
+\begin_inset Quotes erd
+\end_inset
+
+ declarations
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
 \begin_inset Quotes eld
 \end_inset
 
@@ -200,6 +213,7 @@ When importing multiple items from a module, group these with
  The items should be ordered alphabetically.
 \end_layout
 
+\end_deeper
 \begin_layout Enumerate
 Use 
 \begin_inset Quotes eld
