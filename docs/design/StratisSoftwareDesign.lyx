@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties false
@@ -24,6 +24,8 @@
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -53,6 +55,7 @@
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -65,7 +68,10 @@
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -79,7 +85,7 @@
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 0.9
+Stratis Software Design: Version 0.9.1
 \begin_inset Foot
 status collapsed
 
@@ -109,7 +115,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 02/22/2018
+Last modified: 05/30/2018
 \end_layout
 
 \begin_layout Standard
@@ -147,6 +153,7 @@ This document can be found
 LatexCommand href
 name "in the stratis-docs repo"
 target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/design/StratisSoftwareDesign.lyx"
+literal "false"
 
 \end_inset
 
@@ -1426,8 +1433,7 @@ Layer 1: Integrity (optional)
 status collapsed
 
 \begin_layout Plain Layout
-in a future version.
- This will require a new device-mapper target be developed.
+in a future version
 \end_layout
 
 \end_inset
@@ -1436,13 +1442,23 @@ in a future version.
 \end_layout
 
 \begin_layout Standard
-This layer uses a to-be-developed DM target that allows the detection of
- incorrect data as it is read, by using extra space to record the results
- of checksum/hash functions on the data blocks, and then compare the results
- with what the blockdev actually returned.
+This layer uses the dm-integrity target to enable the detection of incorrect
+ data as it is read, by using extra space to record the results of checksum/hash
+ functions on the data blocks, and then comparing the results with what
+ the blockdev actually returned.
  This will enable Stratis to detect data corruption when the pool is non-redunda
 nt, and to repair the corruption when the pool is redundant.
- Such a DM target could use DIF information if present.
+ It should also be possible to use DIF
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+See https://oss.oracle.com/projects/data-integrity/
+\end_layout
+
+\end_inset
+
+ information if present.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1523,7 +1539,7 @@ Layer 3: Flexibility
 
 \begin_layout Standard
 Whether blockdevs are part of raidsets or used directly, pools need to cope
- with the addition or removal
+ with the addition or removal 
 \begin_inset Foot
 status collapsed
 
@@ -1537,36 +1553,32 @@ in a future version
 \end_layout
 
 \begin_layout Standard
-Stratis must allow adding a blockdev to an existing pool, and use it to
- grow the pool's allocated space.
- (This may involve reshaping one or more raidsets to be wider, or just knowing
- to extend the thinpool onto the new blockdev when other blockdevs are full.)
+Stratis allows adding a blockdev to an existing pool, and using it to grow
+ the pool's allocated space.
 \end_layout
 
 \begin_layout Standard
-In a future version, Stratis will calculate if a blockdev can be removed
- from the pool with no effect, removed with loss of redundancy, or not removed
- without data loss, and allow, allow-and-warn, or disallow removal, as appropria
-te.
+Removal of a blockdev involves calculating if a blockdev can be removed
+ from the pool with no effect, removed with loss of redundancy, not removed
+ without data loss, or if removal would be possible after a data movement
+ and reorganization step.
+ The data-movement capability could also be used in the case of a failing
+ disk.
 \end_layout
 
 \begin_layout Standard
-It should also move active data off a perhaps-failing disk (or refuse, if
- space on other disks in the pool is not sufficient) so that the disk then
- can be removed from the pool.
- blockdevs may also be marked as ‘spare’, so that they do not contribute
- to the total available space of the pool, but can immediately replace a
- failed disk.
+Marking a newly-added blockdev as ‘spare’ would keep it in reserve so a
+ failing disk can be immediately removed and replaced without possibly exceeding
+ total pool capacity in the interim.
 \end_layout
 
 \begin_layout Standard
-The flexibility layer will support four linear DM devices made up of segments
+The flexibility layer contains four linear DM devices made up of segments
  from lower-level devices.
- The first two will be used by Layer 4 (Thin Provisioning) as metadata and
- data devices.
- The flex layer will track what lower-level devices they are allocated from,
- allow the two devices to grow, and handle the online movement of segments
- in these devices when lower-level devices come and go.
+ The first two devices will be used by Layer 4 (Thin Provisioning) as metadata
+ and data devices.
+ The flex layer will track what lower-level devices these are allocated
+ from, and allow the two devices to grow as needed.
 \end_layout
 
 \begin_layout Standard
@@ -1579,7 +1591,7 @@ The third linear DM device is a spare metadata device to be used in the
 \end_layout
 
 \begin_layout Standard
-Finally, the fourth linear DM device is used for the Metadata Volume (MDV,
+The fourth and final linear DM device is used for the Metadata Volume (MDV,
  see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1588,7 +1600,7 @@ reference "subsec:Metadata-Volume-(MDV)"
 \end_inset
 
 ).
- The MDV is used to store metadata about upper layers.
+ The MDV is used to store metadata about upper layers, layer five and above.
 \end_layout
 
 \begin_layout Standard
@@ -1597,8 +1609,8 @@ All devices in this layer may be built on L0, L1, or L2 devices, depending
 \end_layout
 
 \begin_layout Standard
-All flex layer devices should be sized to fit within a single blockdev of
- the minimum size (1 GiB).
+The initial sizes of all flex layer devices should be chosen to allow an
+ entire pool to fit within a single blockdev of the minimum size (1 GiB).
 \end_layout
 
 \begin_layout Subsubsection
@@ -1659,8 +1671,8 @@ in a future version
 \end_layout
 
 \begin_layout Standard
-Stratis could enable per-filesystem encryption between the thin device and
- the filesystem.
+Stratis may eventually enable per-filesystem encryption between the thin
+ device and the filesystem.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1669,8 +1681,9 @@ Layer 7: Filesystem
 
 \begin_layout Standard
 Stratis monitors each filesystem’s usage against its capacity and automatically
- extends (changing the thin dev's logical size and then using e.g.
- xfs_growfs) them online without user intervention.
+ extends them online without user intervention.
+ Extending involves changing the thin dev's logical size, and then using
+ a tool such as xfs_growfs to grow the filesystem.
  Stratis also periodically will run fstrim to reclaim unused space during
  idle periods.
  Idle periods will be found based upon current and historical system I/O
@@ -1821,12 +1834,11 @@ Information on levels 0-4 is duplicated across all blockdevs within a on-disk
 \end_layout
 
 \begin_layout Standard
-The Metadata Volume stores metadata on Layers 5 and up in a conventional
- block device and filesystem that is built on top of the layers beneath
- it.
- Choosing to split metadata storage into two schemes allows upper layers'
- metadata to be free of limitations that would apply if a single scheme
- was used.
+The Metadata Volume (MDV) stores metadata on Layers 5 and up in a conventional
+ block device and filesystem that is part of the Flex layer.
+ Choosing to split overall metadata storage into two schemes allows upper
+ layers' metadata to be free of limitations that would apply if a single
+ scheme was used.
  For example, on-disk metadata formats find it hard to support runtime size
  extension, may keep redundant copies to ensure reliability, and aggressively
  check for corruption.
@@ -1838,7 +1850,7 @@ The Metadata Volume stores metadata on Layers 5 and up in a conventional
 Upper-level metadata can achieve redundancy and integrity by building on
  the pre-existing lower layers, and work under looser restrictions around
  updating in place, and the total size to which it may grow.
- It reuses an existing, well-tested solution for solving data organization
+ It can reuse an existing, well-tested solution for solving data organization
  and storage issues – a general-purpose filesystem.
  
 \begin_inset Foot
@@ -4008,6 +4020,7 @@ stratisd is written in
 LatexCommand href
 name "Rust"
 target "https://www.rust-lang.org/en-US/"
+literal "false"
 
 \end_inset
 
@@ -5431,6 +5444,7 @@ System Storage Manager (
 LatexCommand href
 name "SSM"
 target "https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Storage_Administration_Guide/ch-ssm.html"
+literal "false"
 
 \end_inset
 
@@ -5507,6 +5521,7 @@ Logical Volume Manager (
 LatexCommand href
 name "LVM2"
 target "https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)"
+literal "false"
 
 \end_inset
 
@@ -5578,6 +5593,7 @@ XFS
 LatexCommand href
 name "XFS"
 target "https://en.wikipedia.org/wiki/XFS"
+literal "false"
 
 \end_inset
 
@@ -5614,6 +5630,7 @@ device-mapper
 LatexCommand href
 name "device-mapper"
 target "https://en.wikipedia.org/wiki/Device_mapper"
+literal "false"
 
 \end_inset
 
@@ -5628,6 +5645,7 @@ target "https://en.wikipedia.org/wiki/Device_mapper"
 LatexCommand href
 name "mechanism, but no policy"
 target "http://www.personal.kent.edu/~rmuhamma/OpSystems/Myos/mechanicPolicy.htm"
+literal "false"
 
 \end_inset
 
