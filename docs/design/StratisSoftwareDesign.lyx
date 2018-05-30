@@ -4884,11 +4884,31 @@ OS Integration: udev
 \end_layout
 
 \begin_layout Standard
-On boot, Stratis probes all block devices for Stratis signatures, and activates
- pools that are complete.
+The udev library 
+\begin_inset Quotes eld
+\end_inset
+
+libudev
+\begin_inset Quotes erd
+\end_inset
+
+ enables access to the udev device database.
+ This allows library users to enumerate block devices on the system, and
+ includes attributes describing their contents, such as what filesystem
+ or volume manager signature was detected.
+ (libudev uses libblkid for this, which recently had Stratis signature support
+ added.) The primary benefit of this is to perform the time-consuming block
+ device scan only once, and to alleviate library users from interpreting
+ block device contents.
+\end_layout
+
+\begin_layout Standard
+On boot, Stratis uses libudev to enumerate Stratis block devices on the
+ system, reads the Stratis metadata from each, and activates pools that
+ are complete.
  Later, during the main running phase, Stratis monitors udev events for
- newly-added block devices, so that if missing pool members are connected
- to complete a pool, the pool can be activated and used.
+ newly-added block devices, so that if missing Stratis pool members are
+ connected to complete a pool, the pool can be activated and used.
 \end_layout
 
 \begin_layout Subsection
