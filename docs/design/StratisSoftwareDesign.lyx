@@ -4117,7 +4117,7 @@ Naming Convention
 \end_layout
 
 \begin_layout Standard
-Stratis DM names consist of five or six parts as described below, which
+Stratis DM names consist of five to seven parts as described below, which
  are joined with '-' as separation.
 \end_layout
 
@@ -4142,11 +4142,12 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="4">
+<lyxtabular version="3" rows="8" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="10col%">
 <column alignment="center" valignment="top" width="60col%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -4172,6 +4173,15 @@ Name
 
 \begin_layout Plain Layout
 Max length
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Required
 \end_layout
 
 \end_inset
@@ -4214,6 +4224,15 @@ stratis-id
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -4252,6 +4271,15 @@ format-version
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -4276,6 +4304,53 @@ Naming convention version: '1'
 \begin_inset Text
 
 \begin_layout Plain Layout
+private-id
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Optional indicator 'private'
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 pool-id
 \end_layout
 
@@ -4286,6 +4361,15 @@ pool-id
 
 \begin_layout Plain Layout
 32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
 \end_layout
 
 \end_inset
@@ -4305,7 +4389,7 @@ ASCII hex UUID of the associated pool
 \begin_inset Text
 
 \begin_layout Plain Layout
-4
+5
 \end_layout
 
 \end_inset
@@ -4328,6 +4412,15 @@ layer-name
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -4343,7 +4436,7 @@ Name of the Stratis layer this device is in
 \begin_inset Text
 
 \begin_layout Plain Layout
-5
+6
 \end_layout
 
 \end_inset
@@ -4366,6 +4459,15 @@ layer-role
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
@@ -4381,7 +4483,7 @@ Name of the role of the device within the layer
 \begin_inset Text
 
 \begin_layout Plain Layout
-6
+7
 \end_layout
 
 \end_inset
@@ -4399,7 +4501,16 @@ role-unique-id
 \begin_inset Text
 
 \begin_layout Plain Layout
-48
+40
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
 \end_layout
 
 \end_inset
@@ -4428,17 +4539,18 @@ Role-specific unique differentiator between multiple devices within the
 \end_layout
 
 \begin_layout Itemize
-The maximum length (adding 5 '-'s as separator) is 125.
+The maximum length (adding 6 '-'s as separator) is 125.
+ (DM names must be 127 characters or less.)
 \end_layout
 
 \begin_layout Itemize
-Parts 1-5 are required.
- Part 6 is optional.
+private-id is included in names for DM devices that are internal and that
+ should be excluded from content scanning by tools such as blkid.
 \end_layout
 
 \begin_layout Itemize
 All parts of the DM name must consist of `[a-z][0-9]` characters.
- Part 6 may also use '-'.
+ Part 7 may also use '-'.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4475,13 +4587,23 @@ Layer 3: Flex
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
+<lyxtabular version="3" rows="4" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Private
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -4524,6 +4646,15 @@ Description
 \begin_inset Text
 
 \begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 flex
 \end_layout
 
@@ -4562,6 +4693,15 @@ Linear device for thinpool metadata
 \begin_inset Text
 
 \begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 flex
 \end_layout
 
@@ -4596,6 +4736,15 @@ Linear device for thinpool data
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -4641,7 +4790,7 @@ Linear device for Metadata Volume (MDV)
 \end_layout
 
 \begin_layout Description
-Example: stratis-1-2836fca3047bba22938475638abcd840-flex-thinmeta
+Example: stratis-1-private-2836fca3047bba22938475638abcd840-flex-thinmeta
 \end_layout
 
 \begin_layout Subsubsection*
@@ -4650,13 +4799,23 @@ Layer 4: Thinpool
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
+<lyxtabular version="3" rows="2" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Private
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -4695,6 +4854,15 @@ Description
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -4740,22 +4908,32 @@ Thinpool device
 \end_layout
 
 \begin_layout Description
-Example: stratis-1-2836fca3047bba22938475638abcd840-thinpool-pool
+Example: stratis-1-private-2836fca3047bba22938475638abcd840-thinpool-pool
 \end_layout
 
 \begin_layout Subsubsection*
-Layer 5: Thinpool
+Layer 5: Thin volume
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
+<lyxtabular version="3" rows="2" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Private
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -4794,6 +4972,15 @@ Description
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
