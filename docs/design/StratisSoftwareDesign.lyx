@@ -1921,6 +1921,8 @@ The BDA consists of a fixed-length Static Header of sixteen sectors, which
 
 \begin_layout Standard
 Stratis reserves the first 16 sectors of each blockdev for the Static Header.
+ When initializing or modifying the Signature Block, identical data is written
+ to locations 1 and 2.
 \end_layout
 
 \begin_layout Standard
@@ -2037,7 +2039,7 @@ unused
 \begin_inset Text
 
 \begin_layout Plain Layout
-Signature Block copy 1
+Signature Block location 1
 \end_layout
 
 \end_inset
@@ -2095,7 +2097,7 @@ unused
 \begin_inset Text
 
 \begin_layout Plain Layout
-Signature Block copy 2
+Signature Block location 2
 \end_layout
 
 \end_inset
@@ -2572,6 +2574,20 @@ When a blockdev is removed from a pool, or is part of a pool that is destroyed,
  Stratis wipes the Static Header.
 \end_layout
 
+\begin_layout Itemize
+The purpose of the unused sectors is twofold.
+ First, placing the Signature Block copy locations in two separate 4K blocks
+ helps to prevent a single bad write operation on 4K-block disks from corrupting
+ both copies.
+ Second, using a single sector for the Signature Block helps to minimize
+ the likelihood of corruption on disks with 512 byte blocks.
+\end_layout
+
+\begin_layout Itemize
+Each time that Stratis writes one or both Signature Block locations, it
+ also zeroes the unused sectors that share the same 4K block.
+\end_layout
+
 \begin_layout Standard
 The MDA is divided into four equal-size regions, numbered 0-3.
  When updating metadata, identical data is written to either the odd (1
@@ -2918,11 +2934,6 @@ Multiple blockdevs being updated with the same metadata must write identical
  data to each MDA region, but which regions (odd or even) is used may vary,
  if the blockdevs have received differing numbers of metadata updates over
  time.
-\end_layout
-
-\begin_layout Itemize
-Software will generally read Signature Block copy 1 and MDA regions 0 and
- 1, and only reference additional copies if the CRC check fails.
 \end_layout
 
 \begin_layout Subsubsection
