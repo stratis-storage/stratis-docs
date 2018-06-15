@@ -4117,8 +4117,8 @@ Naming Convention
 \end_layout
 
 \begin_layout Standard
-Stratis DM names consist of five to seven parts as described below, which
- are joined with '-' as separation.
+Stratis DM names consist of five required and two optional parts, each separated
+ by a '-'.
 \end_layout
 
 \begin_layout Standard
@@ -4304,7 +4304,7 @@ Naming convention version: '1'
 \begin_inset Text
 
 \begin_layout Plain Layout
-private-id
+private
 \end_layout
 
 \end_inset
@@ -4544,13 +4544,32 @@ The maximum length (adding 6 '-'s as separator) is 125.
 \end_layout
 
 \begin_layout Itemize
-private-id is included in names for DM devices that are internal and that
- should be excluded from content scanning by tools such as blkid.
+\begin_inset Quotes eld
+\end_inset
+
+private
+\begin_inset Quotes erd
+\end_inset
+
+ is included in names for DM devices that are internal and that should be
+ excluded from content scanning by tools such as blkid.
 \end_layout
 
 \begin_layout Itemize
-All parts of the DM name must consist of `[a-z][0-9]` characters.
+Character limitations: All parts of the DM name consist of `[a-z][0-9]`
+ characters.
  Part 7 may also use '-'.
+ (This is stricter than what DM and udev require
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+See libdm/libdm-common.c _is_whitelisted_char() in the lvm2 code for more.
+\end_layout
+
+\end_inset
+
+.)
 \end_layout
 
 \begin_layout Subsubsection
