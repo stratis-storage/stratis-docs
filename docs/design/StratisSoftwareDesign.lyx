@@ -4117,7 +4117,7 @@ Naming Convention
 \end_layout
 
 \begin_layout Standard
-Stratis DM names consist of five required and two optional parts, each separated
+Stratis DM names consist of five required and two optional parts, separated
  by a '-'.
 \end_layout
 
@@ -4539,8 +4539,8 @@ Role-specific unique differentiator between multiple devices within the
 \end_layout
 
 \begin_layout Itemize
-The maximum length (adding 6 '-'s as separator) is 125.
- (DM names must be 127 characters or less.)
+The maximum length (adding 6 '-'s as separator) is 125, to stay within the
+ DM name limit of 127 characters.
 \end_layout
 
 \begin_layout Itemize
@@ -4556,10 +4556,9 @@ private
 \end_layout
 
 \begin_layout Itemize
-Character limitations: All parts of the DM name consist of `[a-z][0-9]`
- characters.
- Part 7 may also use '-'.
- (This is stricter than what DM and udev require
+Characters for each part are drawn solely from the character classes '[a-z]'
+ and '[0-9]' except that part 7 may also use the '-' character.
+ These restrictions meet D-Bus and udev requirements
 \begin_inset Foot
 status collapsed
 
