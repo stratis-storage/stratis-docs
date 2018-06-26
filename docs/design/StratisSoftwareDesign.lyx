@@ -267,8 +267,8 @@ pool
 Unfortunately, existing VMFs aren't easily used on enterprise Linux distribution
 s like RHEL.
  ZFS isn't an option RHEL can embrace due to licensing, Ubuntu notwithstanding.
- Btrfs has no licensing issues, but after many years of work it still has
- significant technical issues that may never be resolved.
+ Btrfs has no licensing issues, but maintaining up-to-date support for in
+ it in enterprise kernels proved difficult.
 \end_layout
 
 \begin_layout Standard
