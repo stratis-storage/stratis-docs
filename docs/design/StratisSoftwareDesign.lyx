@@ -5122,22 +5122,26 @@ libudev
 \end_inset
 
  enables access to the udev device database.
- This allows library users to enumerate block devices on the system, and
- includes attributes describing their contents, such as what filesystem
- or volume manager signature was detected.
- (libudev uses libblkid for this, which recently had Stratis signature support
- added.) The primary benefit of this is to perform the time-consuming block
- device scan only once, and to alleviate library users from interpreting
- block device contents.
+ This library allows enumeration of devices which match certain criteria
+ and reading udev properties of a device.
 \end_layout
 
 \begin_layout Standard
-On boot, Stratis uses libudev to enumerate Stratis block devices on the
- system, reads the Stratis metadata from each, and activates pools that
- are complete.
- Later, during the main running phase, Stratis monitors udev events for
- newly-added block devices, so that if missing Stratis pool members are
- connected to complete a pool, the pool can be activated and used.
+udev maintains certain properties which allow a client of libudev to determine
+ the owner of a particular device.
+ udev delegates the identification of a device to the libblkid library.
+ More recent versions of libblkid contain support for Stratis device identificat
+ion.
+\end_layout
+
+\begin_layout Standard
+When it starts up, Stratis uses libudev to identify block devices on the
+ system, reads Stratis metadata from each Stratis block device, and activates
+ Stratis pools for which all block devices have been found.
+ Later, during the main running phase, Stratis monitors udev events.
+ In particular, it uses udev events to identify any Stratis block devices
+ added after Stratis started up, making it possible to complete and activate
+ a pool that was found to be missing some block devices during startup.
 \end_layout
 
 \begin_layout Subsection
