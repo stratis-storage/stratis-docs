@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -21,6 +21,8 @@
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -49,6 +51,7 @@
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -57,7 +60,10 @@
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -97,6 +103,7 @@ This document can be found
 LatexCommand href
 name "in the stratis-docs repo"
 target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/style/StratisStyleGuidelines.lyx"
+literal "false"
 
 \end_inset
 
@@ -133,6 +140,7 @@ rustfmt (
 LatexCommand href
 name "link"
 target "https://crates.io/crates/rustfmt"
+literal "false"
 
 \end_inset
 
@@ -299,6 +307,115 @@ TBD: Recommendations on when to define const variables versus when to use
  string literals
 \end_layout
 
+\begin_layout Subsection
+Conventions (stratisd)
+\end_layout
+
+\begin_layout Enumerate
+Stratisd has many instances of ranges of storage being allocated from other
+ things.
+ This can become confusing.
+ In naming methods that relate to this, use the following conventions:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+A method that attempts to allocate some number of unit of storage from an
+ allocation pool container should be called 
+\begin_inset Quotes eld
+\end_inset
+
+alloc
+\begin_inset Quotes erd
+\end_inset
+
+ if the method returns an error if the entire amount requested is not available.
+ If a method returns a partial allocation if the entire amount is not available,
+ it should be called 
+\begin_inset Quotes eld
+\end_inset
+
+request
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+A method returning the total amount of storage units (i.e.
+ sectors, DataBlocks, or similar) in an allocation pool should be called
+ 
+\begin_inset Quotes eld
+\end_inset
+
+size
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+A method returning the total 
+\emph on
+usable
+\emph default
+ amount of storage units – the total number minus overhead (if any) – in
+ an allocation pool should be called 
+\begin_inset Quotes eld
+\end_inset
+
+usable
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+usable_size
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+A method returning the number of previously-unallocated storage units should
+ be called 
+\begin_inset Quotes eld
+\end_inset
+
+available
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+avail_size
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+A method returning the number of allocated storage units should be called
+ 
+\begin_inset Quotes eld
+\end_inset
+
+allocated
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
 \begin_layout Section
 Style (Python)
 \end_layout
@@ -309,6 +426,7 @@ Follow PEP 8 (
 LatexCommand href
 name "link"
 target "https://www.python.org/dev/peps/pep-0008/"
+literal "false"
 
 \end_inset
 
