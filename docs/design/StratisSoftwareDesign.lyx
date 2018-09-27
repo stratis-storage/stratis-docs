@@ -6206,7 +6206,8 @@ When encountering errors, Stratis must handle them if possible, but there
 \end_layout
 
 \begin_layout Standard
-Stratis has operation states for the daemon, pools, and also blockdevs (listed
+Stratis has operation states for the pools, meta and data extend, and also
+ blockdevs (listed
 \begin_inset CommandInset ref
 LatexCommand vpageref
 reference "Blockdev-states"
@@ -6217,145 +6218,6 @@ noprefix "false"
 \end_inset
 
 ).
-\end_layout
-
-\begin_layout Subsubsection
-Daemon States
-\end_layout
-
-\begin_layout Standard
-While running, an event may occur that makes it unsafe to make changes.
- If so, the daemon moves to the ReadOnly state.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="40col%">
-<column alignment="center" valignment="top" width="40col%">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-State
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Transitions To
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Starting
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Daemon is starting
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running (or terminate)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Daemon is running
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ReadOnly
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ReadOnly
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Daemon is running but cannot make changes
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -6370,9 +6232,8 @@ In addition to the main states a pool may be in, a Running pool may also
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="4">
+<lyxtabular version="3" rows="7" columns="3">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="40col%">
 <column alignment="center" valignment="top" width="40col%">
@@ -6382,15 +6243,6 @@ In addition to the main states a pool may be in, a Running pool may also
 
 \begin_layout Plain Layout
 State
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Substate
 \end_layout
 
 \end_inset
@@ -6428,16 +6280,7 @@ Initializing
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Starting state for a newly created pool
+Pool startup In progress
 \end_layout
 
 \end_inset
@@ -6446,45 +6289,7 @@ Starting state for a newly created pool
 \begin_inset Text
 
 \begin_layout Plain Layout
-Running/Complete (or fail)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Starting
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Starting state for an existing pool
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running/*, Stopped/*
+Running, OutOfDataSpace, ReadOnly, Failed
 \end_layout
 
 \end_inset
@@ -6504,16 +6309,7 @@ Running
 \begin_inset Text
 
 \begin_layout Plain Layout
-Complete
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Pool is operational
+Pool is read/write - normal operation state
 \end_layout
 
 \end_inset
@@ -6522,7 +6318,7 @@ Pool is operational
 \begin_inset Text
 
 \begin_layout Plain Layout
-Running/Incomplete, Stopped/*
+OutOfDataSpace, ReadOnly, Failed, Stopping
 \end_layout
 
 \end_inset
@@ -6533,7 +6329,7 @@ Running/Incomplete, Stopped/*
 \begin_inset Text
 
 \begin_layout Plain Layout
-Running
+OutOfDataSpace
 \end_layout
 
 \end_inset
@@ -6542,16 +6338,8 @@ Running
 \begin_inset Text
 
 \begin_layout Plain Layout
-Incomplete
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Pool is operational but is missing blockdevs
+Meta data may be changed - new data may not be allocated.
+ Data device is update only
 \end_layout
 
 \end_inset
@@ -6560,7 +6348,7 @@ Pool is operational but is missing blockdevs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Running/Complete, Stopped/*
+Running, ReadOnly, Failed, Stopping
 \end_layout
 
 \end_inset
@@ -6571,7 +6359,7 @@ Running/Complete, Stopped/*
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stopped
+ReadOnly
 \end_layout
 
 \end_inset
@@ -6580,16 +6368,7 @@ Stopped
 \begin_inset Text
 
 \begin_layout Plain Layout
-Incomplete
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Pool is missing required blockdevs
+Meta data may not be changed - data is read only
 \end_layout
 
 \end_inset
@@ -6598,7 +6377,7 @@ Pool is missing required blockdevs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Starting
+Running, OutOfDataSpace, Failed, Stopping
 \end_layout
 
 \end_inset
@@ -6609,7 +6388,7 @@ Starting
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stopped
+Failed
 \end_layout
 
 \end_inset
@@ -6618,16 +6397,7 @@ Stopped
 \begin_inset Text
 
 \begin_layout Plain Layout
-Failure
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Something has gone wrong
+All IO is failed
 \end_layout
 
 \end_inset
@@ -6636,7 +6406,7 @@ Something has gone wrong
 \begin_inset Text
 
 \begin_layout Plain Layout
-Starting
+Running, OutOfDataSpace, ReadOnly, Stopping
 \end_layout
 
 \end_inset
@@ -6647,7 +6417,7 @@ Starting
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stopped
+Stopping
 \end_layout
 
 \end_inset
@@ -6656,16 +6426,7 @@ Stopped
 \begin_inset Text
 
 \begin_layout Plain Layout
-OutOfSpace
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Needs more space to continue
+Pool is in the teardown process
 \end_layout
 
 \end_inset
@@ -6674,7 +6435,204 @@ Needs more space to continue
 \begin_inset Text
 
 \begin_layout Plain Layout
-Starting
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Pool Extend States
+\end_layout
+
+\begin_layout Standard
+As filesystems write data, the meta and data devices backing the pool may
+ need to be extended to accomidate growing pool.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="40col%">
+<column alignment="center" valignment="top" width="40col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transitions To
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initializing
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pool startup In progress
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Good, DataFailed, MetaFailed, MetaAndDataFailed
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Good
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Normal operation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DataFailed, MetaFailed, MetaAndDataFailed
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DataFailed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extend of the pool data device failed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Good, MetaAndDataFailed
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MetaFailed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extend of the pool meta device failed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Good, MetaAndDataFailed
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MetaAndDataFailed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extend of both the meta and data devices failed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Good, DataFailed, MetaFailed
 \end_layout
 
 \end_inset
@@ -6815,7 +6773,7 @@ Space available below Critical threshold
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transition Pool State to Stopped/OutOfSpace
+Alert the user of critical state, run maintenance operations
 \end_layout
 
 \end_inset
