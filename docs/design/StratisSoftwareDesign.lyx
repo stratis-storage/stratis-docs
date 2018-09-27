@@ -115,7 +115,7 @@ status collapsed
 \end_layout
 
 \begin_layout Date
-Last modified: 05/30/2018
+Last modified: 07/11/2018
 \end_layout
 
 \begin_layout Standard
@@ -1534,7 +1534,27 @@ Stratis cannot support redundancy with a single disk, but we may wish to
 \end_layout
 
 \begin_layout Subsubsection
-Layer 3: Flexibility
+Cache Tier (optional)
+\end_layout
+
+\begin_layout Standard
+If present, the Cache Tier sits directly underneath the Flex Layer.
+ Its structure is similar to the lower levels of the Data Tier.
+ See
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Cache-Tier"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for more.
+\end_layout
+
+\begin_layout Subsubsection
+Layer 3: Flex
 \end_layout
 
 \begin_layout Standard
@@ -2584,9 +2604,8 @@ All 'unused' fields are zeroed, and are reserved for future use.
 \end_layout
 
 \begin_layout Itemize
-Blockdev metadata area length (offset 96) must be a number divisible by
- four of at least 2032 – combined minimum length of overall BDA (static
- header and MDA) is 2048 sectors (1 MiB).
+If not zero, blockdev metadata area length (offset 96) must be a number
+ divisible by four of at least 2032.
 \end_layout
 
 \begin_layout Itemize
@@ -2595,7 +2614,11 @@ The BDA is followed immediately by
 reserved space
 \emph default
 , whose size is specified in the signature block (offset 104).
- Reserved space is used by Stratis for temporary storage.
+\end_layout
+
+\begin_layout Itemize
+Minimum length of BDA (static header and MDA) plus Reserved Space is 2048
+ sectors (1 MiB).
 \end_layout
 
 \begin_layout Itemize
@@ -3029,15 +3052,7 @@ Metadata Area (MDA)
 
 \begin_layout Standard
 The MDA contains a JSON object that represents the pool's overall configuration
- of blockdevs, from L0 to L4.
- See Appendix 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:JSON-Schema-for"
-
-\end_inset
-
- for the formal JSON schema.
+ from L0 to L4.
 \end_layout
 
 \begin_layout Description
@@ -3053,28 +3068,8 @@ objects:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-\align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="4">
+<lyxtabular version="3" rows="5" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -3161,7 +3156,7 @@ the name of the pool
 \begin_inset Text
 
 \begin_layout Plain Layout
-block_devs
+backstore
 \end_layout
 
 \end_inset
@@ -3184,87 +3179,11 @@ y
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 the block devices in the pool
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-integrity_devs
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-object
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-info on integrity devices & layout 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-raid_devs
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-object
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layout of the raid devices
 \end_layout
 
 \end_inset
@@ -3353,37 +3272,532 @@ parameters of the thinpool device
 
 \end_layout
 
+\begin_layout Description
+backstore: An object describing the data tier and the cache tier.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="45col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+data_tier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the block devices in the data tier
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cap
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the cap device, from which segments are allocated to the flex layer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+cache_tier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the block devices in the cache tier
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Description
-block_devs: an object with UUID keys and object values with the following
- structure:
+data_tier: An object describing the data tier.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="45col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\align center
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+blockdev
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Settings and mappings describing block devices that make up the tier
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integrity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TBD settings and mappings associated with integrity support
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+raid
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TBD settings and mappings associated with redundancy (RAID) support
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+vdo
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TBD settings and mappings associated with VDO
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+blockdev: An object describing physical block devices that make up the tier.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="50col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+devs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of 
+\series bold
+base_block_dev
+\series default
+ objects
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allocs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of arrays of 
+\series bold
+base_dev
+\series default
+ objects
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+base_dev: An object describing an allocation from a block device.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="4">
 <features tabularvalignment="middle">
@@ -3434,7 +3848,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-devnode
+parent
 \end_layout
 
 \end_inset
@@ -3452,7 +3866,7 @@ string
 \begin_inset Text
 
 \begin_layout Plain Layout
-n
+y
 \end_layout
 
 \end_inset
@@ -3461,7 +3875,178 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-the blockdev's most recently recorded device node
+UUID of the device the segment is created from
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+start
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the starting sector offset within the parent device
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+length
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+the length in sectors of the segment
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+base_block_dev: An object describing a block device in the lowest layer.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="50col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+uuid
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+string
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The UUID of the block device, as recorded in its Signature Block
 \end_layout
 
 \end_inset
@@ -3551,81 +4136,132 @@ uniquely identifying information for the blockdev, such as SCSI VPD83 or
 
 \end_layout
 
-\end_inset
-
-
+\begin_layout Description
+integrity: (TBD) Settings and mappings associated with integrity support.
 \end_layout
 
 \begin_layout Description
-integrity_devs: TBD
+raid: (TBD) Settings and mappings associated with RAID support.
 \end_layout
 
 \begin_layout Description
-raid_devs: TBD
+vdo: (TBD) Settings and mappings associated with VDO support.
 \end_layout
 
 \begin_layout Description
-flex_devs: an object with four keys: 
-\begin_inset Quotes eld
-\end_inset
-
-meta_dev
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-thin_meta_dev
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-thin_meta_dev_spare
-\begin_inset Quotes erd
-\end_inset
-
-, and 
-\begin_inset Quotes eld
-\end_inset
-
-thin_data_dev
-\begin_inset Quotes erd
-\end_inset
-
-.
- Each corresponding value is an array of objects.
- These objects define the linear segments that make up each device.
- Each segment object has the following structure:
+cap: An object describing a view of the top-level linear device provided
+ by the backstore to the flex layer.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="45col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-\align center
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allocs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of pairs of integers representing the starting offset and length
+ of an allocation in sectors
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+cache_tier: An object describing the cache tier.
+ Identical format to 
+\series bold
+data_tier
+\series default
+ except VDO layer is not supported.
+\end_layout
+
+\begin_layout Description
+flex_devs: An object with four keys that define the linear segments that
+ make up each device in the Flex layer.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
+<lyxtabular version="3" rows="5" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -3674,7 +4310,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-parent
+meta_dev
 \end_layout
 
 \end_inset
@@ -3683,7 +4319,7 @@ parent
 \begin_inset Text
 
 \begin_layout Plain Layout
-string
+array
 \end_layout
 
 \end_inset
@@ -3701,7 +4337,8 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-UUID of the lower-layered device the segment is in
+an array of pairs of integers representing the starting offset and length
+ of an allocation in sectors that make up the metadata volume (MDV)
 \end_layout
 
 \end_inset
@@ -3712,7 +4349,7 @@ UUID of the lower-layered device the segment is in
 \begin_inset Text
 
 \begin_layout Plain Layout
-start
+thin_meta_dev
 \end_layout
 
 \end_inset
@@ -3721,7 +4358,7 @@ start
 \begin_inset Text
 
 \begin_layout Plain Layout
-integer
+array
 \end_layout
 
 \end_inset
@@ -3739,7 +4376,47 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the starting sector offset within the parent device
+an array of pairs of integers representing the starting offset and length
+ of an allocation in sectors that make up the thin metadata device
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+thin_meta_dev_spare
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of pairs of integers representing the starting offset and length
+ of an allocation in sectors that make up the thin metadata spare device
 \end_layout
 
 \end_inset
@@ -3750,7 +4427,7 @@ the starting sector offset within the parent device
 \begin_inset Text
 
 \begin_layout Plain Layout
-length
+thin_data_dev
 \end_layout
 
 \end_inset
@@ -3759,7 +4436,7 @@ length
 \begin_inset Text
 
 \begin_layout Plain Layout
-integer
+array
 \end_layout
 
 \end_inset
@@ -3777,7 +4454,8 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the length in sectors of the segment
+an array of pairs of integers representing the starting offset and length
+ of an allocation in sectors that make up the thin data device
 \end_layout
 
 \end_inset
@@ -3790,40 +4468,11 @@ the length in sectors of the segment
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
 \begin_layout Description
-parent: may be a valid blockdev, integrity dev, or raid dev UUID.
-\end_layout
-
-\begin_layout Description
-thinpool_dev: an object with the following structure:
+thinpool_dev: An object that defines properties of the thinpool device.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="4">
 <features tabularvalignment="middle">
@@ -3908,11 +4557,6 @@ the size in sectors of the thinpool data block
 </cell>
 </row>
 </lyxtabular>
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -4037,7 +4681,23 @@ In addition to Stratis-specific metadata, device-mapper layers such as cache,
 \end_layout
 
 \begin_layout Subsection
-Cache Tier Requirements
+Cache Tier
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Cache-Tier"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Cache Tier is a secondary optional stack that, if present, sits underneath
+ the Flex Layer, and above the
+\end_layout
+
+\begin_layout Subsubsection
+Requirements
 \end_layout
 
 \begin_layout Enumerate
@@ -4064,10 +4724,6 @@ Removing cache tier comes with performance hit and “rewarming” phase
 
 \begin_layout Enumerate
 For write-back caching, Cache tier must be redundant if data tier is redundant.
-\end_layout
-
-\begin_layout Enumerate
-(more details to fill in here.)
 \end_layout
 
 \begin_layout Subsection
@@ -5209,26 +5865,22 @@ libudev
 \end_inset
 
  enables access to the udev device database.
- This library allows enumeration of devices which match certain criteria
- and reading udev properties of a device.
+ This allows library users to enumerate block devices on the system, and
+ includes attributes describing their contents, such as what filesystem
+ or volume manager signature was detected.
+ (libudev uses libblkid for this, which recently had Stratis signature support
+ added.) The primary benefit of this is to perform the time-consuming block
+ device scan only once, and to alleviate library users from interpreting
+ block device contents.
 \end_layout
 
 \begin_layout Standard
-udev maintains certain properties which allow a client of libudev to determine
- the owner of a particular device.
- udev delegates the identification of a device to the libblkid library.
- More recent versions of libblkid contain support for Stratis device identificat
-ion.
-\end_layout
-
-\begin_layout Standard
-When it starts up, Stratis uses libudev to identify block devices on the
- system, reads Stratis metadata from each Stratis block device, and activates
- Stratis pools for which all block devices have been found.
- Later, during the main running phase, Stratis monitors udev events.
- In particular, it uses udev events to identify any Stratis block devices
- added after Stratis started up, making it possible to complete and activate
- a pool that was found to be missing some block devices during startup.
+On boot, Stratis uses libudev to enumerate Stratis block devices on the
+ system, reads the Stratis metadata from each, and activates pools that
+ are complete.
+ Later, during the main running phase, Stratis monitors udev events for
+ newly-added block devices, so that if missing Stratis pool members are
+ connected to complete a pool, the pool can be activated and used.
 \end_layout
 
 \begin_layout Subsection
@@ -5293,6 +5945,244 @@ Each snapshot uses around half a gigabyte of actual backing storage, which
 
 \begin_layout Standard
 These may change in the future.
+\end_layout
+
+\begin_layout Subsection
+Backstore Internals
+\end_layout
+
+\begin_layout Standard
+The backstore is divided into two tiers: the data tier, and an optional
+ cache tier.
+ Each tier has its own set of physical block devices.
+ The goal of each tier is to provide a single linear device that the flex
+ layer (or another tier) can easily build on top of.
+\end_layout
+
+\begin_layout Standard
+A tier is created with a certain feature set, which results in an internal
+ layering of devices as needed to support those features.
+ Features such as redundancy, integrity, and dedupe/compression.
+ The features a tier supports are fixed at tier creation time.
+ However, the block devices that make up the tier may change.
+ A blockdev may increase in capacity, or new blockdevs may be added.
+\end_layout
+
+\begin_layout Standard
+This requires each tier to support:
+\end_layout
+
+\begin_layout Itemize
+Today
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+add_blockdev (add a new blockdev to the tier)
+\end_layout
+
+\begin_layout Itemize
+blockdevs (list/iterate)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Near Future
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+extend_blockdev (start using added space on a blockdev that has become larger)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Far future
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+prepare_to_remove_blockdev (move data off a blockdev in preparation for
+ its removal, if space is available elsewhere)
+\end_layout
+
+\begin_layout Itemize
+remove_blockdev (remove a blockdev that has no data on it)
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The tier includes optional internal support for multiple features, which
+ also are implemented using DM devices.
+\end_layout
+
+\begin_layout Standard
+At the 
+\begin_inset Quotes eld
+\end_inset
+
+bottom
+\begin_inset Quotes erd
+\end_inset
+
+ of the tier are blockdevs.
+ These blockdevs are mapped through layers that add value, such as integrity
+ or compression.
+\end_layout
+
+\begin_layout Standard
+Each layer takes a list of blockdevs and converts it to a list of 
+\begin_inset Quotes eld
+\end_inset
+
+better
+\begin_inset Quotes erd
+\end_inset
+
+ blockdevs, whose total size is likely different.
+ (Integrity and raid will be smaller, vdo will present a single much larger
+ block device, etc.)
+\end_layout
+
+\begin_layout Standard
+While each intermediate layer may provide an array of blockdevs, the 
+\begin_inset Quotes eld
+\end_inset
+
+cap
+\begin_inset Quotes erd
+\end_inset
+
+ layer of the tier presents a single linear blockdev that maintains the
+ location of each presented block and never shrinks, and hides the interior
+ complexity of the tier from upper users.
+\end_layout
+
+\begin_layout Standard
+The ordering of layers (from bottom to top) within a tier is:
+\end_layout
+
+\begin_layout Enumerate
+blockdev
+\begin_inset Newline newline
+\end_inset
+
+Blockdevs supply available space to the tier.
+ Blockdevs may grow, for example if they happen to be further virtualized
+ on top of a storage appliance, Amazon EBS, or Ceph block storage.
+\end_layout
+
+\begin_layout Enumerate
+integrity
+\begin_inset Newline newline
+\end_inset
+
+When integrity=true, each blockdev's usable space is mapped to the dm-integrity
+ target, which will slightly reduce usable space, and cause a performance
+ hit, in order to detect corruption on reads.
+ It is believed that integrity devices cannot change size.
+ Therefore, extending a blockdev may require a second dm-integrity device
+ be created.
+\end_layout
+
+\begin_layout Enumerate
+raid
+\begin_inset Newline newline
+\end_inset
+
+when raid=true, Stratis uses the dm-raid target to create software RAID
+ in top of the devices presented to it (These may be either 
+\begin_inset Quotes eld
+\end_inset
+
+raw
+\begin_inset Quotes erd
+\end_inset
+
+ blockdevs or integrity-enabled blockdevs.) In order to maximize flexibility,
+ Stratis creates multiple raidsets by defining a maximum for each raid member's
+ size, as well as the number of members in a raidset.
+ It also may choose a raid member size smaller than the maximum, in order
+ to ensure between 4-8 raidsets are created.
+\begin_inset Newline newline
+\end_inset
+
+if additional block resources are made available, the raid layer constructs
+ additional raidsets.
+\end_layout
+
+\begin_layout Enumerate
+vdo
+\begin_inset Newline newline
+\end_inset
+
+When vdo=true, the vdo layer will concatenate the blockdevs it is given
+ (if needed) of any previously-mentioned type and create a single VDO device.
+ The layer must manage extending both the logical size (the top) in response
+ to space requests from above, as well as requesting additional space from
+ lower layers to extend the physical size (the bottom) if needed.
+\end_layout
+
+\begin_layout Enumerate
+cap
+\begin_inset Newline newline
+\end_inset
+
+If presented with more than one blockdev, or the blockdev has a nonzero
+ offset, the 
+\begin_inset Quotes eld
+\end_inset
+
+cap
+\begin_inset Quotes erd
+\end_inset
+
+ layer will ensure the Tier presents a single blockdev with consistent block
+ mapping for use above the tier by creating a Linear device that never relocates
+ previously-mapped block ranges.
+\end_layout
+
+\begin_layout Subsubsection
+Demand-based allocations
+\end_layout
+
+\begin_layout Standard
+Layers should not consume the entire space available to them when constructing
+ devices, but instead grow existing mapped allocations (or create new ones)
+ as the total demands of upper layers grow larger.
+ This is preferred over a 
+\begin_inset Quotes eld
+\end_inset
+
+greedy
+\begin_inset Quotes erd
+\end_inset
+
+ strategy because any mapping that is created and has data on it must be
+ maintained for the life of the pool.
+ There's no good way to tell when blocks in an existing device mapping become
+ used.
+ Starting small and then growing allocations gives each layer a way to track
+ regions that can be reclaimed if needed.
+ This will make eventual support for blockdev removal easier.
+\end_layout
+
+\begin_layout Standard
+Another reason is that space requirements may expand or shrink as a request
+ passes down the layers.
+ For example, VDO may satisfy a request for more logical space without any
+ additional lower-level space needed.
+ But, a small request to the RAID layer may require the construction of
+ an entirely new raidset with a large minimum size from unused space, if
+ the layer's existing capacity is full.
+\end_layout
+
+\begin_layout Subsubsection
+Common Layer API
+\end_layout
+
+\begin_layout Standard
+TBD
 \end_layout
 
 \begin_layout Part
@@ -5673,52 +6563,6 @@ options "plain"
 \begin_layout Part*
 \start_of_appendix
 Appendices
-\end_layout
-
-\begin_layout Section
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:JSON-Schema-for"
-
-\end_inset
-
-JSON Schema for MDA
-\end_layout
-
-\begin_layout Standard
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-
-\size tiny
-\begin_inset CommandInset include
-LatexCommand verbatiminput
-filename "mda.schema.json"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section
