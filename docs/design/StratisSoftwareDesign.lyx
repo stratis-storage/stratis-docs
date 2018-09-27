@@ -158,7 +158,7 @@ literal "false"
 \end_inset
 
 , and is written using \SpecialChar LyX
- 2.2.2.
+ 2.3.0.
  Please ask any questions by opening an issue, and propose changes as pull
  requests.
 \end_layout
