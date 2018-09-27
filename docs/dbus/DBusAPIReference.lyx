@@ -645,6 +645,24 @@ Uuid The UUID of the pool.
  Signature: s.
 \end_layout
 
+\begin_layout Description
+State The state of the pool.
+ Possible values are documented in the design doc.
+ Signature: q.
+\end_layout
+
+\begin_layout Description
+ExtendState The extend state of the pool.
+ Possible values are documented in the design doc.
+ Signature: q.
+\end_layout
+
+\begin_layout Description
+SpaceState The space state of the pool.
+ Possible values are documented in the design doc.
+ Signature: q.
+\end_layout
+
 \begin_layout Subsection
 filesystem interface
 \end_layout
