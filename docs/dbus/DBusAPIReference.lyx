@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -12,24 +12,27 @@
 \inputencoding auto
 \fontencoding global
 \font_roman "default" "default"
-\font_sans "default" "default"
+\font_sans "lmss" "default"
 \font_typewriter "default" "default"
 \font_math "auto" "auto"
-\font_default_family default
+\font_default_family sfdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -49,15 +52,23 @@
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 1.5in
+\topmargin 1in
+\rightmargin 1.5in
+\bottommargin 1in
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -97,7 +108,7 @@ status collapsed
 
 \end_inset
 
-Stratisd Version 0.0.1
+Stratisd Version 1.0.0
 \end_layout
 
 \begin_layout Author
@@ -105,7 +116,7 @@ Anne Mulhern
 \end_layout
 
 \begin_layout Date
-Version 0.2.1
+Version 0.9.0
 \begin_inset ERT
 status collapsed
 
@@ -120,7 +131,7 @@ status collapsed
 
 \end_inset
 
-Last modified: 10/10/2017
+Last modified: 09/27/2018
 \end_layout
 
 \begin_layout Standard
@@ -158,11 +169,12 @@ This document can be found
 LatexCommand href
 name "in the stratis-docs repo"
 target "https://github.com/stratis-storage/stratis-docs/blob/master/docs/dbus/DBusAPIReference.lyx"
+literal "false"
 
 \end_inset
 
 , and is written using \SpecialChar LyX
- 2.2.2.
+ 2.3.0.
  Please ask any questions by opening an issue, and propose changes as pull
  requests.
 \end_layout
@@ -177,9 +189,24 @@ This document describes the D-Bus API for the Stratis daemon.
  the time of this writing.
  The public methods of the daemon's engine do not constitute part of the
  public API.
- The D-Bus API is a thin layer which receives message on the D-Bus, processes
+ The D-Bus API is a thin layer which receives messages on the D-Bus, processes
  them, transmits them to the Stratis engine, receives the results from the
  engine, and transmits a response on the D-Bus.
+ The engine can also generate D-Bus signals, when important properties change
+ in value.
+\end_layout
+
+\begin_layout Section
+This API is 
+\emph on
+NOT STABLE
+\end_layout
+
+\begin_layout Standard
+While this document covers the API as implemented in Stratis 1.0, the Stratis
+ Team has not yet declared this a stable API.
+ Other software should not rely on this API until the Stratis Team updates
+ this document and declares the API stable and supported.
 \end_layout
 
 \begin_layout Subsection
@@ -330,6 +357,7 @@ qs
 LatexCommand href
 name "container type"
 target "https://dbus.freedesktop.org/doc/dbus-specification.html#container-types"
+literal "false"
 
 \end_inset
 
@@ -558,7 +586,8 @@ Returns: true if the name was actually changed, otherwise false.
 
 \end_deeper
 \begin_layout Description
-SnapshotFilesystem This method allows a snapshot to be created from an existing filesystem
+SnapshotFilesystem This method allows a snapshot to be created from an existing
+ filesystem
 \end_layout
 
 \begin_deeper
