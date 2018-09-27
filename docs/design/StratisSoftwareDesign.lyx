@@ -1058,25 +1058,6 @@ name "Blockdev-states"
 
 \begin_layout Standard
 \align left
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="6">
 <features tabularvalignment="middle">
@@ -1423,11 +1404,6 @@ y
 </cell>
 </row>
 </lyxtabular>
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -1959,26 +1935,6 @@ Static Header
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-\align left
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
@@ -2166,11 +2122,6 @@ unused
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
 \begin_layout Standard
 
 \emph on
@@ -2178,26 +2129,6 @@ Signature Block
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-\align left
 \begin_inset Tabular
 <lyxtabular version="3" rows="13" columns="3">
 <features tabularvalignment="middle">
@@ -2597,11 +2528,6 @@ unused
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
 \begin_layout Itemize
 No flags are yet defined, so 'flags' field is zeroed.
 \end_layout
@@ -2666,26 +2592,6 @@ MDA Region Header
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
-\align left
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="3">
 <features tabularvalignment="middle">
@@ -2983,11 +2889,6 @@ JSON data
 </cell>
 </row>
 </lyxtabular>
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -4883,25 +4784,6 @@ Stratis DM names consist of five required and two optional parts, separated
 \end_layout
 
 \begin_layout Standard
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status collapsed
-
-\begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="5">
 <features tabularvalignment="middle">
@@ -5288,11 +5170,6 @@ Role-specific unique differentiator between multiple devices within the
 </cell>
 </row>
 </lyxtabular>
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
