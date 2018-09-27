@@ -737,8 +737,8 @@ Methods
 \end_layout
 
 \begin_layout Description
-SetUserId This allows setting identifying information for the blockdev by
- the user.
+SetUserInfo This allows setting identifying information for the blockdev
+ by the user.
 \end_layout
 
 \begin_deeper
@@ -802,7 +802,7 @@ InitializationTime
 \uwave default
 \noun default
 \color inherit
- Signature: s.
+ Signature: t.
 \end_layout
 
 \begin_layout Description
@@ -860,7 +860,13 @@ Bad
 \end_inset
 
 .
- Signature: s.
+ Signature: q.
+\end_layout
+
+\begin_layout Description
+Tier The tier the blockdev is in, either Data(0) or Cache (1).
+ This property is constant.
+ Signature: q.
 \end_layout
 
 \begin_layout Description
