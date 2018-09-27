@@ -1855,29 +1855,6 @@ Upper-level metadata can achieve redundancy and integrity by building on
  updating in place, and the total size to which it may grow.
  It can reuse an existing, well-tested solution for solving data organization
  and storage issues – a general-purpose filesystem.
- 
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-It would also be possible to store lower-level metadata on a /boot partition.
- This would still enable Stratis to be used for the root and other core
- filesystems, but would prevent /boot from being 
-\emph on
-in
-\emph default
- Stratis.
- This has to be weighed against the work required to define a new on-disk
- metadata format.
- Our hope is that the split-metadata design allows the on-disk metadata
- format's implementation to be easy enough that we can avoid the dependency
- on a non-Stratis /boot partition.
- 
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsubsection
