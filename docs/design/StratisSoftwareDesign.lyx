@@ -148,8 +148,8 @@ literal "false"
 
 , and is written using \SpecialChar LyX
  2.3.0.
- Please ask any questions by opening an issue, and propose changes as pull
- requests.
+ Please use the mailing list (stratis-devel@lists.fedorahosted.org), or open
+ an issue on GitHub, for any questions or issues that arise.
 \end_layout
 
 \begin_layout Section*
