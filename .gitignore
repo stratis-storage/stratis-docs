@@ -1,4 +1,5 @@
 docs/faq/FAQ.html
+docs/relnotes/*.html
 *.bib.bak
 *.lyx~
 *.lyx#
