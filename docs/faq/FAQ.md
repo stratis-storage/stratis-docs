@@ -147,6 +147,7 @@ increased memory safety and productivity reasons.
 ### I found a bug in Stratis, what do I do?
 
 There are a couple of different ways to report a bug:
+
   * Send an email to `stratis-devel@lists.fedorahosted.org`
   * Create a github issue (if not sure which one just select stratisd)
     - [stratisd (daemon)](https://github.com/stratis-storage/stratisd/issues)
