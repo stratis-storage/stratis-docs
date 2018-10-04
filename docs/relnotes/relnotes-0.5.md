@@ -1,4 +1,8 @@
-# Release notes for Stratis 0.5 (March 8, 2018)
+---
+title: 'Stratis 0.5 Release Notes'
+---
+
+# March 8, 2018
 
 This release is suitable for developers and early testers. It should not be
 used with valuable data, and pools created with this release will not be
