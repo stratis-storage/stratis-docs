@@ -5740,14 +5740,14 @@ OS Integration: /dev entries
 \begin_layout Standard
 Stratis allows the user to create filesystems, which then can be mounted
  and used via mount(8) and the fstab(5).
- Stratisd creates a /dev/stratis directory.
- It creates /dev/stratis/<poolname> for each pool present on the system,
- and /dev/stratis/<poolname>/<filesystemname> for each filesystem within
- the pool.
+ Stratisd creates a /stratis directory.
+ It creates /stratis/<poolname> for each pool present on the system, and
+ /stratis/<poolname>/<filesystemname> for each filesystem within the pool.
  Changes such as creations, removals, and renames are reflected in the entries
- under /dev/stratis.
+ under /stratis.
  These entries give the user a well-known path to a device to use for mounting
  the Stratis filesystem.
+ Filesystems may also be listed in /etc/fstab using XFS UUID.
 \end_layout
 
 \begin_layout Subsection
