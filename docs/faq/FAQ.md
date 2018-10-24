@@ -65,7 +65,7 @@ tested using LVM logical volumes as block devices for Stratis pools.
 
 Stratis pools and filesystems both are given names are part of the creation
 process. Stratis creates links to filesystems under
-`/dev/stratis/<pool-name>/<filesystem-name>`. These may be used in
+`/stratis/<pool-name>/<filesystem-name>`. These may be used in
 `/etc/fstab`, but if pools or filesystems are renamed in the future, be sure
 to update `/etc/fstab` accordingly. Alternatively you can use the `blkid` tool
 to get the XFS filesystem UUID, and use that, which remains constant across
