@@ -11,6 +11,8 @@ website-distrib: check
 	cp ./docs/style/StratisStyleGuidelines.pdf $(SITE)
 	cd ./docs/faq; $(MAKE); cd -
 	cp ./docs/faq/FAQ.html $(SITE)
+	cd ./docs/guide; $(MAKE); cd -
+	cp ./docs/guide/howto.html $(SITE)
 	cd ./docs/relnotes; $(MAKE); cd -
 	mkdir -p $(SITE)/relnotes
 	cp ./website/style.css $(SITE)/relnotes
