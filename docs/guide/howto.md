@@ -3,18 +3,14 @@
 
 ### Introduction ###
 
-[Stratis](https://github.com/stratis-storage)
-(which includes stratisd as well as stratis-cli), provides ZFS/Btrfs-style
+[Stratis](https://github.com/stratis-storage) provides ZFS/Btrfs-style
 features by integrating layers of existing technology: Linux's devicemapper
 subsystem, and the XFS filesystem.  The [stratisd](https://github.com/stratis-storage/stratisd)
 daemon manages collections of block devices, and provides a
-[D-Bus API](https://stratis-storage.github.io/DBusAPIReference.pdf)
-(not finalized).  The [stratis-cli](https://github.com/stratis-storage/stratis-cli)
+[D-Bus API](https://stratis-storage.github.io/DBusAPIReference.pdf).
+The [stratis-cli](https://github.com/stratis-storage/stratis-cli)
 provides a command-line tool `stratis` which itself uses the D-Bus API to
 communicate with stratisd.
-
-Basic workflow is take one or more empty disks and create a Stratis pool.  Using
-the pool create one or more file systems.
 
 #### 1. Installation ####
 
@@ -33,7 +29,7 @@ Created symlink /etc/systemd/system/sysinit.target.wants/stratisd.service →
 
 #### 3. Locate an empty block device ####
 
-Utilize utilities like `lsblk` and `blkid` to find a block device to use
+Use utilities like `lsblk` and `blkid` to find a block device to use
 with Stratis.
 
 ```bash
