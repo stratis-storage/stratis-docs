@@ -221,6 +221,21 @@ in use, and then destroy it.
   ```
 
 #### Misc. operations ####
+- Query which block devices belong to a pool or all of Stratis.
+
+  ```bash
+  # stratis blockdev list olympic
+  Pool Name  Device Node    Physical Size   State  Tier
+  olympic    /dev/sdc            2.00 TiB  In-use  Data
+  ```
+
+  ```bash
+  # stratis blockdev list
+  Pool Name      Device Node    Physical Size   State  Tier
+  olympic        /dev/sdc            2.00 TiB  In-use  Data
+  stratis_howto  /dev/sdb               1 TiB  In-use  Data
+  ```
+
 - Query redundancies that Stratis supports.
 
   ```bash
