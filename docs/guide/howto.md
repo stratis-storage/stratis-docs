@@ -152,6 +152,7 @@ UUID is recommended.
 
 #### Other useful pool operations ####
 - **add-data** Add a disk to an existing pool.
+
     ```bash
     # stratis pool add-data tale_of_2_disks /dev/sdc
     # stratis pool list
@@ -161,6 +162,7 @@ UUID is recommended.
     ```
 
 - **rename** To rename a pool.
+
     ```bash
     # stratis pool rename tale_of_2_disks 3_amigos
     # stratis pool list
@@ -170,6 +172,7 @@ UUID is recommended.
     ```
 
 - **add-cache** To add a block device as a cache device (typically something like SSD).
+
     ```bash
     # stratis pool add-cache 3_amigos /dev/sde
     ```
@@ -219,12 +222,15 @@ in use, and then destroy it.
 
 #### Misc. operations ####
 - Query redundancies that Stratis supports.
-```bash
-# stratis daemon redundancy
-NONE: 0
-```
+
+  ```bash
+  # stratis daemon redundancy
+  NONE: 0
+  ```
+
 - Query the Stratis daemon (`stratisd`) version.
-```bash
-# stratis daemon version
-1.0.1
-```
+
+  ```bash
+  # stratis daemon version
+  1.0.1
+  ```
