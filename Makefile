@@ -25,6 +25,13 @@ check:
 
 clean:
 	- rm -Rf $(SITE)
+	cd ./docs/dbus ; $(MAKE) clean && cd -
+	cd ./docs/design ; $(MAKE) clean && cd -
+	cd ./docs/faq ; $(MAKE) clean && cd -
+	cd ./docs/guide; $(MAKE) clean && cd -
+	cd ./docs/relnotes ; $(MAKE) clean && cd -
+	cd ./docs/style ; $(MAKE) clean && cd -
+	cd ./images ; $(MAKE) clean && cd -
 
 .PHONY:
 	check
