@@ -1,0 +1,31 @@
+# The URL the site will be built for
+base_url = "https://stratis-storage.github.io"
+theme = "hyde"
+title = ""
+description = "Easy to use local storage management for Linux."
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = true
+
+[extra]
+hyde_theme = "theme-base-09"
+hyde_user_links = [
+    {url = "$BASE_URL/faq", name = "FAQ"},
+    {url = "$BASE_URL/howto", name = "How-To"},
+]
+hyde_developer_links = [
+    {url = "$BASE_URL/StratisSoftwareDesign.pdf", name = "Software Design"},
+    {url = "$BASE_URL/DBusAPIReference.pdf", name = "DBUS API Reference"},
+    {url = "$BASE_URL/StratisStyleGuidelines.pdf", name = "Programming Style Guidelines"},
+]
+hyde_contact_links = [
+    {url = "https://github.com/stratis-storage", name = "Github", fa="fab fa-github"},
+    {url = "https://twitter.com/stratisstorage", name = "Twitter", fa="fab fa-twitter"},
+]

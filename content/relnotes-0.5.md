@@ -1,12 +1,17 @@
----
-title: 'Stratis 0.5 Release Notes'
----
++++
+title = "Stratis 0.5 Release Notes"
+date = 2018-09-28
+template = "page.html"
+render = true
++++
 
-# March 8, 2018
+March 8, 2018
 
 This release is suitable for developers and early testers. It should not be
 used with valuable data, and pools created with this release will not be
 supported in Stratis 1.0, due to upcoming on-disk format changes.
+
+<!-- more -->
 
 ## New Features
 

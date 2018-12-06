@@ -1,9 +1,7 @@
-docs/faq/FAQ.html
-docs/relnotes/*.html
+public/
 *.bib.bak
 *.lyx~
 *.lyx#
 *.pdf
 *.swp
 *.tex
-_site
