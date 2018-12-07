@@ -234,6 +234,11 @@ tbody tr:nth-child(odd) th {
   font-weight: 300;
 }
 
+/* Make about work better on a dark-ish background. */
+.about {
+  color: #ddd;
+}
+
 
 /*
  * Messages

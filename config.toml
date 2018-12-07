@@ -1,7 +1,7 @@
 # The URL the site will be built for
 base_url = "https://stratis-storage.github.io"
 theme = "hyde"
-title = ""
+title = "Stratis Storage"
 description = "Easy to use local storage management for Linux."
 
 # Whether to automatically compile all Sass files in the sass directory
@@ -15,7 +15,8 @@ highlight_code = true
 build_search_index = true
 
 [extra]
-hyde_theme = "theme-base-09"
+hyde_sticky = false
+hyde_theme = "theme-base-10"
 hyde_user_links = [
     {url = "$BASE_URL/faq", name = "FAQ"},
     {url = "$BASE_URL/howto", name = "How-To"},

@@ -31,14 +31,14 @@
                 <div class="container {% if config.extra.hyde_sticky %}sidebar-sticky{% endif %}">
 					<div>
 						<a href="{{ config.base_url }}">
-							<img src="{{ get_url(path="/imgs/stratis_d28445.jpg", trailing_slash=false) }}" />
+							<img src="{{ get_url(path="/imgs/stratis_sidebar.png", trailing_slash=false) }}" />
 						</a>
 					</div>
                     <div class="sidebar-about">
                         {% block sidebar_about %}
-                            <a href="{{ config.base_url }}"><h1>{{ config.title }}</h1></a>
+                            <!-- <a href="{{ config.base_url }}"><h1>{{ config.title }}</h1></a> -->
                             {% if config.description %}
-                            <p class="lead">{{config.description}}</p>
+                            <p class="about lead">{{config.description}}</p>
                             {% endif %}
                         {% endblock sidebar_about %}
                     </div>

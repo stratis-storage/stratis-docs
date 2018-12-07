@@ -79,7 +79,7 @@ html {
 .sidebar-about h1 {
   color: #fff;
   margin-top: 0;
-  font-family: "Abril Fatface", serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 3.25rem;
 }
 
@@ -257,11 +257,11 @@ a.sidebar-nav-item:focus {
 
 /* Yellow */
 .theme-base-0a .sidebar {
-  background-color: #f4bf75;
+  background-color: #ffc72c;
 }
 .theme-base-0a .content a,
 .theme-base-0a .related-posts li a:hover {
-  color: #f4bf75;
+  color: #ffc72c;
 }
 
 /* Green */
@@ -307,4 +307,13 @@ a.sidebar-nav-item:focus {
 .theme-base-0f .content a,
 .theme-base-0f .related-posts li a:hover {
   color: #8f5536;
+}
+
+/* Gray */
+.theme-base-10 .sidebar {
+  background-color: #373838;
+}
+.theme-base-0f .content a,
+.theme-base-0f .related-posts li a:hover {
+  color: #373838;
 }
