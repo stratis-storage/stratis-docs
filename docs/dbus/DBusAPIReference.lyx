@@ -427,12 +427,6 @@ redundancy the redundancy specification for the pool.
 \end_layout
 
 \begin_layout Description
-force if true, the method will claim all devices specified, regardless of
- whether they seem to belong to another application.
- Signature: b.
-\end_layout
-
-\begin_layout Description
 devices device nodes of devices to form the pool.
  Signature: as.
 \end_layout
@@ -490,7 +484,7 @@ Methods
 \end_layout
 
 \begin_layout Description
-AddDevs This method allows additional devices to be added to the pool after
+AddCacheDevs This method allows additional cache devices to be added to the pool after
  it is created.
 \end_layout
 
@@ -499,10 +493,25 @@ AddDevs This method allows additional devices to be added to the pool after
 Arguments:
 \end_layout
 
+\begin_layout Description
+devices this argument has the same meaning as the device argument of CreatePool.
+ Signature: as.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: a list of object paths of the blockdevs added to the pool.
+ Signature: a(o)qs.
+\end_layout
+
+\begin_layout Description
+AddDataDevs This method allows additional data devices to be added to the pool after
+ it is created.
+\end_layout
+
 \begin_deeper
 \begin_layout Description
-force this option has the same meaning as the force option of CreatePool.
- Signature: b.
+Arguments:
 \end_layout
 
 \begin_layout Description
