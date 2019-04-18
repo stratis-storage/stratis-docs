@@ -1,0 +1,1832 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Error-Management for Stratis
+\end_layout
+
+\begin_layout Part*
+Desired Properties
+\end_layout
+
+\begin_layout Section
+A Backtrace in 
+\emph on
+Every
+\emph default
+ Error that Stratis Controls
+\end_layout
+
+\begin_layout Subsection
+Benefits
+\end_layout
+
+\begin_layout Standard
+I think these are obvious.
+ There is some question about how much additional value is gained by having
+ a backtrace in every error, rather than just the first one returned.
+ I think that it is probably quite real.
+ One can imagine that an error is returned, and then some action is performed
+ because of the error.
+ This action results in more frames being pushed onto the stack, but this
+ action might also result in an error.
+ The second stack trace will not just be a prefix of the first stack trace,
+ but will contain new information.
+\end_layout
+
+\begin_layout Subsection
+Concerns
+\end_layout
+
+\begin_layout Subsubsection
+Is inserting a backtrace in every error expensive?
+\end_layout
+
+\begin_layout Standard
+It makes sense to try to discover if this a bad idea for some kind of performanc
+e reason.
+\end_layout
+
+\begin_layout Paragraph
+Does it increase the size of the generated code by a lot?
+\end_layout
+
+\begin_layout Standard
+This is still to be determined.
+ The suggested experiment is to enable error-chain without the backtrace
+ feature and see how that changes the size of devicemapper.
+ However, whether or not error-chain actually produces an error is dependent
+ on whether or not the RUST_BACKTRACE environment variable is set at runtime.
+\end_layout
+
+\begin_layout Paragraph
+It is certainly more expensive to generate an error if a backtrace must
+ accompany it, how much more expensive is it?
+\end_layout
+
+\begin_layout Standard
+There is a rumor that I heard that resolving the symbols is by far the most
+ expensive part of generating a backtrace.
+ This makes sense.
+ Supposing each frame just contains an instruction pointer, resolving that
+ to a line in a module requires some work.
+ There is something about this in the backtrace module: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://docs.rs/backtrace/0.3.14/backtrace/struct.Backtrace.html#method.new_unresolved
+\end_layout
+
+\end_inset
+
+.
+ I believe that the failure crate defers resolving symbols until the backtrace
+ is used, automatically.
+ It turns out that so does the error_chain crate; this was added in one
+ of the last updates made by the backtrace principal developer.
+\end_layout
+
+\begin_layout Subsubsection
+Will the backtrace be useless unless the debug flag is set during compilation?
+\end_layout
+
+\begin_layout Standard
+The worry here is that unless the debug flag is set, it will be really impossibl
+e to resolve the symbols precisely.
+ I tried an experiment in rust playground.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "basicstyle={\small}"
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+   Compiling playground v0.0.1 (/playground)
+\end_layout
+
+\begin_layout Plain Layout
+
+    Finished release [optimized] target(s) in 0.81s
+\end_layout
+
+\begin_layout Plain Layout
+
+     Running `target/release/playground`
+\end_layout
+
+\begin_layout Plain Layout
+
+thread 'main' panicked at 'assertion failed: false', src/main.rs:11:10
+\end_layout
+
+\begin_layout Plain Layout
+
+stack backtrace:
+\end_layout
+
+\begin_layout Plain Layout
+
+   0: std::sys::unix::backtrace::tracing::imp::unwind_backtrace
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/sys/unix/backtrace/tracing/gcc_s.rs:39
+\end_layout
+
+\begin_layout Plain Layout
+
+   1: std::sys_common::backtrace::_print
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/sys_common/backtrace.rs:70
+\end_layout
+
+\begin_layout Plain Layout
+
+   2: std::panicking::default_hook::{{closure}}
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/sys_common/backtrace.rs:58
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:200
+\end_layout
+
+\begin_layout Plain Layout
+
+   3: std::panicking::default_hook
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:215
+\end_layout
+
+\begin_layout Plain Layout
+
+   4: std::panicking::rust_panic_with_hook
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:478
+\end_layout
+
+\begin_layout Plain Layout
+
+   5: std::panicking::begin_panic
+\end_layout
+
+\begin_layout Plain Layout
+
+   6: playground::d
+\end_layout
+
+\begin_layout Plain Layout
+
+   7: playground::c
+\end_layout
+
+\begin_layout Plain Layout
+
+   8: playground::b
+\end_layout
+
+\begin_layout Plain Layout
+
+   9: playground::a
+\end_layout
+
+\begin_layout Plain Layout
+
+  10: playground::main
+\end_layout
+
+\begin_layout Plain Layout
+
+  11: std::rt::lang_start::{{closure}}
+\end_layout
+
+\begin_layout Plain Layout
+
+  12: std::panicking::try::do_call
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:49
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:297
+\end_layout
+
+\begin_layout Plain Layout
+
+  13: __rust_maybe_catch_panic
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libpanic_unwind/lib.rs:92
+\end_layout
+
+\begin_layout Plain Layout
+
+  14: std::rt::lang_start_internal
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:276
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panic.rs:388
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:48
+\end_layout
+
+\begin_layout Plain Layout
+
+  15: main
+\end_layout
+
+\begin_layout Plain Layout
+
+  16: __libc_start_main
+\end_layout
+
+\begin_layout Plain Layout
+
+  17: _start
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The above is w/out debug.
+ w/ debug, below, the stack trace is more informative, because line numbers
+ are available.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "basicstyle={\small}"
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+Compiling playground v0.0.1 (/playground)
+\end_layout
+
+\begin_layout Plain Layout
+
+    Finished dev [unoptimized + debuginfo] target(s) in 1.23s
+\end_layout
+
+\begin_layout Plain Layout
+
+     Running `target/debug/playground`
+\end_layout
+
+\begin_layout Plain Layout
+
+thread 'main' panicked at 'assertion failed: false', src/main.rs:11:10
+\end_layout
+
+\begin_layout Plain Layout
+
+stack backtrace:
+\end_layout
+
+\begin_layout Plain Layout
+
+   0: std::sys::unix::backtrace::tracing::imp::unwind_backtrace
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/sys/unix/backtrace/tracing/gcc_s.rs:39
+\end_layout
+
+\begin_layout Plain Layout
+
+   1: std::sys_common::backtrace::_print
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/sys_common/backtrace.rs:70
+\end_layout
+
+\begin_layout Plain Layout
+
+   2: std::panicking::default_hook::{{closure}}
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/sys_common/backtrace.rs:58
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:200
+\end_layout
+
+\begin_layout Plain Layout
+
+   3: std::panicking::default_hook
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:215
+\end_layout
+
+\begin_layout Plain Layout
+
+   4: std::panicking::rust_panic_with_hook
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:478
+\end_layout
+
+\begin_layout Plain Layout
+
+   5: std::panicking::begin_panic
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/2aa4c46cfdd726e97360c2734835aa3515e8c858/src/libstd/panic
+king.rs:412
+\end_layout
+
+\begin_layout Plain Layout
+
+   6: playground::d
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:11
+\end_layout
+
+\begin_layout Plain Layout
+
+   7: playground::c
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:9
+\end_layout
+
+\begin_layout Plain Layout
+
+   8: playground::b
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:6
+\end_layout
+
+\begin_layout Plain Layout
+
+   9: playground::a
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:2
+\end_layout
+
+\begin_layout Plain Layout
+
+  10: playground::main
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:14
+\end_layout
+
+\begin_layout Plain Layout
+
+  11: std::rt::lang_start::{{closure}}
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/2aa4c46cfdd726e97360c2734835aa3515e8c858/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+  12: std::panicking::try::do_call
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:49
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:297
+\end_layout
+
+\begin_layout Plain Layout
+
+  13: __rust_maybe_catch_panic
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libpanic_unwind/lib.rs:92
+\end_layout
+
+\begin_layout Plain Layout
+
+  14: std::rt::lang_start_internal
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:276
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panic.rs:388
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:48
+\end_layout
+
+\begin_layout Plain Layout
+
+  15: std::rt::lang_start
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/2aa4c46cfdd726e97360c2734835aa3515e8c858/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+  16: main
+\end_layout
+
+\begin_layout Plain Layout
+
+  17: __libc_start_main
+\end_layout
+
+\begin_layout Plain Layout
+
+  18: _start
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For reference, here is the actual code.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+fn a() {
+\end_layout
+
+\begin_layout Plain Layout
+
+    b()
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn b() {
+\end_layout
+
+\begin_layout Plain Layout
+
+    c()
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn c() { d() }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn d() { assert!(false) }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn main() {
+\end_layout
+
+\begin_layout Plain Layout
+
+    a()
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Comments
+\end_layout
+
+\begin_layout Paragraph
+The standard error-chain approach is to insert a stack trace into the first
+ error that occurs over which it has control.
+\end_layout
+
+\begin_layout Standard
+This can be compiled out by not making use of the backtrace feature.
+ This can be elided at runtime if RUST_BACKTRACE is not set.
+\end_layout
+
+\begin_layout Paragraph
+There has been some talk on failure site about a shorter backtrace.
+\end_layout
+
+\begin_layout Standard
+This makes sense.
+ Your standard backtrace has a bunch of extra stuff at the start and end,
+ that are always going to be just ignored for purposes of debugging.
+\end_layout
+
+\begin_layout Paragraph
+There exists a crate, stacktrace, which wraps an error with a backtrace.
+\end_layout
+
+\begin_layout Standard
+It looked interesting at first, but has been deprecated in favor of error_chain.
+ I don't really think that it has any useful ideas in it now.
+\end_layout
+
+\begin_layout Subsection
+Implementation
+\end_layout
+
+\begin_layout Standard
+Supply a function, 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+our_backtrace
+\end_layout
+
+\end_inset
+
+, which returns an 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+Option<&Backtrace>
+\end_layout
+
+\end_inset
+
+.
+ Choose a different name from 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+backtrace
+\end_layout
+
+\end_inset
+
+, since there is an RFC
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+https://github.com/rust-lang/rfcs/blob/master/text/2504-fix-error.md
+\end_layout
+
+\end_inset
+
+ which may add a 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+backtrace
+\end_layout
+
+\end_inset
+
+ function to the 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+Error
+\end_layout
+
+\end_inset
+
+ trait's API.
+ Choose 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+Option<&Backtrace>
+\end_layout
+
+\end_inset
+
+ rather than 
+\begin_inset listings
+inline true
+status collapsed
+
+\begin_layout Plain Layout
+
+&Backtrace
+\end_layout
+
+\end_inset
+
+ to allow future flexibility to include or not to include a backtrace in
+ the error.
+\end_layout
+
+\begin_layout Section
+Specific Information About an Error
+\end_layout
+
+\begin_layout Standard
+We want specific information about the error in every error, i.e., while the
+ error should include a string message, it should, in the general case,
+ also allow for other fields which allow programmatic access to more specific
+ information.
+ We use a separate field in the Error itself, called specs.
+ The difficult question is: should this be a trait or should it be a concrete
+ type?
+\end_layout
+
+\begin_layout Standard
+If it is a trait, then the error type itself can be generic.
+ If it is a concrete type, i.e., a struct, then there are two possibilities:
+\end_layout
+
+\begin_layout Itemize
+It may be implemented in terms of a map of keys to values.
+ In this case, the error type can be generic.
+\end_layout
+
+\begin_layout Itemize
+It may be implemented in terms of fields within a struct.
+ In that case, the struct must be an enum, and a distinct type.
+ In this case, the error type can not be generic.
+ This is the approach taken by error_chain internally.
+\end_layout
+
+\begin_layout Standard
+Note that the HashMap supplied by the Rust standard library is a sophisticated
+ and powerful data structure.
+ If using a map for the purpose of matching keys to values of an error it
+ would probably be necessary to use a simpler and much less heavy-weight
+ data structure.
+ Given the possibility of needing to hold fields of different types, this
+ would be a bit tricky.
+ fixed_map
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+https://crates.io/crates/fixed-map
+\end_layout
+
+\end_inset
+
+ or the hints that accompany it might be a help.
+ Nonetheless, the crucial fact is that all the possible types that could
+ be used as values in the map must implement some shared trait.
+ That shared trait might just be Debug + Display, which would just mean
+ that the only thing that could be done w/ these values would be to display
+ them in one context or another.
+ It might be possible to do a dynamic downcast to a concrete type, but it
+ would have to be possible to programmatically anticipate what that concrete
+ type was.
+ To do that would require keeping a separate and static record of names
+ to types.
+ This would undermine the utility of having the map in the first place.
+\end_layout
+
+\begin_layout Standard
+If the error kind is a trait then it has all the restrictions of a trait
+ object.
+ It must necessarily be placed in a box.
+ It must be dynamically downcast to its specific type, which must be known
+ from context or possibly because there are a small subset of possibilities.
+\end_layout
+
+\begin_layout Standard
+Defining the error kind as an enum requires the most boiler-plate, as each
+ error and error kind must be defined separately.
+ However, it is by far the best for programmatic access.
+ This is, therefore, the current plan.
+\end_layout
+
+\begin_layout Section
+Backwards Compatibility
+\end_layout
+
+\begin_layout Standard
+The idea of backwards compatibility is that older clients of the library
+ that uses this error type should be able to compile with newer versions
+ of the library.
+ This is really up to the client, not to the library.
+ If the client chooses to use wildcard matches everywhere, it can compile
+ w/ subsequent versions of the library.
+ Whether it does the correct thing is anyone's guess.
+\end_layout
+
+\begin_layout Standard
+There is no real obstacle to using a wildcard match that can not match on
+ any constructor.
+ The client must explicitly allow it using annotations or by turning off
+ the warnings for unreachable_patterns.
+ The '..' to match on additional arguments to a single constructor, when applied
+ where there are no additional arguments, does not even trigger a compiler
+ warning.
+\end_layout
+
+\begin_layout Section
+Ability to Chain Errors
+\end_layout
+
+\begin_layout Standard
+We want the ability to chain errors.
+ That is, if an error is returned, it may be passed up the stack using ?,
+ or the error may be matched and cause an action to be taken.
+ That action may be either to immediately chain w/ a higher level error
+ or to take some action.
+ The action may fail, which may cause another error to be raised, which
+ should still chain w/ the original error.
+ It seems to me that the correct thing to do is to always chain the higher
+ level, context-providing error, and then either take the remediation action
+ or just return the new error (chained to the old one).
+ In order to distinguish between these two kinds of relationships, and also
+ to implement the Error trait, it will be necessary to encode the relationship
+ in each error, as the Error trait only acknowledges the possibility of
+ a chain, rather than a tree of errors.
+\end_layout
+
+\begin_layout Section
+Ability to Programmatically Access any Error in the Error Chain
+\end_layout
+
+\begin_layout Standard
+We want to be able to traverse the error-chain, finding errors further in
+ the chain and downcasting them to their particular type.
+ This is the most difficult problem.
+ 
+\end_layout
+
+\begin_layout Section
+The Example
+\end_layout
+
+\begin_layout Standard
+This is an 
+\emph on
+example
+\emph default
+ of a particular 
+\emph on
+instance
+\emph default
+ of the proposed error-management approach.
+ It is specific to the core module of devicemapper.
+ An analogous error structure would be developed for the outer layer of
+ devicemapper, and for stratisd or its modules.
+ This represents a lot of boiler plate, which ought eventually to be managed
+ by Rust macros, or perhaps some other auto-generation system.
+ This document does not address that problem; it just addresses the design
+ of the error management structure.
+\end_layout
+
+\begin_layout Subsection
+Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\scriptsize}"
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+use backtrace::Backtrace;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#[derive(Debug)]
+\end_layout
+
+\begin_layout Plain Layout
+
+enum OurErrorKind {
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Raised when a devicemapper context is not initialized
+\end_layout
+
+\begin_layout Plain Layout
+
+    ContextInitError,
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Raised when any method receives an argument it can not handle
+\end_layout
+
+\begin_layout Plain Layout
+
+    InvalidArgument { description: String },
+\end_layout
+
+\begin_layout Plain Layout
+
+    // below should be Box<DeviceInfo>
+\end_layout
+
+\begin_layout Plain Layout
+
+    // ioctl failure
+\end_layout
+
+\begin_layout Plain Layout
+
+    IoctlError { device_info: String },
+\end_layout
+
+\begin_layout Plain Layout
+
+    // ioctl result is too large
+\end_layout
+
+\begin_layout Plain Layout
+
+    IoctlResultTooLarge,
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Failed to get metadata
+\end_layout
+
+\begin_layout Plain Layout
+
+    MetadataIoError { path: std::path::PathBuf },
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+impl std::fmt::Display for OurErrorKind {
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+\end_layout
+
+\begin_layout Plain Layout
+
+        match self {
+\end_layout
+
+\begin_layout Plain Layout
+
+            OurErrorKind::ContextInitError => write!(f, "DM context not
+ initialized"),
+\end_layout
+
+\begin_layout Plain Layout
+
+            OurErrorKind::InvalidArgument { description } => {
+\end_layout
+
+\begin_layout Plain Layout
+
+                write!(f, "invalid argument: {}", description)
+\end_layout
+
+\begin_layout Plain Layout
+
+            }
+\end_layout
+
+\begin_layout Plain Layout
+
+            OurErrorKind::IoctlError { device_info } => {
+\end_layout
+
+\begin_layout Plain Layout
+
+                write!(f, "ioctl error, device info: {}", device_info)
+\end_layout
+
+\begin_layout Plain Layout
+
+            }
+\end_layout
+
+\begin_layout Plain Layout
+
+            OurErrorKind::IoctlResultTooLarge => write!(
+\end_layout
+
+\begin_layout Plain Layout
+
+                f,
+\end_layout
+
+\begin_layout Plain Layout
+
+                "ioctl result too large for maximum buffer size 4294967295
+ bytes"
+\end_layout
+
+\begin_layout Plain Layout
+
+            ),
+\end_layout
+
+\begin_layout Plain Layout
+
+            OurErrorKind::MetadataIoError { path } => write!(
+\end_layout
+
+\begin_layout Plain Layout
+
+                f,
+\end_layout
+
+\begin_layout Plain Layout
+
+                "failed to stat metadata for device at {}",
+\end_layout
+
+\begin_layout Plain Layout
+
+                path.to_string_lossy()
+\end_layout
+
+\begin_layout Plain Layout
+
+            ),
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#[derive(Debug)]
+\end_layout
+
+\begin_layout Plain Layout
+
+struct OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+    // The items below are mutually exclusive,
+\end_layout
+
+\begin_layout Plain Layout
+
+    // If one is Some, the other must be None.
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Both may be None.
+\end_layout
+
+\begin_layout Plain Layout
+
+    prev: Option<Box<std::error::Error>>,
+\end_layout
+
+\begin_layout Plain Layout
+
+    suberror: Option<Box<std::error::Error>>,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // The backtrace at the site the error is returned
+\end_layout
+
+\begin_layout Plain Layout
+
+    backtrace: Backtrace,
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Distinguish among different errors with an ErrorKind
+\end_layout
+
+\begin_layout Plain Layout
+
+    specifics: OurErrorKind,
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+impl OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+    #[allow(dead_code)]
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn our_backtrace(&self) -> Option<&Backtrace> {
+\end_layout
+
+\begin_layout Plain Layout
+
+        Some(&self.backtrace)
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    #[allow(dead_code)]
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn suberror(&self) -> Option<&(std::error::Error + 'static)> {
+\end_layout
+
+\begin_layout Plain Layout
+
+        self.suberror.as_ref().map(|c| &**c)
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    #[allow(dead_code)]
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn prev(&self) -> Option<&(std::error::Error + 'static)> {
+\end_layout
+
+\begin_layout Plain Layout
+
+        self.prev.as_ref().map(|c| &**c)
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+impl std::error::Error for OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn source(&self) -> Option<&(std::error::Error + 'static)> {
+\end_layout
+
+\begin_layout Plain Layout
+
+        self.prev
+\end_layout
+
+\begin_layout Plain Layout
+
+            .as_ref()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .map(|c| &**c)
+\end_layout
+
+\begin_layout Plain Layout
+
+            .or_else(|| self.suberror.as_ref().map(|c| &**c))
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // deprecated in 1.33.0
+\end_layout
+
+\begin_layout Plain Layout
+
+    // identical to source()
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn cause(&self) -> Option<&std::error::Error> {
+\end_layout
+
+\begin_layout Plain Layout
+
+        self.prev
+\end_layout
+
+\begin_layout Plain Layout
+
+            .as_ref()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .map(|c| &**c)
+\end_layout
+
+\begin_layout Plain Layout
+
+            .or_else(|| self.suberror.as_ref().map(|c| &**c))
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+impl std::fmt::Display for OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+\end_layout
+
+\begin_layout Plain Layout
+
+        write!(f, "{}", self.specifics)
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Usage
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+fn b() -> Result<(), OurError> {
+\end_layout
+
+\begin_layout Plain Layout
+
+    Err(OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+        prev: None,
+\end_layout
+
+\begin_layout Plain Layout
+
+        suberror: None,
+\end_layout
+
+\begin_layout Plain Layout
+
+        backtrace: Backtrace::new(),
+\end_layout
+
+\begin_layout Plain Layout
+
+        specifics: OurErrorKind::ContextInitError,
+\end_layout
+
+\begin_layout Plain Layout
+
+    })
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn c() -> Result<(), OurError> {
+\end_layout
+
+\begin_layout Plain Layout
+
+    b()
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn d() -> Result<(), OurError> {
+\end_layout
+
+\begin_layout Plain Layout
+
+    c()
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fn main() {
+\end_layout
+
+\begin_layout Plain Layout
+
+    let err = d().expect_err("");
+\end_layout
+
+\begin_layout Plain Layout
+
+    println!("{:?}", err);
+\end_layout
+
+\begin_layout Plain Layout
+
+    println!("");
+\end_layout
+
+\begin_layout Plain Layout
+
+    print!("{}", err);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Output
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\scriptsize}"
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+OurError { prev: None, suberror: None, backtrace: stack backtrace:
+\end_layout
+
+\begin_layout Plain Layout
+
+   0: playground::b::hb492ddeffb8ecdf5 (0x5555920907fc)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:104
+\end_layout
+
+\begin_layout Plain Layout
+
+   1: playground::c::hecdbc1eba162dc61 (0x55559209091c)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:110
+\end_layout
+
+\begin_layout Plain Layout
+
+   2: playground::d::h3a71fe06c27261b5 (0x55559209093c)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:114
+\end_layout
+
+\begin_layout Plain Layout
+
+   3: playground::main::he9c170a38e86927d (0x555592090963)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:118
+\end_layout
+
+\begin_layout Plain Layout
+
+   4: std::rt::lang_start::{{closure}}::h5926a8a1c07c80b4 (0x55559208f38f)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/91856ed52c58aa5ba66a015354d1cc69e9779bdf/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+   5: {{closure}} (0x5555920d7e92)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:49
+\end_layout
+
+\begin_layout Plain Layout
+
+      do_call<closure,i32>
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:297
+\end_layout
+
+\begin_layout Plain Layout
+
+   6: __rust_maybe_catch_panic (0x5555920d9e09)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libpanic_unwind/lib.rs:87
+\end_layout
+
+\begin_layout Plain Layout
+
+   7: try<i32,closure> (0x5555920d899c)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:276
+\end_layout
+
+\begin_layout Plain Layout
+
+      catch_unwind<closure,i32>
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panic.rs:388
+\end_layout
+
+\begin_layout Plain Layout
+
+      lang_start_internal
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:48
+\end_layout
+
+\begin_layout Plain Layout
+
+   8: std::rt::lang_start::h1cd01c07bf2e3690 (0x55559208f368)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/91856ed52c58aa5ba66a015354d1cc69e9779bdf/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+   9: main (0x555592091019)
+\end_layout
+
+\begin_layout Plain Layout
+
+  10: __libc_start_main (0x7fc41143bb96)
+\end_layout
+
+\begin_layout Plain Layout
+
+  11: _start (0x55559208f219)
+\end_layout
+
+\begin_layout Plain Layout
+
+  12: <unknown> (0x0), specifics: ContextInitError }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+DM context not initialized
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
