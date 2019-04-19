@@ -1062,6 +1062,15 @@ status collapsed
 
 \begin_layout Plain Layout
 
+use std::error::Error;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
 use backtrace::Backtrace;
 \end_layout
 
@@ -1072,6 +1081,21 @@ use backtrace::Backtrace;
 \begin_layout Plain Layout
 
 #[derive(Debug)]
+\end_layout
+
+\begin_layout Plain Layout
+
+// One can check equality of Kinds only if all their constituents can be
+\end_layout
+
+\begin_layout Plain Layout
+
+// checked for equality.
+\end_layout
+
+\begin_layout Plain Layout
+
+#[derive(Eq, PartialEq)]
 \end_layout
 
 \begin_layout Plain Layout
@@ -1181,7 +1205,8 @@ impl std::fmt::Display for OurErrorKind {
 
 \begin_layout Plain Layout
 
-            OurErrorKind::IoctlError { device_info } => {
+            OurErrorKind::IoctlError { device_info, ..
+ } => {
 \end_layout
 
 \begin_layout Plain Layout
@@ -1266,32 +1291,81 @@ impl std::fmt::Display for OurErrorKind {
 
 \begin_layout Plain Layout
 
+/// What relation the component error has to its parent
+\end_layout
+
+\begin_layout Plain Layout
+
+enum Suberror {
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// The error occurred before the parent error
+\end_layout
+
+\begin_layout Plain Layout
+
+    Previous(Box<std::error::Error>),
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// The error is further explained or extended by the parent
+\end_layout
+
+\begin_layout Plain Layout
+
+    Constituent(Box<std::error::Error>),
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#[derive(Debug)]
+\end_layout
+
+\begin_layout Plain Layout
+
 struct OurError {
 \end_layout
 
 \begin_layout Plain Layout
 
-    // The items below are mutually exclusive,
+    // The source of the error, which may be an error for
 \end_layout
 
 \begin_layout Plain Layout
 
-    // If one is Some, the other must be None.
+    // which this error is a further explanation, i.e., a
 \end_layout
 
 \begin_layout Plain Layout
 
-    // Both may be None.
+    // constituent error, or it may simply be an error that occurred
 \end_layout
 
 \begin_layout Plain Layout
 
-    prev: Option<Box<std::error::Error>>,
+    // previously, and which presumably caused the current code to
 \end_layout
 
 \begin_layout Plain Layout
 
-    suberror: Option<Box<std::error::Error>>,
+    // be run and encounter its own, novel error.
+\end_layout
+
+\begin_layout Plain Layout
+
+    source_impl: Option<Suberror>,
 \end_layout
 
 \begin_layout Plain Layout
@@ -1338,12 +1412,61 @@ impl OurError {
 
 \begin_layout Plain Layout
 
-    #[allow(dead_code)]
+    fn new(kind: OurErrorKind) -> OurError {
 \end_layout
 
 \begin_layout Plain Layout
 
-    fn our_backtrace(&self) -> Option<&Backtrace> {
+        OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+            backtrace: Backtrace::new(),
+\end_layout
+
+\begin_layout Plain Layout
+
+            source_impl: None,
+\end_layout
+
+\begin_layout Plain Layout
+
+            specifics: kind,
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// Return the optional backtrace associated with this error.
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Note that the function name is our_backtrace, so that it does not
+\end_layout
+
+\begin_layout Plain Layout
+
+    // conflict with a future possible backtrace function in the Error trait.
+\end_layout
+
+\begin_layout Plain Layout
+
+    pub fn our_backtrace(&self) -> Option<&Backtrace> {
 \end_layout
 
 \begin_layout Plain Layout
@@ -1362,17 +1485,27 @@ impl OurError {
 
 \begin_layout Plain Layout
 
-    #[allow(dead_code)]
+    /// Set extension as the extension on this error.
 \end_layout
 
 \begin_layout Plain Layout
 
-    fn suberror(&self) -> Option<&(std::error::Error + 'static)> {
+    /// Return the head of the chain, now subsequent.
 \end_layout
 
 \begin_layout Plain Layout
 
-        self.suberror.as_ref().map(|c| &**c)
+    pub fn set_extension(self, mut extension: OurError) -> OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+        extension.source_impl = Some(Suberror::Constituent(Box::new(self)));
+\end_layout
+
+\begin_layout Plain Layout
+
+        extension
 \end_layout
 
 \begin_layout Plain Layout
@@ -1386,17 +1519,155 @@ impl OurError {
 
 \begin_layout Plain Layout
 
-    #[allow(dead_code)]
+    /// Set subsequent as the subsequent error for this error.
 \end_layout
 
 \begin_layout Plain Layout
 
-    fn prev(&self) -> Option<&(std::error::Error + 'static)> {
+    /// Return the head of the chain, now subsequent.
 \end_layout
 
 \begin_layout Plain Layout
 
-        self.prev.as_ref().map(|c| &**c)
+    pub fn set_subsequent(self, mut subsequent: OurError) -> OurError {
+\end_layout
+
+\begin_layout Plain Layout
+
+        subsequent.source_impl = Some(Suberror::Previous(Box::new(self)));
+\end_layout
+
+\begin_layout Plain Layout
+
+        subsequent
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// Set constituent as the constituent of this error.
+\end_layout
+
+\begin_layout Plain Layout
+
+    pub fn set_constituent(&mut self, constituent: Box<std::error::Error>)
+ {
+\end_layout
+
+\begin_layout Plain Layout
+
+        self.source_impl = Some(Suberror::Constituent(constituent));
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// Set previous as the previous error.
+\end_layout
+
+\begin_layout Plain Layout
+
+    pub fn set_previous(&mut self, previous: Box<std::error::Error>) {
+\end_layout
+
+\begin_layout Plain Layout
+
+        self.source_impl = Some(Suberror::Previous(previous));
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// Obtain the immediate previous error, if there is one
+\end_layout
+
+\begin_layout Plain Layout
+
+    pub fn previous(&self) -> Option<&(std::error::Error + 'static)> {
+\end_layout
+
+\begin_layout Plain Layout
+
+        match self.source_impl.as_ref() {
+\end_layout
+
+\begin_layout Plain Layout
+
+            Some(Suberror::Previous(c)) => Some(&**c),
+\end_layout
+
+\begin_layout Plain Layout
+
+            _ => None,
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+    }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    /// Obtain the immediate constituent error, if there is one
+\end_layout
+
+\begin_layout Plain Layout
+
+    pub fn constituent(&self) -> Option<&(std::error::Error + 'static)>
+ {
+\end_layout
+
+\begin_layout Plain Layout
+
+        match self.source_impl.as_ref() {
+\end_layout
+
+\begin_layout Plain Layout
+
+            Some(Suberror::Constituent(c)) => Some(&**c),
+\end_layout
+
+\begin_layout Plain Layout
+
+            _ => None,
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
 \end_layout
 
 \begin_layout Plain Layout
@@ -1425,22 +1696,22 @@ impl std::error::Error for OurError {
 
 \begin_layout Plain Layout
 
-        self.prev
+        self.source_impl.as_ref().map(|c| match c {
 \end_layout
 
 \begin_layout Plain Layout
 
-            .as_ref()
+            Suberror::Previous(c) => &**c,
 \end_layout
 
 \begin_layout Plain Layout
 
-            .map(|c| &**c)
+            Suberror::Constituent(c) => &**c,
 \end_layout
 
 \begin_layout Plain Layout
 
-            .or_else(|| self.suberror.as_ref().map(|c| &**c))
+        })
 \end_layout
 
 \begin_layout Plain Layout
@@ -1469,22 +1740,22 @@ impl std::error::Error for OurError {
 
 \begin_layout Plain Layout
 
-        self.prev
+        self.source_impl.as_ref().map(|c| match c {
 \end_layout
 
 \begin_layout Plain Layout
 
-            .as_ref()
+            Suberror::Previous(c) => &**c,
 \end_layout
 
 \begin_layout Plain Layout
 
-            .map(|c| &**c)
+            Suberror::Constituent(c) => &**c,
 \end_layout
 
 \begin_layout Plain Layout
 
-            .or_else(|| self.suberror.as_ref().map(|c| &**c))
+        })
 \end_layout
 
 \begin_layout Plain Layout
@@ -1499,6 +1770,16 @@ impl std::error::Error for OurError {
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
+// Display only the message associated w/ the specifics.
+\end_layout
+
+\begin_layout Plain Layout
+
+// Consider the rest to be management baggage.
 \end_layout
 
 \begin_layout Plain Layout
@@ -1547,32 +1828,22 @@ fn b() -> Result<(), OurError> {
 
 \begin_layout Plain Layout
 
-    Err(OurError {
+    let err = std::io::Error::new(std::io::ErrorKind::Other, "oh no!");
 \end_layout
 
 \begin_layout Plain Layout
 
-        prev: None,
+    let mut ours = OurError::new(OurErrorKind::ContextInitError);
 \end_layout
 
 \begin_layout Plain Layout
 
-        suberror: None,
+    ours.set_constituent(Box::new(err));
 \end_layout
 
 \begin_layout Plain Layout
 
-        backtrace: Backtrace::new(),
-\end_layout
-
-\begin_layout Plain Layout
-
-        specifics: OurErrorKind::ContextInitError,
-\end_layout
-
-\begin_layout Plain Layout
-
-    })
+    Err(ours)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1610,7 +1881,32 @@ fn d() -> Result<(), OurError> {
 
 \begin_layout Plain Layout
 
-    c()
+    Err(c()
+\end_layout
+
+\begin_layout Plain Layout
+
+        .expect_err("")
+\end_layout
+
+\begin_layout Plain Layout
+
+        .set_extension(OurError::new(OurErrorKind::InvalidArgument {
+\end_layout
+
+\begin_layout Plain Layout
+
+            description: "32".into(),
+\end_layout
+
+\begin_layout Plain Layout
+
+        }))
+\end_layout
+
+\begin_layout Plain Layout
+
+        .set_subsequent(OurError::new(OurErrorKind::IoctlResultTooLarge)))
 \end_layout
 
 \begin_layout Plain Layout
@@ -1630,6 +1926,191 @@ fn main() {
 \begin_layout Plain Layout
 
     let err = d().expect_err("");
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // We can downcast the source to OurError, since we know it is.
+\end_layout
+
+\begin_layout Plain Layout
+
+    assert_eq!(
+\end_layout
+
+\begin_layout Plain Layout
+
+        err.source()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+            .downcast_ref::<OurError>()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+            .specifics,
+\end_layout
+
+\begin_layout Plain Layout
+
+        OurErrorKind::InvalidArgument {
+\end_layout
+
+\begin_layout Plain Layout
+
+            description: "32".into()
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+    );
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Downcasting to std::io::Error will result in None
+\end_layout
+
+\begin_layout Plain Layout
+
+    assert!(err
+\end_layout
+
+\begin_layout Plain Layout
+
+        .source()
+\end_layout
+
+\begin_layout Plain Layout
+
+        .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+        .downcast_ref::<std::io::Error>()
+\end_layout
+
+\begin_layout Plain Layout
+
+        .is_none());
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // The source is a previous error
+\end_layout
+
+\begin_layout Plain Layout
+
+    assert_eq!(
+\end_layout
+
+\begin_layout Plain Layout
+
+        err.previous()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+            .downcast_ref::<OurError>()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+            .specifics,
+\end_layout
+
+\begin_layout Plain Layout
+
+        err.source()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+            .downcast_ref::<OurError>()
+\end_layout
+
+\begin_layout Plain Layout
+
+            .expect("")
+\end_layout
+
+\begin_layout Plain Layout
+
+            .specifics
+\end_layout
+
+\begin_layout Plain Layout
+
+    );
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Since the source is a previous error, it can not be a constituent
+\end_layout
+
+\begin_layout Plain Layout
+
+    // error.
+\end_layout
+
+\begin_layout Plain Layout
+
+    assert!(err.constituent().is_none());
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -1669,52 +2150,64 @@ status collapsed
 
 \begin_layout Plain Layout
 
-OurError { prev: None, suberror: None, backtrace: stack backtrace:
+OurError { source_impl: Some(Previous(OurError { source_impl: Some(Constituent(O
+urError { source_impl: Some(Constituent(Custom { kind: Other, error: StringError
+("oh no!") })), backtrace: stack backtrace:
 \end_layout
 
 \begin_layout Plain Layout
 
-   0: playground::b::hb492ddeffb8ecdf5 (0x5555920907fc)
+   0: playground::OurError::new::hc0eb0b7122939ed8 (0x559e0b856a79)
 \end_layout
 
 \begin_layout Plain Layout
 
-             at src/main.rs:104
+             at src/main.rs:74
 \end_layout
 
 \begin_layout Plain Layout
 
-   1: playground::c::hecdbc1eba162dc61 (0x55559209091c)
+   1: playground::b::h6d81dc4e9d036681 (0x559e0b8572d8)
 \end_layout
 
 \begin_layout Plain Layout
 
-             at src/main.rs:110
+             at src/main.rs:156
 \end_layout
 
 \begin_layout Plain Layout
 
-   2: playground::d::h3a71fe06c27261b5 (0x55559209093c)
+   2: playground::c::h9f865f3761595b15 (0x559e0b85740c)
 \end_layout
 
 \begin_layout Plain Layout
 
-             at src/main.rs:114
+             at src/main.rs:162
 \end_layout
 
 \begin_layout Plain Layout
 
-   3: playground::main::he9c170a38e86927d (0x555592090963)
+   3: playground::d::ha8860ebbf20b9213 (0x559e0b857453)
 \end_layout
 
 \begin_layout Plain Layout
 
-             at src/main.rs:118
+             at src/main.rs:166
 \end_layout
 
 \begin_layout Plain Layout
 
-   4: std::rt::lang_start::{{closure}}::h5926a8a1c07c80b4 (0x55559208f38f)
+   4: playground::main::he9c170a38e86927d (0x559e0b857623)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:175
+\end_layout
+
+\begin_layout Plain Layout
+
+   5: std::rt::lang_start::{{closure}}::h5926a8a1c07c80b4 (0x559e0b854dbf)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1725,7 +2218,7 @@ OurError { prev: None, suberror: None, backtrace: stack backtrace:
 
 \begin_layout Plain Layout
 
-   5: {{closure}} (0x5555920d7e92)
+   6: {{closure}} (0x559e0b89fc52)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1745,7 +2238,7 @@ OurError { prev: None, suberror: None, backtrace: stack backtrace:
 
 \begin_layout Plain Layout
 
-   6: __rust_maybe_catch_panic (0x5555920d9e09)
+   7: __rust_maybe_catch_panic (0x559e0b8a1d19)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1755,7 +2248,7 @@ OurError { prev: None, suberror: None, backtrace: stack backtrace:
 
 \begin_layout Plain Layout
 
-   7: try<i32,closure> (0x5555920d899c)
+   8: try<i32,closure> (0x559e0b8a075c)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1785,7 +2278,7 @@ OurError { prev: None, suberror: None, backtrace: stack backtrace:
 
 \begin_layout Plain Layout
 
-   8: std::rt::lang_start::h1cd01c07bf2e3690 (0x55559208f368)
+   9: std::rt::lang_start::h1cd01c07bf2e3690 (0x559e0b854d98)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1796,22 +2289,288 @@ OurError { prev: None, suberror: None, backtrace: stack backtrace:
 
 \begin_layout Plain Layout
 
-   9: main (0x555592091019)
+  10: main (0x559e0b858699)
 \end_layout
 
 \begin_layout Plain Layout
 
-  10: __libc_start_main (0x7fc41143bb96)
+  11: __libc_start_main (0x7f2206677b96)
 \end_layout
 
 \begin_layout Plain Layout
 
-  11: _start (0x55559208f219)
+  12: _start (0x559e0b8545c9)
 \end_layout
 
 \begin_layout Plain Layout
 
-  12: <unknown> (0x0), specifics: ContextInitError }
+  13: <unknown> (0x0), specifics: ContextInitError })), backtrace: stack
+ backtrace:
+\end_layout
+
+\begin_layout Plain Layout
+
+   0: playground::OurError::new::hc0eb0b7122939ed8 (0x559e0b856a79)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:74
+\end_layout
+
+\begin_layout Plain Layout
+
+   1: playground::d::ha8860ebbf20b9213 (0x559e0b8574f8)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:168
+\end_layout
+
+\begin_layout Plain Layout
+
+   2: playground::main::he9c170a38e86927d (0x559e0b857623)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:175
+\end_layout
+
+\begin_layout Plain Layout
+
+   3: std::rt::lang_start::{{closure}}::h5926a8a1c07c80b4 (0x559e0b854dbf)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/91856ed52c58aa5ba66a015354d1cc69e9779bdf/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+   4: {{closure}} (0x559e0b89fc52)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:49
+\end_layout
+
+\begin_layout Plain Layout
+
+      do_call<closure,i32>
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:297
+\end_layout
+
+\begin_layout Plain Layout
+
+   5: __rust_maybe_catch_panic (0x559e0b8a1d19)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libpanic_unwind/lib.rs:87
+\end_layout
+
+\begin_layout Plain Layout
+
+   6: try<i32,closure> (0x559e0b8a075c)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:276
+\end_layout
+
+\begin_layout Plain Layout
+
+      catch_unwind<closure,i32>
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panic.rs:388
+\end_layout
+
+\begin_layout Plain Layout
+
+      lang_start_internal
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:48
+\end_layout
+
+\begin_layout Plain Layout
+
+   7: std::rt::lang_start::h1cd01c07bf2e3690 (0x559e0b854d98)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/91856ed52c58aa5ba66a015354d1cc69e9779bdf/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+   8: main (0x559e0b858699)
+\end_layout
+
+\begin_layout Plain Layout
+
+   9: __libc_start_main (0x7f2206677b96)
+\end_layout
+
+\begin_layout Plain Layout
+
+  10: _start (0x559e0b8545c9)
+\end_layout
+
+\begin_layout Plain Layout
+
+  11: <unknown> (0x0), specifics: InvalidArgument { description: "32" }
+ })), backtrace: stack backtrace:
+\end_layout
+
+\begin_layout Plain Layout
+
+   0: playground::OurError::new::hc0eb0b7122939ed8 (0x559e0b856a79)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:74
+\end_layout
+
+\begin_layout Plain Layout
+
+   1: playground::d::ha8860ebbf20b9213 (0x559e0b85754f)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:171
+\end_layout
+
+\begin_layout Plain Layout
+
+   2: playground::main::he9c170a38e86927d (0x559e0b857623)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/main.rs:175
+\end_layout
+
+\begin_layout Plain Layout
+
+   3: std::rt::lang_start::{{closure}}::h5926a8a1c07c80b4 (0x559e0b854dbf)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/91856ed52c58aa5ba66a015354d1cc69e9779bdf/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+   4: {{closure}} (0x559e0b89fc52)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:49
+\end_layout
+
+\begin_layout Plain Layout
+
+      do_call<closure,i32>
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:297
+\end_layout
+
+\begin_layout Plain Layout
+
+   5: __rust_maybe_catch_panic (0x559e0b8a1d19)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libpanic_unwind/lib.rs:87
+\end_layout
+
+\begin_layout Plain Layout
+
+   6: try<i32,closure> (0x559e0b8a075c)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panicking.rs:276
+\end_layout
+
+\begin_layout Plain Layout
+
+      catch_unwind<closure,i32>
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/panic.rs:388
+\end_layout
+
+\begin_layout Plain Layout
+
+      lang_start_internal
+\end_layout
+
+\begin_layout Plain Layout
+
+             at src/libstd/rt.rs:48
+\end_layout
+
+\begin_layout Plain Layout
+
+   7: std::rt::lang_start::h1cd01c07bf2e3690 (0x559e0b854d98)
+\end_layout
+
+\begin_layout Plain Layout
+
+             at /rustc/91856ed52c58aa5ba66a015354d1cc69e9779bdf/src/libstd/rt.rs:
+64
+\end_layout
+
+\begin_layout Plain Layout
+
+   8: main (0x559e0b858699)
+\end_layout
+
+\begin_layout Plain Layout
+
+   9: __libc_start_main (0x7f2206677b96)
+\end_layout
+
+\begin_layout Plain Layout
+
+  10: _start (0x559e0b8545c9)
+\end_layout
+
+\begin_layout Plain Layout
+
+  11: <unknown> (0x0), specifics: IoctlResultTooLarge }
 \end_layout
 
 \begin_layout Plain Layout
@@ -1820,7 +2579,7 @@ OurError { prev: None, suberror: None, backtrace: stack backtrace:
 
 \begin_layout Plain Layout
 
-DM context not initialized
+ioctl result too large for maximum buffer size 4294967295 bytes
 \end_layout
 
 \end_inset
