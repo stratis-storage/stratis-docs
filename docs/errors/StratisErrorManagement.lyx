@@ -79,8 +79,22 @@
 Error-Management for Stratis
 \end_layout
 
-\begin_layout Part*
+\begin_layout Part
 Desired Properties
+\end_layout
+
+\begin_layout Standard
+In the following document, we discuss general properties that ought to hold
+ for 
+\emph on
+all
+\emph default
+ error types that are defined.
+ This might be too strong a requirement.
+ It has been pointed out that for the devicemapper library it is really
+ desirable that its errors that might be returned should implement the standard
+ library Error type, but that this is less necessary for stratisd, since
+ stratisd is not a library.
 \end_layout
 
 \begin_layout Section
@@ -1024,10 +1038,31 @@ Ability to Programmatically Access any Error in the Error Chain
 We want to be able to traverse the error-chain, finding errors further in
  the chain and downcasting them to their particular type.
  This is the most difficult problem.
- 
+ At this point, it is not possible to dynamically check the type of a particular
+ error.
+\end_layout
+
+\begin_layout Part
+News
 \end_layout
 
 \begin_layout Section
+type_id function
+\end_layout
+
+\begin_layout Standard
+As of compiler version 1.34.0 the Error traits requires that every implementor
+ implement the method type_id() and provides a default implementation for
+ the method.
+ There is no action that needs to be taken about this, however, since our
+ lowest supported compiler is 1.31, it is also impossible to take advantage
+ of it.
+ However, the is() and the downcast_ref() and downcast_mut() methods have
+ been available since early on, so it is still possible to dynamically check
+ the type of an error in the chain.
+\end_layout
+
+\begin_layout Part
 The Example
 \end_layout
 
