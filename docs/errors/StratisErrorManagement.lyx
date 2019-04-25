@@ -1125,6 +1125,22 @@ The Suberror constructors each take a box of an error type that must also
 \end_layout
 
 \begin_layout Part
+Usage
+\end_layout
+
+\begin_layout Section
+Implementing Chains
+\end_layout
+
+\begin_layout Standard
+The way to do this is to use an argumentless closure to wrap some part of
+ the function body, the part that returns the errors, and then map the error
+ result of that invoked closure to extend the returned error as necessary.
+ Any other approach seems to require more aggressive refactoring of the
+ body, and each refactoring has to be specific to that case.
+\end_layout
+
+\begin_layout Part
 News
 \end_layout
 
