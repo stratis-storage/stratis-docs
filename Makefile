@@ -10,6 +10,7 @@ ifdef LYX
 endif
 	cd ./docs/design ; $(MAKE) StratisSoftwareDesign.pdf; cd -
 	cd ./docs/dbus; $(MAKE) DBusAPIReference.pdf; cd -
+	cd ./docs/errors; $(MAKE) StratisErrorManagement.lyx; cd -
 	cd ./docs/style; $(MAKE) StratisStyleGuidelines.pdf; cd -
 
 website-build: pdfs
