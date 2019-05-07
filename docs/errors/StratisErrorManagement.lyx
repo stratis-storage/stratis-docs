@@ -1140,6 +1140,17 @@ The way to do this is to use an argumentless closure to wrap some part of
  body, and each refactoring has to be specific to that case.
 \end_layout
 
+\begin_layout Section
+Naming Error Types
+\end_layout
+
+\begin_layout Standard
+It seems likely that it will be useful to give individual error types distinct
+ names, rather than the generic type Error and distinguish by the module
+ name.
+ Using the module name will make encapsulation virtually impossible.
+\end_layout
+
 \begin_layout Part
 News
 \end_layout
