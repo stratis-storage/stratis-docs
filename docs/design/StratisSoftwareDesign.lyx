@@ -768,6 +768,70 @@ stratisd implements the D-Bus interface, and manages and monitors Stratis
  or blockdevs are present in the system.
 \end_layout
 
+\begin_layout Standard
+stratisd includes a simulator engine.
+ The simulator engine is purely computational and does not affect the environmen
+t, although it does communicate over the D-Bus.
+\end_layout
+
+\begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:stratis"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the basic Stratis architecture.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename stratis.svg
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Stratis Architecture
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:stratis"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 User Experience
 \end_layout
