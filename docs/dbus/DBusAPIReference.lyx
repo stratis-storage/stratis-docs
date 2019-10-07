@@ -547,7 +547,7 @@ Returns: Signature: (bao)qs.
 \begin_deeper
 \begin_layout Enumerate
 True if any cache devices were added, otherwise false.
- Signature: s.
+ Signature: b.
 \end_layout
 
 \begin_layout Enumerate
