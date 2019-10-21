@@ -1135,8 +1135,7 @@ Re-encryption will not be supported initially; this functionality will be
 \end_layout
 
 \begin_layout Itemize
-Blockdevs in the cache tier will not be encrypted.
- If a pool was encrypted on creation, then all blockdevs added to the data
+If a pool was encrypted on creation, then all blockdevs added to the data
  tier will be automatically encrypted with a randomly generated MEK and
  the pool's designated KEK.
 \end_layout
@@ -1144,8 +1143,6 @@ Blockdevs in the cache tier will not be encrypted.
 \begin_layout Itemize
 On any encrypted blockdev, the Stratis metadata will itself be encrypted;
  it will be inaccessible until the encrypted blockdev is opened.
- Any Stratis metadata on a blockdev in the cache tier will be unencrypted
- since cache blockdevs will never be encrypted.
 \end_layout
 
 \begin_layout Itemize
@@ -1153,6 +1150,12 @@ For encrypted blockdevs, the minimum blockdev size will apply to the opened
  device.
  Thus the entire size of the encrypted blockdev will be required to be more
  than 1 GiB.
+\end_layout
+
+\begin_layout Itemize
+The use of a cache tier and of encryption will be mutually exclusive.
+ If a pool is encrypted, an attempt to add a blockdev to the cache tier
+ will be rejected.
 \end_layout
 
 \begin_layout Standard
