@@ -108,7 +108,7 @@ status collapsed
 
 \end_inset
 
-Stratisd Version 1.0.0
+Stratisd Version 1.1.0
 \end_layout
 
 \begin_layout Author
@@ -116,7 +116,7 @@ Anne Mulhern
 \end_layout
 
 \begin_layout Date
-Version 0.9.0
+Version 0.10.0
 \begin_inset ERT
 status collapsed
 
@@ -131,7 +131,7 @@ status collapsed
 
 \end_inset
 
-Last modified: 09/27/2018
+Last modified: 10/04/2019
 \end_layout
 
 \begin_layout Standard
@@ -366,6 +366,18 @@ literal "false"
  pair of the return code and message.
 \end_layout
 
+\begin_layout Standard
+It is intended that all operations that can be requested via the D-Bus API
+ be idempotent.
+ By this is meant that if an operation is requested repeatedly, and there
+ are no intervening actions, then the operation should succeed every time,
+ or it should fail every time.
+ Since the return values may encode information about actions taken these
+ may differ between different invocations.
+ However if an error is returned that should always be the same error.
+ Lack of idempotency as defined here constitutes a bug.
+\end_layout
+
 \begin_layout Subsection
 Manager interface
 \end_layout
@@ -400,7 +412,7 @@ denominator the denominator of the fraction that determines the frequency
 
 \end_deeper
 \begin_layout Description
-Returns: nothing
+Returns: Signature: qs.
 \end_layout
 
 \end_deeper
@@ -433,11 +445,33 @@ devices device nodes of devices to form the pool.
 
 \end_deeper
 \begin_layout Description
-Returns: the object path of the constructed pool and the object paths of
- the blockdevs added to the pool.
- Signature: (oa(o))qs.
+Returns: Signature: (b(oao))qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if a pool was created, otherwise false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The result of the creation action, default values if no pool was created.
+ Signature: (oao).
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+The object path of the created pool.
+ Signature: o.
+\end_layout
+
+\begin_layout Enumerate
+The object paths of all the block devices in the pool.
+ Signature: ao.
+\end_layout
+
+\end_deeper
+\end_deeper
 \end_deeper
 \begin_layout Description
 DestroyPool This method destroys the specified pool.
@@ -456,19 +490,25 @@ pool_object_path the object path of the pool to destroy.
 
 \end_deeper
 \begin_layout Description
-Returns: true if it was necessary to take an action, otherwise false.
- If the pool has already been destroyed, no action is required.
- Signature: bqs.
+Returns: Signature: (bs)qs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if the pool was destroyed, otherwise false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The UUID of the pool destroyed, or a default value if no action was taken.
+ Signature: s.
 \end_layout
 
 \end_deeper
-\begin_layout Subsubsection*
-Properties
-\end_layout
-
+\end_deeper
 \begin_layout Description
 Version The current stratisd version.
- Signature: s.
+ Signature: sqs.
 \end_layout
 
 \begin_layout Subsection
@@ -484,8 +524,8 @@ Methods
 \end_layout
 
 \begin_layout Description
-AddCacheDevs This method allows additional cache devices to be added to the pool after
- it is created.
+AddCacheDevs This method allows additional cache devices to be added to
+ the pool after it is created.
 \end_layout
 
 \begin_deeper
@@ -493,6 +533,7 @@ AddCacheDevs This method allows additional cache devices to be added to the pool
 Arguments:
 \end_layout
 
+\begin_deeper
 \begin_layout Description
 devices this argument has the same meaning as the device argument of CreatePool.
  Signature: as.
@@ -500,13 +541,25 @@ devices this argument has the same meaning as the device argument of CreatePool.
 
 \end_deeper
 \begin_layout Description
-Returns: a list of object paths of the blockdevs added to the pool.
- Signature: a(o)qs.
+Returns: Signature: (bao)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if any cache devices were added, otherwise false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The object paths of the newly added cache devices.
+ Signature: ao.
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Description
-AddDataDevs This method allows additional data devices to be added to the pool after
- it is created.
+AddDataDevs This method allows additional data devices to be added to the
+ pool after it is created.
 \end_layout
 
 \begin_deeper
@@ -514,6 +567,7 @@ AddDataDevs This method allows additional data devices to be added to the pool a
 Arguments:
 \end_layout
 
+\begin_deeper
 \begin_layout Description
 devices this argument has the same meaning as the device argument of CreatePool.
  Signature: as.
@@ -521,10 +575,21 @@ devices this argument has the same meaning as the device argument of CreatePool.
 
 \end_deeper
 \begin_layout Description
-Returns: a list of object paths of the blockdevs added to the pool.
- Signature: a(o)qs.
+Returns: Signature: (bao)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if any data devices were added, otherwise false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The object paths of the newly added data devices.
+ Signature: ao.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Description
 CreateFilesystems This method allows creating multiple filesystems, specified
@@ -545,10 +610,21 @@ specs The specification for each filesystem to be created, currently just
 
 \end_deeper
 \begin_layout Description
-Returns a list of pairs of object paths and names of filesystems created.
- Signature: a(os)qs.
+Returns Signature: (ba(os))qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if any filesystem was added, otherwise false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+An array of object path/name pairs for each filesystem created.
+ Signature: a(os).
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Description
 DestroyFilesystems This method allows destroying multiple filesystems.
@@ -567,10 +643,21 @@ filesystems the object paths of the filesystems to be destroyed.
 
 \end_deeper
 \begin_layout Description
-Returns: the names of the filesystems destroyed.
- Signature: asqs.
+Returns: Signature: (bas)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if any filesystems were destroyed, otherwise False.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+An array of the UUIDs of the filesystems destroyed.
+ Signature: as.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Description
 SetName This allows setting the name of the pool.
@@ -589,10 +676,23 @@ new_name The name to set.
 
 \end_deeper
 \begin_layout Description
-Returns: true if the name was actually changed, otherwise false.
- Signature: bqs.
+Returns: Signature: (bs)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if an action was taken, otherwise false.
+ If the new name is the same as the old name, then no action is considered
+ to have been taken.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The UUID of the filesystem or a default UUID if no change was made.
+ Signature: s.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Description
 SnapshotFilesystem This method allows a snapshot to be created from an existing
@@ -617,10 +717,21 @@ snapshot_name the name of the newly created snapshot.
 
 \end_deeper
 \begin_layout Description
-Returns: the object path of the newly created snapshot.
- Signature: oqs.
+Returns: Signature: (bo)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if a new snapshot was created, otherwise false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The object path of the newly created snapshot.
+ Signature: o.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Subsubsection*
 Properties
@@ -701,10 +812,23 @@ name The name to set.
 
 \end_deeper
 \begin_layout Description
-Returns: true if the name was actually changed, otherwise false.
- Signature: bqs.
+Returns: Signature: (bs)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if an action was taken, otherwise false.
+ If the new name is the same as the old name, then no action is considered
+ to have been taken.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The UUID of the filesystem, or a default UUID if no change was made.
+ Signature: s.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Subsubsection*
 Properties
@@ -763,10 +887,23 @@ id The free-form information to set.
 
 \end_deeper
 \begin_layout Description
-Returns: true if the Id was actually changed, otherwise false.
- Signature: bqs.
+Returns: Signature: (bs)qs.
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+True if an action was taken, otherwise false.
+ If the new information is the same as the old information, then no action
+ is considered to have been taken.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The UUID of the blockdev, or a default UUID if no change was made.
+ Signature: s.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Subsubsection*
 Properties
