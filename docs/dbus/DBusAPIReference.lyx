@@ -736,15 +736,6 @@ Name The name of the pool.
 \end_layout
 
 \begin_layout Description
-TotalPhysicalSize The total physical size of the pool in sectors.
- These sectors may be used by the pool for many purposes, so there are always
- fewer sectors than this that can be used to store user data.
- This is the largest physical size that can be meaningfully associated with
- a pool.
- Signature: s.
-\end_layout
-
-\begin_layout Description
 Uuid The UUID of the pool.
  This property is constant.
  Signature: s.
@@ -919,11 +910,6 @@ InitializationTime
 \end_layout
 
 \begin_layout Description
-TotalPhysicalSize The total physical size of the blockdev in sectors.
- Signature: s.
-\end_layout
-
-\begin_layout Description
 Pool The object path of the parent pool.
  This property is constant.
  Signature: o.
@@ -947,5 +933,97 @@ Uuid The UUID of the blockdev.
  Signature: s.
 \end_layout
 
+\begin_layout Subsection
+FetchProperties interface
+\end_layout
+
+\begin_layout Standard
+The FetchProperties interface is a generic interface supported by filesystems,
+ pools, and blockdevs.
+ It supplies two methods, which have the same return signature: a{s(bv)}.
+ The return value is a table mapping string keys to properties of a filesystem,
+ pool, or blockdev.
+ Each value is a tuple of a boolean and a variant.
+ The boolean indicates whether the second element of the pair represents
+ the value requested or not.
+ If the first element of the tuple is false, the second element is a string
+ containing an error message indicating the cause of the failure to obtain
+ the value.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+GetAllProperties This method allows getting all properties of the particular
+ pool, filesystem or blockdev.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments: None.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+GetProperties This method allows getting properties specified by a list
+ of keys passed as an argument.
+ If a key is unrecognized, there is no corresponding entry in the returned
+ table.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+properties: The list of string keys specifying the names of the properties
+ requested.
+ Signature: as.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+Pools, filesystem, and blockdevs each support a different set of properties.
+ The properties supported for each are:
+\end_layout
+
+\begin_layout Description
+blockdev
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+TotalPhysicalSize The total physical size of the blockdev in bytes.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+filesystem
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Used The bytes used by this filesystem.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+pool
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+TotalPhysicalSize The total physical size of the pool in bytes.
+ Signature: s.
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
