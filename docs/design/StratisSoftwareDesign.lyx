@@ -6407,6 +6407,43 @@ Alert the user of critical state, run maintenance operations
 
 \end_layout
 
+\begin_layout Subsection
+Licensing
+\end_layout
+
+\begin_layout Standard
+Currently, stratisd and all Rust libraries included in the stratis-storage
+ organization meant for stratisd are licensed as MPLv2.
+ This conclusion was reached after careful consideration of compatibility
+ with other licenses in the open source ecosystem.
+ MPLv2 allows some major benefits:
+\end_layout
+
+\begin_layout Enumerate
+It is compatible with more permissive licenses in the open source ecosystem
+ such as BSD and MIT licenses.
+ Given the prevalence of more permissive licenses in the Rust ecosystem,
+ this is an important consideration.
+\end_layout
+
+\begin_layout Enumerate
+It is compatible with GPL code.
+ This permits stratisd to incorporate GPL code and become effectively GPL
+ without ever changing the MPLv2 license.
+\end_layout
+
+\begin_layout Enumerate
+If GPL code is incompatible with the license of a dependency added later,
+ MPLv2 allows the removal of GPL code and migration of the GPL code into
+ a separate service to permit the addition of the conflicting dependency.
+ This can all be done without relicensing.
+\end_layout
+
+\begin_layout Standard
+After evaluating the options, the MPLv2 seemed to be the most flexible license
+ that still fulfilled the requirements for this project.
+\end_layout
+
 \begin_layout Part
 Development Plan
 \end_layout
