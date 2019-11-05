@@ -741,35 +741,9 @@ TotalPhysicalSize The total physical size of the pool in sectors.
 \end_layout
 
 \begin_layout Description
-TotalPhysicalUsed All the sectors in use by the pool for any purpose whatsoever.
- These purposes include storage of user data as well as recording of pool
- metadata and other pool administration.
- This value may never exceed TotalPhysicalSize.
- Signature: s.
-\end_layout
-
-\begin_layout Description
 Uuid The UUID of the pool.
  This property is constant.
  Signature: s.
-\end_layout
-
-\begin_layout Description
-State The state of the pool.
- Possible values are documented in the design doc.
- Signature: q.
-\end_layout
-
-\begin_layout Description
-ExtendState The extend state of the pool.
- Possible values are documented in the design doc.
- Signature: q.
-\end_layout
-
-\begin_layout Description
-SpaceState The space state of the pool.
- Possible values are documented in the design doc.
- Signature: q.
 \end_layout
 
 \begin_layout Subsection
@@ -949,53 +923,6 @@ TotalPhysicalSize The total physical size of the blockdev in sectors.
 Pool The object path of the parent pool.
  This property is constant.
  Signature: o.
-\end_layout
-
-\begin_layout Description
-State The current state of the blockdev.
- These are defined in section 10.2.1 (
-\begin_inset Quotes eld
-\end_inset
-
-Layer 0: Blockdevs
-\begin_inset Quotes erd
-\end_inset
-
-) of the Design Doc.
- Examples include: 
-\begin_inset Quotes eld
-\end_inset
-
-Missing
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-In-use
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-Not-in-use
-\begin_inset Quotes erd
-\end_inset
-
-, and 
-\begin_inset Quotes eld
-\end_inset
-
-Bad
-\begin_inset Quotes erd
-\end_inset
-
-.
- Signature: q.
 \end_layout
 
 \begin_layout Description
