@@ -192,21 +192,10 @@ This document describes the D-Bus API for the Stratis daemon.
  The D-Bus API is a thin layer which receives messages on the D-Bus, processes
  them, transmits them to the Stratis engine, receives the results from the
  engine, and transmits a response on the D-Bus.
- The engine can also generate D-Bus signals, when important properties change
- in value.
 \end_layout
 
 \begin_layout Section
-This API is 
-\emph on
-NOT STABLE
-\end_layout
-
-\begin_layout Standard
-While this document covers the API as implemented in Stratis 1.0, the Stratis
- Team has not yet declared this a stable API.
- Other software should not rely on this API until the Stratis Team updates
- this document and declares the API stable and supported.
+Overview
 \end_layout
 
 \begin_layout Subsection
