@@ -990,7 +990,15 @@ Security Policy
 \end_layout
 
 \begin_layout Standard
-Stratis D-Bus methods require root permissions.
+Most stratisd D-Bus methods require root permissions.
+ However, listing operations do not; these can be done by an unprivileged
+ user.
+ The default permissions are specified in the policy file, stratisd.conf,
+ included in the stratisd distribution.
+ These defaults permit all actions by root users but restrict unprivileged
+ users to read-only actions.
+ Systems administrators can adjust permissions by editing the stratisd D-Bus
+ policy files.
 \end_layout
 
 \begin_layout Subsubsection
