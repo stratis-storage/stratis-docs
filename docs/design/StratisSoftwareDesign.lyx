@@ -990,7 +990,79 @@ Security Policy
 \end_layout
 
 \begin_layout Standard
-Stratis D-Bus methods require root permissions.
+Most stratisd D-Bus methods require root permissions.
+ However, listing operations do not; this can be done as an unprivileged
+ user.
+ These permissions can be changed in the policy file included in the repo,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{stratisd.conf}
+\end_layout
+
+\end_inset
+
+, according to the DBus documentation.
+ On Red Hat and Fedora Linux, this file will be installed by the stratisd
+ package under 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{/usr/share/dbus-1/system.d/stratisd.conf}
+\end_layout
+
+\end_inset
+
+.
+ The defaults that are included in the file in the stratisd repository on
+ Github permit all actions by root users and only allow certain read operations
+ over the DBus for listing purposes, denying all other actions for unprivileged
+ users.
+ To remove listing permissions for unprivileged users, please remove all
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{<allow>}
+\end_layout
+
+\end_inset
+
+ tags inside of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{<policy context=
+\begin_inset Quotes erd
+\end_inset
+
+default
+\begin_inset Quotes erd
+\end_inset
+
+>}
+\end_layout
+
+\end_inset
+
+ tag.
 \end_layout
 
 \begin_layout Subsubsection
