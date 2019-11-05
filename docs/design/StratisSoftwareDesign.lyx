@@ -996,7 +996,7 @@ Most stratisd D-Bus methods require root permissions.
  These permissions can be changed in the policy file included in the repo,
  
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
