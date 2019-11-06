@@ -991,29 +991,14 @@ Security Policy
 
 \begin_layout Standard
 Most stratisd D-Bus methods require root permissions.
- However, listing operations do not; this can be done by an unprivileged
+ However, listing operations do not; these can be done by an unprivileged
  user.
- These permissions can be changed in the policy file included in the repo,
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-texttt{stratisd.conf}
-\end_layout
-
-\end_inset
-
-, according to the D-Bus documentation.
- The defaults that are included in the file in the stratisd repository on
- Github permit all actions by root users and only allow certain read operations
- over the D-Bus for listing purposes, denying all other actions for unprivileged
- users.
- To remove listing permissions for unprivileged users, systems administrators
- can choose to restrict permissions further using the D-Bus policy files.
+ The default permissions are specified in the policy file, stratisd.conf,
+ included in the stratisd distribution.
+ These defaults permit all actions by root users but restrict unprivileged
+ users to read-only actions.
+ Systems administrators can adjust permissions by editing the stratisd D-Bus
+ policy files.
 \end_layout
 
 \begin_layout Subsubsection
