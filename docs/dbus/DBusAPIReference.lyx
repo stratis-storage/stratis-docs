@@ -192,21 +192,10 @@ This document describes the D-Bus API for the Stratis daemon.
  The D-Bus API is a thin layer which receives messages on the D-Bus, processes
  them, transmits them to the Stratis engine, receives the results from the
  engine, and transmits a response on the D-Bus.
- The engine can also generate D-Bus signals, when important properties change
- in value.
 \end_layout
 
 \begin_layout Section
-This API is 
-\emph on
-NOT STABLE
-\end_layout
-
-\begin_layout Standard
-While this document covers the API as implemented in Stratis 1.0, the Stratis
- Team has not yet declared this a stable API.
- Other software should not rely on this API until the Stratis Team updates
- this document and declares the API stable and supported.
+Overview
 \end_layout
 
 \begin_layout Subsection
@@ -506,6 +495,10 @@ The UUID of the pool destroyed, or a default value if no action was taken.
 
 \end_deeper
 \end_deeper
+\begin_layout Subsubsection*
+Propeties
+\end_layout
+
 \begin_layout Description
 Version The current stratisd version.
  Signature: sqs.
@@ -743,44 +736,9 @@ Name The name of the pool.
 \end_layout
 
 \begin_layout Description
-TotalPhysicalSize The total physical size of the pool in sectors.
- These sectors may be used by the pool for many purposes, so there are always
- fewer sectors than this that can be used to store user data.
- This is the largest physical size that can be meaningfully associated with
- a pool.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-TotalPhysicalUsed All the sectors in use by the pool for any purpose whatsoever.
- These purposes include storage of user data as well as recording of pool
- metadata and other pool administration.
- This value may never exceed TotalPhysicalSize.
- Signature: s.
-\end_layout
-
-\begin_layout Description
 Uuid The UUID of the pool.
  This property is constant.
  Signature: s.
-\end_layout
-
-\begin_layout Description
-State The state of the pool.
- Possible values are documented in the design doc.
- Signature: q.
-\end_layout
-
-\begin_layout Description
-ExtendState The extend state of the pool.
- Possible values are documented in the design doc.
- Signature: q.
-\end_layout
-
-\begin_layout Description
-SpaceState The space state of the pool.
- Possible values are documented in the design doc.
- Signature: q.
 \end_layout
 
 \begin_layout Subsection
@@ -882,7 +840,7 @@ Arguments:
 \begin_deeper
 \begin_layout Description
 id The free-form information to set.
- Signature: s.
+ Signature: (bs).
 \end_layout
 
 \end_deeper
@@ -919,7 +877,7 @@ Devnode The device node of the blockdev.
 HardwareInfo The hardware-derived ID for this blockdev.
  May be empty.
  This property is constant.
- Signature: s.
+ Signature: (bs).
 \end_layout
 
 \begin_layout Description
@@ -952,61 +910,9 @@ InitializationTime
 \end_layout
 
 \begin_layout Description
-TotalPhysicalSize The total physical size of the blockdev in sectors.
- Signature: s.
-\end_layout
-
-\begin_layout Description
 Pool The object path of the parent pool.
  This property is constant.
  Signature: o.
-\end_layout
-
-\begin_layout Description
-State The current state of the blockdev.
- These are defined in section 10.2.1 (
-\begin_inset Quotes eld
-\end_inset
-
-Layer 0: Blockdevs
-\begin_inset Quotes erd
-\end_inset
-
-) of the Design Doc.
- Examples include: 
-\begin_inset Quotes eld
-\end_inset
-
-Missing
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-In-use
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-Not-in-use
-\begin_inset Quotes erd
-\end_inset
-
-, and 
-\begin_inset Quotes eld
-\end_inset
-
-Bad
-\begin_inset Quotes erd
-\end_inset
-
-.
- Signature: q.
 \end_layout
 
 \begin_layout Description
@@ -1018,13 +924,173 @@ Tier The tier the blockdev is in, either Data(0) or Cache (1).
 \begin_layout Description
 UserInfo The user-defined string associated with this blockdev.
  May be empty.
- Signature: s.
+ Signature: (bs).
 \end_layout
 
 \begin_layout Description
 Uuid The UUID of the blockdev.
  This property is constant.
  Signature: s.
+\end_layout
+
+\begin_layout Subsection
+FetchProperties interface
+\end_layout
+
+\begin_layout Standard
+The FetchProperties interface is a generic interface supported by filesystems,
+ pools, and blockdevs.
+ It supplies two methods, which have the same return signature: a{s(bv)}.
+ The return value is a table mapping string keys to properties of a filesystem,
+ pool, or blockdev.
+ Each value is a tuple of a boolean and a variant.
+ The boolean indicates whether the second element of the pair represents
+ the value requested or not.
+ If the first element of the tuple is false, the second element is a string
+ containing an error message indicating the cause of the failure to obtain
+ the value.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+GetAllProperties This method allows getting all properties of the particular
+ pool, filesystem or blockdev.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments: None.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+GetProperties This method allows getting properties specified by a list
+ of keys passed as an argument.
+ If a key is unrecognized, there is no corresponding entry in the returned
+ table.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+properties: The list of string keys specifying the names of the properties
+ requested.
+ Signature: as.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+Pools, filesystem, and blockdevs each support a different set of properties.
+ The properties supported for each are:
+\end_layout
+
+\begin_layout Description
+blockdev
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+TotalPhysicalSize The total physical size of the blockdev in bytes.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+filesystem
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Used The bytes used by this filesystem.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+pool
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+TotalPhysicalSize The total physical size of the pool in bytes.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+TotalPhysicalUsed The total amount of physical space already used in the
+ pool.
+ Signature: s
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Stratis interface versioning
+\end_layout
+
+\begin_layout Subsection
+Versioning scheme
+\end_layout
+
+\begin_layout Standard
+stratisd implements a versioned D-Bus interface.
+\end_layout
+
+\begin_layout Subsubsection
+Interface major versions
+\end_layout
+
+\begin_layout Standard
+The versioning scheme is currently included in the bus name (for example,
+ org.storage.stratis2) and all of the interface names (org.storage.stratis2.pool,
+ org.storage.stratis2.filesystem, and so on).
+ The interface version number corresponds to the major version number of
+ stratisd.
+\end_layout
+
+\begin_layout Subsubsection
+Interface minor versions
+\end_layout
+
+\begin_layout Standard
+The proposed scheme also leaves room for supporting two interfaces at once.
+ This would arise if enhancements need to be made in a minor release version
+ to support new arguments in a method call or a new method altogether.
+ For accessing minor release versions of the interface, two things are required.
+ First, the minor version of stratisd must be at least that specified in
+ the interface.
+ Second, the interface must be accessed by appending the minor version number
+ after a period to the end of the interface name.
+ For example, a change to the filesystem interface at version 2.4.0 would
+ be accessed through org.storage.stratis2.filesystem.4.
+ This interface would provide the new feature or change to the interface,
+ maintaining backwards compatibility through org.storage.stratis2.filesystem.
+\end_layout
+
+\begin_layout Subsection
+Interface breaking changes
+\end_layout
+
+\begin_layout Standard
+When upgrading stratisd to a version with breaking changes, this should
+ work automatically when installing from packages.
+ If installing from source, there are some considerations when updating.
+ Because stratisd uses the system bus in D-Bus, D-Bus will only allow stratis
+ to bind to the new interface name if the D-Bus policy file allowing this
+ is updated.
+ When using packaging, this is typically installed at the location /usr/share/db
+us-1/system.d/stratisd.conf on your filesystem or another path supported by
+ D-Bus when searching for policy files.
+ When stratis releases version 3.0.0, all instances of org.storage.stratis2
+ should be replaced with org.storage.stratis3 or else stratis will fail to
+ communicate using the CLI or the programmatic API over D-Bus.
 \end_layout
 
 \end_body
