@@ -4344,8 +4344,8 @@ name "subsec:Cache-Tier"
 \end_layout
 
 \begin_layout Standard
-The Cache Tier is a secondary optional stack that, if present, sits underneath
- the Flex Layer, and above the
+The Cache Tier is a secondary optional stack that, if present, serves as
+ a cache for the DataTier.
 \end_layout
 
 \begin_layout Subsubsection
