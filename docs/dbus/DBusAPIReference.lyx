@@ -1066,10 +1066,10 @@ The proposed scheme also leaves room for supporting two interfaces at once.
  For accessing minor release versions of the interface, two things are required.
  First, the minor version of stratisd must be at least that specified in
  the interface.
- Second, the interface must be accessed by appending the minor version number
- after a period to the end of the interface name.
+ Second, the interface must be accessed by appending the letter 'r' and
+ the minor version number after a period to the end of the interface name.
  For example, a change to the filesystem interface at version 2.4.0 would
- be accessed through org.storage.stratis2.filesystem.4.
+ be accessed through org.storage.stratis2.filesystem.r4.
  This interface would provide the new feature or change to the interface,
  maintaining backwards compatibility through org.storage.stratis2.filesystem.
 \end_layout
