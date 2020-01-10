@@ -81,7 +81,7 @@ Stratis Coding Style Guidelines
 \end_layout
 
 \begin_layout Date
-Last modified: 02/27/2018
+Last modified: 01/10/2019
 \end_layout
 
 \begin_layout Standard
@@ -108,7 +108,7 @@ literal "false"
 \end_inset
 
 , and is written using \SpecialChar LyX
- 2.2.2.
+ 2.3.3.
  Please ask any questions by opening an issue, and propose changes as pull
  requests.
 \end_layout
@@ -132,20 +132,6 @@ For both Rust and Python, there are standard coding conventions, as well
 
 \begin_layout Section
 Style (Rust)
-\end_layout
-
-\begin_layout Enumerate
-rustfmt (
-\begin_inset CommandInset href
-LatexCommand href
-name "link"
-target "https://crates.io/crates/rustfmt"
-literal "false"
-
-\end_inset
-
-) defines spacing, brace placement, and other formatting, and should be
- followed (or automatically applied) for new Stratis code.
 \end_layout
 
 \begin_layout Enumerate
@@ -195,7 +181,7 @@ declarations from other external dependencies except for devicemapper
 \end_layout
 
 \begin_layout Enumerate
-devicemapper dependencies
+dependencies owned by the Stratis project
 \end_layout
 
 \begin_layout Enumerate
@@ -204,21 +190,20 @@ declarations from other modules in the same crate
 
 \begin_layout Standard
 as needed, separated by blank lines.
- Ordering within blocks is alphabetical.
 \end_layout
 
 \end_deeper
 \begin_layout Enumerate
-When importing multiple items from a module, group these with 
+Each section should be a single 
 \begin_inset Quotes eld
 \end_inset
 
-{}
+use
 \begin_inset Quotes erd
 \end_inset
 
- on a single line.
- The items should be ordered alphabetically.
+ directive, except for declarations from external dependencies, which require
+ a separate use directive for each crate.
 \end_layout
 
 \end_deeper
@@ -253,26 +238,6 @@ unwrap()
 
 \begin_deeper
 \begin_layout Enumerate
-Output from Linux kernel APIs is considered 
-\begin_inset Quotes eld
-\end_inset
-
-super-stable
-\begin_inset Quotes erd
-\end_inset
-
- and should be 
-\begin_inset Quotes eld
-\end_inset
-
-expect
-\begin_inset Quotes erd
-\end_inset
-
-ed instead of returning a parse error.
-\end_layout
-
-\begin_layout Enumerate
 \begin_inset Quotes eld
 \end_inset
 
@@ -295,16 +260,6 @@ should never fail
 \begin_layout Enumerate
 When implementing a trait, the methods should be ordered as they are ordered
  in the trait definition.
-\end_layout
-
-\begin_layout Enumerate
-TBD: Recommendations on when it's time to break up a single module (file)
- into submodules
-\end_layout
-
-\begin_layout Enumerate
-TBD: Recommendations on when to define const variables versus when to use
- string literals
 \end_layout
 
 \begin_layout Subsection
@@ -418,23 +373,6 @@ allocated
 \end_deeper
 \begin_layout Section
 Style (Python)
-\end_layout
-
-\begin_layout Enumerate
-Follow PEP 8 (
-\begin_inset CommandInset href
-LatexCommand href
-name "link"
-target "https://www.python.org/dev/peps/pep-0008/"
-literal "false"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Enumerate
-Minimum supported Python version is 3.4.
 \end_layout
 
 \begin_layout Enumerate
