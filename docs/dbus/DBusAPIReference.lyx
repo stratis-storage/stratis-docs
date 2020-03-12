@@ -325,7 +325,15 @@ Each kind of object implements an identifying interface, i.e., pools implement
  Some more detailed information can be obtained from the introspection informati
 on that can be queried for each object, including the signatures of all
  methods and properties.
- All methods return a return code and an accompanying message, with type
+ 
+\end_layout
+
+\begin_layout Paragraph
+Structure of the Return Value
+\end_layout
+
+\begin_layout Standard
+All methods return a return code and an accompanying message, with type
  signature 
 \begin_inset Quotes eld
 \end_inset
@@ -351,6 +359,10 @@ literal "false"
  pair of the return code and message.
 \end_layout
 
+\begin_layout Paragraph
+Idempotency
+\end_layout
+
 \begin_layout Standard
 It is intended that all operations that can be requested via the D-Bus API
  be idempotent.
@@ -361,6 +373,19 @@ It is intended that all operations that can be requested via the D-Bus API
  may differ between different invocations.
  However if an error is returned that should always be the same error.
  Lack of idempotency as defined here constitutes a bug.
+\end_layout
+
+\begin_layout Paragraph
+Duplicate Device Nodes in Method Arguments
+\end_layout
+
+\begin_layout Standard
+Some methods expect an array of device nodes as an argument.
+ It is not considered an error if the array contains duplicate items; the
+ items are reduced to a set.
+ The order in which the devices are processed, for example, are added to
+ an existing pool, is not guaranteed to be the same as the order in which
+ they are passed as arguments.
 \end_layout
 
 \begin_layout Subsection
