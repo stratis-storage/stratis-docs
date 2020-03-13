@@ -752,6 +752,12 @@ Properties
 \end_layout
 
 \begin_layout Description
+Encrypted Whether or not the pool is encrypted.
+ Signature: b.
+ Introduced in D-Bus version: 2-r1.
+\end_layout
+
+\begin_layout Description
 Name The name of the pool.
  Signature: s.
 \end_layout
@@ -1040,6 +1046,12 @@ pool
 \end_layout
 
 \begin_deeper
+\begin_layout Description
+HasCache Whether or not the pool has a cache.
+ Signature: b.
+ Introduced in D-Bus version: 2-r1.
+\end_layout
+
 \begin_layout Description
 TotalPhysicalSize The total physical size of the pool in bytes.
  Signature: s.
