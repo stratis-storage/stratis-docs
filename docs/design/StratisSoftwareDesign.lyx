@@ -4348,13 +4348,6 @@ On any encrypted blockdev, the Stratis metadata will itself be encrypted;
 \end_layout
 
 \begin_layout Itemize
-For encrypted blockdevs, the minimum blockdev size will apply to the opened
- device.
- Thus the entire size of the encrypted blockdev will be required to be more
- than 1 GiB.
-\end_layout
-
-\begin_layout Itemize
 The use of a cache tier and of encryption will be mutually exclusive.
  If a pool is encrypted, an attempt to add a blockdev to the cache tier
  will be rejected.
