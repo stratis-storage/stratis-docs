@@ -6933,5 +6933,421 @@ Based on looking at the existing available building blocks, the best option
  provides.
 \end_layout
 
+\begin_layout Section
+Encryption implementation details
+\end_layout
+
+\begin_layout Standard
+Stratis uses libcryptsetup to manage FDE (full disk encryption) for each
+ block device added to an encrypted pool.
+\end_layout
+
+\begin_layout Subsection
+On-disk format
+\end_layout
+
+\begin_layout Standard
+Stratis uses the LUKS2 encryption format as the basis for the encryption
+ implementation.
+ The LUKS2 header contains information that can be used to identify a device
+ as a Stratis encrypted device.
+\end_layout
+
+\begin_layout Subsubsection
+LUKS2 token format
+\end_layout
+
+\begin_layout Standard
+LUKS2 tokens contain the necessary information to describe how to unlock
+ the device.
+ No private information is contained in the tokens.
+ Stratis uses two tokens, one standard cryptsetup token which allows activating
+ the device using a passphrase stored in the kernel keyring and another
+ Stratis-defined token that contains activation information required by
+ Stratis.
+ Token IDs are statically assigned for each token for a number of reasons:
+\end_layout
+
+\begin_layout Itemize
+Using static IDs, stratisd does not have to do a scan of all of the tokens
+ followed by heuristics to recognize a token.
+ Instead, it chooses the static ID, and if the format does not match what
+ was expected, it is not treated as a Stratis encrypted device.
+\end_layout
+
+\begin_layout Itemize
+As other activation methods are added, activation of a pool can specify
+ one token ID to use for activation of all devices in the pool and expect
+ that they will all be unlocked using the same mechanism.
+\end_layout
+
+\begin_layout Itemize
+New tokens may be added without breaking changes to the assignment of existing
+ token IDs.
+\end_layout
+
+\begin_layout Standard
+The Stratis token has an ID of 0 while the LUKS2 keyring token has an ID
+ of 1.
+\end_layout
+
+\begin_layout Subsubsection*
+LUKS2 keyring token
+\end_layout
+
+\begin_layout Standard
+The kernel keyring token contains information for LUKS2 integration with
+ keys in the kernel keyring.
+ This token is a standard token supported by cryptsetup, and details for
+ the format can be found in the cryptsetup documentation.
+ Interaction with this token is handled by standard libcryptsetup API methods.
+\end_layout
+
+\begin_layout Subsubsection*
+Stratis token
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Stratis-token"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Stratis token is used for device identification and activation, and
+ the values are set directly by Stratis.
+ The format specification is as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\begin_inset Quotes eld
+\end_inset
+
+type
+\begin_inset Quotes erd
+\end_inset
+
+: 
+\begin_inset Quotes eld
+\end_inset
+
+stratis
+\begin_inset Quotes erd
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\begin_inset Quotes eld
+\end_inset
+
+keyslots
+\begin_inset Quotes erd
+\end_inset
+
+: [],
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\begin_inset Quotes eld
+\end_inset
+
+activation_name
+\begin_inset Quotes erd
+\end_inset
+
+: <DEVICEMAPPER_NAME>,
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\begin_inset Quotes eld
+\end_inset
+
+pool_uuid
+\begin_inset Quotes erd
+\end_inset
+
+: <POOL_UUID>,
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\begin_inset Quotes eld
+\end_inset
+
+device_uuid
+\begin_inset Quotes erd
+\end_inset
+
+: <DEVICE_UUID>
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+See below for an explanation of each JSON value:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+<DEVICEMAPPER_NAME>
+\end_layout
+
+\end_inset
+
+ This is the managed name that will show up in devicemapper when the device
+ is activated using libcryptsetup.
+ While the name can be seen on the system by querying devicemapper, managing
+ encrypted Stratis devices outside of Stratis is not supported so this is
+ considered an internal name.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+<POOL_UUID>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This UUID corresponds to the Stratis pool that owns this block device.
+ The pool UUID in the token matches the pool UUID in the encrypted Stratis
+ metadata.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+<DEVICE_UUID>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This UUID corresponds to the device UUID for this specific block device.
+ The device UUID in the token matches the device UUID in the encrypted Stratis
+ metadata.
+\end_layout
+
+\begin_layout Subsubsection
+Encrypted Stratis metadata format
+\end_layout
+
+\begin_layout Standard
+Once the LUKS2 volume is unlocked, the encrypted Stratis metadata should
+ be accessible through the unencrypted logical devicemapper device in exactly
+ the same way as an unencrypted Stratis device.
+\end_layout
+
+\begin_layout Subsection
+Encrypted device creation
+\end_layout
+
+\begin_layout Standard
+Stratis does not wipe the device prior to initializing it with a LUKS2 header.
+ This means that an attacker can deduce the following from examining a disk
+ that has been initialized using Stratis without any prior preparation:
+\end_layout
+
+\begin_layout Itemize
+The amount of data currently stored on disk that is encrypted.
+ For example, if a disk has sectors that were zeroed or contain unencrypted
+ data previously stored on the disk at the end of an encrypted segment,
+ this can give insight into how many encrypted blocks are stored on the
+ device.
+ To prevent this, the device should be wiped with random data prior to providing
+ it to a Stratis pool.
+\end_layout
+
+\begin_layout Itemize
+The contents of unencrypted data that was previously stored on the disk
+ prior to initialization by Stratis.
+ cryptsetup's LUKS2 implementation does not overwrite all of the data on
+ the disk by default, so without prior preparation, any sectors that have
+ not been overwritten with encrypted data will still contain the data previously
+ stored on the disk.
+ To prevent this, the disk should be zeroed or wiped with random data.
+\end_layout
+
+\begin_layout Subsection
+Encrypted device discovery
+\end_layout
+
+\begin_layout Standard
+Stratis identifies encrypted devices belonging to Stratis by their Stratis
+ token.
+ It does not attempt to activate any device until it receives a D-Bus command
+ to activate all devices.
+ When the command is received, stratisd attempts to unlock the devices using
+ the LUKS2 keyring token previously set by stratisd.
+ If activation of devices yields a set of devices that can form a complete
+ pool, the pool is set up.
+\end_layout
+
+\begin_layout Subsection
+Encrypted device activation
+\end_layout
+
+\begin_layout Standard
+Devices are activated with the activation name in the Stratis token.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Stratis-token"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for an explanation of the Stratis token.
+ Device activation results in a new, activated device path with the canonical
+ path name 
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+/dev/mapper/<activation_name>
+\end_layout
+
+\end_inset
+
+ where the unencrypted data can be accessed.
+ Because of the design and use of libcryptsetup, encrypted devices can also
+ be activated outisde of Stratis using libcryptsetup or the cryptsetup CLI
+ as long as the required passphrase is in the kernel keyring.
+\end_layout
+
+\begin_layout Subsection
+Encrypted device destruction
+\end_layout
+
+\begin_layout Standard
+Destroying an encrypted Stratis device does not wipe the entire device as
+ the cost of this operation is linearly proportional with respect to disk
+ size.
+ Instead, Stratis uses libcryptsetup to destroy all of the keyslots, wiping
+ all of the encrypted MEK (media encryption key) data in each keyslot.
+ It then obtains the size of the LUKS2 metadata on this device and does
+ an additional wipe of the remaining LUKS2 metadata.
+ This provides the following device properties on pool destruction:
+\end_layout
+
+\begin_layout Itemize
+The MEK data is destroyed so the data stored on the device will be unrecoverable.
+\end_layout
+
+\begin_layout Itemize
+If this device is used when creating another pool later, Stratis will be
+ able to reinitialize it and will consider this device unowned due to the
+ wipe of the LUKS2 metadata.
+\end_layout
+
+\begin_layout Itemize
+The encrypted data will be left on the device but will be inaccessible due
+ to the destruction of the key.
+\end_layout
+
+\begin_layout Standard
+Additional security may be achieved by zeroing the disk or overwriting it
+ with random data using external tools.
+\end_layout
+
+\begin_layout Subsection
+Key consistency for encrypted pools
+\end_layout
+
+\begin_layout Standard
+Stratis takes steps to ensure that the same passphrase used during initial
+ creation of the pool is the passphrase that is used for adding encrypted
+ block devices at a later time.
+ stratisd runs a check prior to adding block devices to an encrypted pool
+ to verify that the passphrase in the kernel keyring with the key description
+ recorded in the LUKS2 metadata can unlock the block devices that have already
+ been encrypted and added to the pool.
+ This prevents the passphrase data associated with a key description from
+ being accidentally or intentionally changed between pool creation and addition
+ of encrypted block devices which would result in an unusable pool and loss
+ of data on the next occasion when the pool must be set up.
+\end_layout
+
+\begin_layout Subsection
+Key management
+\end_layout
+
+\begin_layout Standard
+Stratis provides facilities for key management.
+ The kernel keyring is used as the backing store for the keys provided through
+ the D-Bus API to allow proper access controls for passphrases.
+ The architecture of key input has been carefully designed to avoid leaving
+ keys in memory after they are no longer in use.
+ The key is not directly sent over D-Bus; D-Bus traffic is not encrypted
+ so this would leak the plaintext passphrase.
+ Instead, the client side provides the server side with a file descriptor
+ from which to read the passphrase so that no data is ever exposed in the
+ D-Bus method call.
+ When a user provides a key using the interactive mode in the CLI or D-Bus
+ API, input buffering is turned off on the client side so the key is never
+ stored in userspace memory.
+ On the server side, stratisd reads the key into a memory block managed
+ by libcryptsetup so that as soon as the memory is no longer in use, libcryptset
+up will wipe the memory using a method that will not be optimized out by
+ the compiler.
+ All of this guarantees that the key data will only be available in one
+ memory location while it is in use, and that the memory will be securely
+ wiped after use.
+\end_layout
+
 \end_body
 \end_document
