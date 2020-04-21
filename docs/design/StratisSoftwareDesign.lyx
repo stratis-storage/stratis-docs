@@ -4312,8 +4312,9 @@ All blockdevs in a pool will be encrypted, or all blockdevs in a pool will
 \end_layout
 
 \begin_layout Itemize
-A distinct KEK (Key Encryption Key) for each pool will be supported, although
- it will be possible to use the same KEK for every pool, if desired.
+A distinct passphrase (used to generate the KEK or Key Encryption Key) will
+ be supported for each pool, although it will be possible to use the same
+ passphrase for every pool, if desired.
 \end_layout
 
 \begin_layout Itemize
