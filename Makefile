@@ -27,6 +27,9 @@ website-distrib: website-build
 website-test: website-build
 	zola serve
 
+yamllint:
+	yamllint --strict .travis.yml
+
 check:
 	cd ./docs/design ; $(MAKE) check && cd -
 	cd ./docs/dbus ; $(MAKE) check && cd -
@@ -44,3 +47,4 @@ clean:
 	clean
 	pdfs
 	website-distrib
+	yamllint
