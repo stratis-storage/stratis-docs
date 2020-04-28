@@ -6947,7 +6947,7 @@ On-disk format
 \end_layout
 
 \begin_layout Standard
-Stratis utilises the LUKS2 encryption format as the basis for the encryption
+Stratis uses the LUKS2 encryption format as the basis for the encryption
  implementation.
  The LUKS2 header contains information that can be used to discover devices
  as a Stratis encrypted device.
@@ -7227,9 +7227,13 @@ Encrypted device discovery
 To find encrypted Stratis devices, stratisd searches for LUKS2 volumes present
  on the system and validates that the LUKS2 metadata on the device is well
  formed LUKS2 metadata laid down by Stratis.
- Once this has been verified, Stratis attempts to activate the LUKS2 volume
- with the corresponding passphrase in the kernel keyring as specified by
- the key description in the LUKS2 keyring token.
+ Once this has been verified, Stratis stores a record of this device and
+ waits for the user to activate the LUKS2 volume which can be initiated
+ by a D-Bus API method.
+ The devices will be unlocked with the corresponding passphrase in the kernel
+ keyring as specified by the key description in the LUKS2 keyring token.
+ Stratis will then search all resulting unencrypted logical devices for
+ the Stratis metadata and will construct pools accordingly.
 \end_layout
 
 \begin_layout Subsection
@@ -7335,7 +7339,7 @@ Links the root-associated persistent keyring (the persistent keyring for
 \end_layout
 
 \begin_layout Enumerate
-Searches the available keyrings for a key with the specified key description
+Searches the persistent keyring for a key with the specified key description
 \end_layout
 
 \begin_layout Enumerate
@@ -7344,33 +7348,7 @@ Reads the key data associated with the given key description into memory
 \end_layout
 
 \begin_layout Standard
-The recommended process for adding a key to the kernel keyring uses the
- utility keyctl, provided in the keyutils package on Fedora.
- To add a key to the root persistent keyring, run the following command:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-# keyctl add user $KEY_DESCRIPTION $KEY_PASSPHRASE $(keyctl get_persistent
- @s 0)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Keyring data is not persistent across boot, so it is up to the user to populate
- the keyring with the required passphrases before operations like activation
- of existing encrypted pools and encrypted pool creation.
- Stratis may at a later point allow some key management to be done through
- stratisd.
+TODO: Document the add-key commands?
 \end_layout
 
 \end_body
