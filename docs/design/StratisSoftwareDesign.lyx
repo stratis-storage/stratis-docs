@@ -7004,7 +7004,7 @@ The other token that is laid down by Stratis in the LUKS2 metadata is a
 \begin_layout Standard
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7114,7 +7114,7 @@ See below for an explanation of each JSON value:
 \begin_layout Standard
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7133,7 +7133,7 @@ status open
 \begin_layout Standard
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7155,7 +7155,7 @@ The key description in this token is not used for unlocking, only to refer
 \begin_layout Standard
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7176,7 +7176,7 @@ This UUID corresponds to the Stratis pool that owns this block device.
 \begin_layout Standard
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -7257,7 +7257,7 @@ noprefix "false"
  path of 
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
