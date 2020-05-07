@@ -6949,7 +6949,7 @@ On-disk format
 \begin_layout Standard
 Stratis uses the LUKS2 encryption format as the basis for the encryption
  implementation.
- The LUKS2 header contains information that can be used to discover devices
+ The LUKS2 header contains information that can be used to identify a device
  as a Stratis encrypted device.
 \end_layout
 
@@ -6961,9 +6961,10 @@ LUKS2 token format
 LUKS2 tokens contain the necessary information to describe how to unlock
  the device.
  No private information is contained in the tokens.
- Stratis lays down two tokens, one for interacting with the passphrase stored
- in the kernel keyring and another that contains activation information
- required by Stratis.
+ Stratis uses two tokens, one standard cryptsetup token which allows activating
+ the device using a passphrase stored in the kernel keyring and another
+ Stratis-defined token that contains activation information required by
+ Stratis.
  Token indexes are statically assigned for each token so that new tokens
  may be added without breaking changes to the existing tokens.
 \end_layout
@@ -6973,14 +6974,12 @@ LUKS2 keyring token
 \end_layout
 
 \begin_layout Standard
-The first relevant token is that which contains information for LUKS2 integratio
-n with the kernel keyring.
- This token is supported internally by cryptsetup by its mechanism for unlocking
- a device using a token and the available keys in the keyring.
+The kernel keyring token contains information for LUKS2 integration with
+ keys in the kernel keyring.
+ This token is a standard token supported by cryptsetup, and details for
+ the format can be found in the cryptsetup documentation.
  It is located at index 0 in the token section of the LUKS2 metadata.
- The formatting for this token is handled by libcryptsetup and requires
- only one input, the key description of the passphrase to be used for encrypting
- the devices.
+ Interaction with this token is handled by standard libcryptsetup API methods.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -6995,16 +6994,15 @@ name "subsec:Stratis-token"
 \end_layout
 
 \begin_layout Standard
-The other token that is laid down by Stratis in the LUKS2 metadata is a
- Stratis token whose format is controlled by Stratis.
- This token is used for device discovery and activation of a device.
+The Stratis token is used for device identification and activation, and
+ the values are set directly by Stratis.
  The format specification is as follows:
 \end_layout
 
 \begin_layout Standard
 \begin_inset listings
 inline false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -7064,19 +7062,6 @@ activation_name
 \begin_inset Quotes eld
 \end_inset
 
-key_description
-\begin_inset Quotes erd
-\end_inset
-
-: <KEY_DESCRIPTION>,
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\begin_inset Quotes eld
-\end_inset
-
 pool_uuid
 \begin_inset Quotes erd
 \end_inset
@@ -7126,30 +7111,8 @@ status collapsed
  This is the managed name that will show up in devicemapper when the device
  is activated using libcryptsetup.
  While the name can be seen on the system by querying devicemapper, managing
- encrypted devices outside of Stratis is not supported so this is considered
- an internal name.
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status collapsed
-
-\begin_layout Plain Layout
-
-<KEY_DESCRIPTION>
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The key description in this token is not used for unlocking, only to refer
- back to the corresponding LUKS2 keyring token which handles unlocking the
- device.
- The key description in both should be identical.
+ encrypted Stratis devices outside of Stratis is not supported so this is
+ considered an internal name.
 \end_layout
 
 \begin_layout Standard
@@ -7200,7 +7163,7 @@ Encrypted Stratis metadata format
 
 \begin_layout Standard
 Once the LUKS2 volume is unlocked, the encrypted Stratis metadata should
- be accessible through the unencrypted logical devicemapper device exactly
+ be accessible through the unencrypted logical devicemapper device in exactly
  the same way as an unencrypted Stratis device.
 \end_layout
 
@@ -7210,12 +7173,26 @@ Encrypted device creation
 
 \begin_layout Standard
 Stratis does not wipe the device prior to initializing it with a LUKS2 header.
- Due to how data is encrypted with LUKS2, if a user is concerned with an
- attacker being able to determine exactly how much of the data on the device
- is encrypted, the device should be wiped with random data prior to providing
- it to a Stratis pool.
+ This means that an attacker can potentially deduce the following from examing
+ a disk that has been initialized using Stratis without any prior preparation
+ outside of Stratis:
+\end_layout
+
+\begin_layout Itemize
+The amount of data currently stored on disk that is encrypted.
+\end_layout
+
+\begin_layout Itemize
+The contents of unencrypted data that was previously stored on the disk
+ prior to initialization by Stratis.
+\end_layout
+
+\begin_layout Standard
+If a user is concerned with an attacker being able to determine exactly
+ how much encrypted data is stored on the device, the device should be wiped
+ with random data prior to providing it to a Stratis pool.
  If a user does not want data that was previously stored on the device (encrypte
-d or unencrypted) to be visible, the disk should be zeroed or wiped with
+d or unencrypted) to be accessible, the disk should be zeroed or wiped with
  random data.
 \end_layout
 
@@ -7224,16 +7201,14 @@ Encrypted device discovery
 \end_layout
 
 \begin_layout Standard
-To find encrypted Stratis devices, stratisd searches for LUKS2 volumes present
- on the system and validates that the LUKS2 metadata on the device is well
- formed LUKS2 metadata laid down by Stratis.
- Once this has been verified, Stratis stores a record of this device and
- waits for the user to activate the LUKS2 volume which can be initiated
- by a D-Bus API method.
- The devices will be unlocked with the corresponding passphrase in the kernel
- keyring as specified by the key description in the LUKS2 keyring token.
- Stratis will then search all resulting unencrypted logical devices for
- the Stratis metadata and will construct pools accordingly.
+Stratis identifies encrypted devices belonging to Stratis by their Stratis
+ token.
+ It does not attempt to activate any device until it receives a D-Bus command
+ to activate all devices.
+ When the command is received, stratisd attempts to unlock the devices using
+ the LUKS2 keyring token previously set by stratisd.
+ If activation of devices yields a set of devices that can form a complete
+ pool, the pool is set up.
 \end_layout
 
 \begin_layout Subsection
@@ -7253,8 +7228,8 @@ noprefix "false"
 \end_inset
 
  for an explanation of the Stratis token.
- libcryptsetup handles device activation and should result device with a
- path of 
+ Device activation results in a new, activated device path with the canonical
+ path name 
 \begin_inset listings
 inline false
 status collapsed
@@ -7274,8 +7249,8 @@ Encrypted device destruction
 \end_layout
 
 \begin_layout Standard
-Destroying an encrypted Stratis device does not wipe the entire device due
- to the time that this would take increasing linearly with regard to disk
+Destroying an encrypted Stratis device does not wipe the entire device as
+ the cost of this operation is linearly proportional with respect to disk
  size.
  Instead, Stratis uses libcryptsetup to destroy all of the keyslots, wiping
  all of the encrypted MEK (media encryption key) data in each keyslot.
@@ -7300,9 +7275,8 @@ The encrypted data will be left on the device but will be inaccessible due
 \end_layout
 
 \begin_layout Standard
-If the user is concerned about leaving the encrypted data on the device
- even if the key has been destroyed, the disk should be zeroed or wiped
- with random data.
+Additional security may be achieved by zeroing the disk or overwriting it
+ with random data using external tools.
 \end_layout
 
 \begin_layout Subsection
@@ -7319,8 +7293,8 @@ Stratis takes steps to ensure that the same passphrase used during initial
  been encrypted and added to the pool.
  This prevents the passphrase data associated with a key description from
  being accidentally or intentionally changed between pool creation and addition
- of encrypted block devices which lead to a broken pool on a later activation
- of the pool.
+ of encrypted block devices which would result in an unusable pool and loss
+ of data on the next occasion when the pool must be set up.
 \end_layout
 
 \begin_layout Subsection
