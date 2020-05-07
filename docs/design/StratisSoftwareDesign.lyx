@@ -7002,7 +7002,7 @@ The Stratis token is used for device identification and activation, and
 \begin_layout Standard
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
