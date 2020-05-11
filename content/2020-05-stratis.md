@@ -54,8 +54,8 @@ Please consult the D-Bus API Reference for the precise D-Bus specification.
 The following are significant implementation details:
   * Each block device in an encrypted pool's data tier is encrypted with a
     distinct, randomly chosen MEK (Media Encryption Key) on initialization.
-  * All devices belonging to a single encrypted pool share a single KEK
-    (Key Encryption Key), supplied via the kernel keyring.
+  * All devices belonging to a single encrypted pool share a single passphrase,
+    supplied via the kernel keyring.
   * The release requires cryptsetup version 2.3.
 
 
