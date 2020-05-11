@@ -6965,8 +6965,30 @@ LUKS2 tokens contain the necessary information to describe how to unlock
  the device using a passphrase stored in the kernel keyring and another
  Stratis-defined token that contains activation information required by
  Stratis.
- Token indexes are statically assigned for each token so that new tokens
- may be added without breaking changes to the existing tokens.
+ Token IDs are statically assigned for each token for a number of reasons:
+\end_layout
+
+\begin_layout Itemize
+Using static IDs, stratisd no longer has to do a scan of all of the tokens
+ followed by heuristics to recognize a token.
+ Instead, it chooses the static ID, and if the format does not match what
+ was expected, it is not treated as a Stratis encrypted device.
+\end_layout
+
+\begin_layout Itemize
+As other activation methods are added, activation of a pool can specify
+ one token ID to use for activation of all devices in the pool and expect
+ that they will all be unlocked using the same mechanism.
+\end_layout
+
+\begin_layout Itemize
+New tokens may be added without breaking changes to the assignment of existing
+ token IDs.
+\end_layout
+
+\begin_layout Standard
+The Stratis token has an ID of 0 while the LUKS2 keyring token has an ID
+ of 1.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -6978,7 +7000,6 @@ The kernel keyring token contains information for LUKS2 integration with
  keys in the kernel keyring.
  This token is a standard token supported by cryptsetup, and details for
  the format can be found in the cryptsetup documentation.
- It is located at index 0 in the token section of the LUKS2 metadata.
  Interaction with this token is handled by standard libcryptsetup API methods.
 \end_layout
 
@@ -7173,27 +7194,28 @@ Encrypted device creation
 
 \begin_layout Standard
 Stratis does not wipe the device prior to initializing it with a LUKS2 header.
- This means that an attacker can potentially deduce the following from examing
- a disk that has been initialized using Stratis without any prior preparation
- outside of Stratis:
+ This means that an attacker can deduce the following from examining a disk
+ that has been initialized using Stratis without any prior preparation:
 \end_layout
 
 \begin_layout Itemize
 The amount of data currently stored on disk that is encrypted.
+ For example, if a disk has sectors that were zeroed or contain unencrypted
+ data previously stored on the disk at the end of an encrypted segment,
+ this can give insight into how many encrypted blocks are stored on the
+ device.
+ To prevent this, the device should be wiped with random data prior to providing
+ it to a Stratis pool.
 \end_layout
 
 \begin_layout Itemize
 The contents of unencrypted data that was previously stored on the disk
  prior to initialization by Stratis.
-\end_layout
-
-\begin_layout Standard
-If a user is concerned with an attacker being able to determine exactly
- how much encrypted data is stored on the device, the device should be wiped
- with random data prior to providing it to a Stratis pool.
- If a user does not want data that was previously stored on the device (encrypte
-d or unencrypted) to be accessible, the disk should be zeroed or wiped with
- random data.
+ cryptsetup's LUKS2 implementation does not overwrite all of the data on
+ the disk by default, so without prior preparation, any sectors that have
+ not been overwritten with encrypted data will still contain the data previously
+ stored on the disk.
+ To prevent this, the disk should be zeroed or wiped with random data.
 \end_layout
 
 \begin_layout Subsection
@@ -7242,6 +7264,9 @@ status collapsed
 \end_inset
 
  where the unencrypted data can be accessed.
+ Because of the design and use of libcryptsetup, encrypted devices can also
+ be activated outisde of Stratis using the libcryptsetup or the cryptsetup
+ CLI as long as the required passphrase is in the kernel keyring.
 \end_layout
 
 \begin_layout Subsection
@@ -7302,27 +7327,26 @@ Key management
 \end_layout
 
 \begin_layout Standard
-Currently Stratis requires the user to manage the kernel keyring.
- Stratis takes only a direct few actions when interacting with the kernel
- keyring:
-\end_layout
-
-\begin_layout Enumerate
-Links the root-associated persistent keyring (the persistent keyring for
- Linux user ID 0) to the session keyring for searching purposes
-\end_layout
-
-\begin_layout Enumerate
-Searches the persistent keyring for a key with the specified key description
-\end_layout
-
-\begin_layout Enumerate
-Reads the key data associated with the given key description into memory
- that will be wiped after being used for encryption
-\end_layout
-
-\begin_layout Standard
-TODO: Document the add-key commands?
+Stratis provides facilities for key management.
+ The kernel keyring is used as the backing store for the keys provided through
+ the D-Bus API to allow proper access controls for passphrases.
+ The design of key input has been carefully designed to avoid leaving keys
+ in memory after they are no longer in use.
+ The key is not directly sent over D-Bus; D-Bus traffic is not encrypted
+ so this would leak the plaintext passphrase.
+ Instead, the client side provides the server side with a file descriptor
+ from which to read the passphrase so that no data is ever exposed in the
+ D-Bus method call.
+ When a user provides a key using the interactive mode in the CLI or D-Bus
+ API, input buffering is turned off on the client side so the key is never
+ stored in userspace memory.
+ On the server side, stratisd reads the key into a memory block managed
+ by libcryptsetup so that as soon as the memory is no longer in use, libcryptset
+up will wipe the memory using a method that won't be optimized out by the
+ compiler.
+ All of this guarantees that the key data will only be available in one
+ specific memory location while it is in use, and that the memory will be
+ securely wiped after use.
 \end_layout
 
 \end_body
