@@ -36,13 +36,18 @@ It implements encryption support in the following way:
 stratisd 2.1.0 supplies several new D-Bus interfaces:
   * `org.storage.stratis2.manager.r1`: This interface supplies an
     extended `CreatePool` method, to support an optional argument for
-    encryption.
+    encryption. In addition, it supplies a number of method for key
+    management.
   * `org.storage.stratis2.pool.r1`: This interface supports explicit
     initialization of a cache tier. Previously, a cache was initialized as
     a side-effect of the addition of the first device to the cache tier.
     It also supports the new `Encrypted` property.
   * `org.storage.stratis2.FetchProperties.r1`: This interface supports an
     additional `HasCache` property.
+  * `org.storage.stratis2.Report.r1```: This interface supports a set of
+    ad-hoc reports about Stratis. The interface is unstable; the names by
+    which the reports can be accesed are not guaranteed to remain stable,
+    and the format of any report is only guaranteed to be valid JSON.
 
 Please consult the D-Bus API Reference for the precise D-Bus specification.
 
@@ -66,7 +71,8 @@ This release requires stratisd 2.1.0. The user will observe the following
 changes:
 
   * The `pool create` command has been extended to allow encryption.
-  * There is a new `pool init_cache` method, for initializing a cache.
+  * There is a new `pool init_cache` command, for initializing a cache.
+  * There is a new subcommand, `key`, for key management tasks.
   * The output of `pool list` now includes a `Properties` column; each
     entry in the column is a string encoding the following properties of the
     pool:
