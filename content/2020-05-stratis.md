@@ -44,7 +44,7 @@ stratisd 2.1.0 supplies several new D-Bus interfaces:
     It also supports the new `Encrypted` property.
   * `org.storage.stratis2.FetchProperties.r1`: This interface supports an
     additional `HasCache` property.
-  * `org.storage.stratis2.Report.r1```: This interface supports a set of
+  * `org.storage.stratis2.Report.r1`: This interface supports a set of
     ad-hoc reports about Stratis. The interface is unstable; the names by
     which the reports can be accesed are not guaranteed to remain stable,
     and the format of any report is only guaranteed to be valid JSON.
