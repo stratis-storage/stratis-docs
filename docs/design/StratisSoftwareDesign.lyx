@@ -6969,7 +6969,7 @@ LUKS2 tokens contain the necessary information to describe how to unlock
 \end_layout
 
 \begin_layout Itemize
-Using static IDs, stratisd no longer has to do a scan of all of the tokens
+Using static IDs, stratisd does not have to do a scan of all of the tokens
  followed by heuristics to recognize a token.
  Instead, it chooses the static ID, and if the format does not match what
  was expected, it is not treated as a Stratis encrypted device.
@@ -7265,8 +7265,8 @@ status collapsed
 
  where the unencrypted data can be accessed.
  Because of the design and use of libcryptsetup, encrypted devices can also
- be activated outisde of Stratis using the libcryptsetup or the cryptsetup
- CLI as long as the required passphrase is in the kernel keyring.
+ be activated outisde of Stratis using libcryptsetup or the cryptsetup CLI
+ as long as the required passphrase is in the kernel keyring.
 \end_layout
 
 \begin_layout Subsection
@@ -7330,8 +7330,8 @@ Key management
 Stratis provides facilities for key management.
  The kernel keyring is used as the backing store for the keys provided through
  the D-Bus API to allow proper access controls for passphrases.
- The design of key input has been carefully designed to avoid leaving keys
- in memory after they are no longer in use.
+ The architecture of key input has been carefully designed to avoid leaving
+ keys in memory after they are no longer in use.
  The key is not directly sent over D-Bus; D-Bus traffic is not encrypted
  so this would leak the plaintext passphrase.
  Instead, the client side provides the server side with a file descriptor
@@ -7342,11 +7342,11 @@ Stratis provides facilities for key management.
  stored in userspace memory.
  On the server side, stratisd reads the key into a memory block managed
  by libcryptsetup so that as soon as the memory is no longer in use, libcryptset
-up will wipe the memory using a method that won't be optimized out by the
- compiler.
+up will wipe the memory using a method that will not be optimized out by
+ the compiler.
  All of this guarantees that the key data will only be available in one
- specific memory location while it is in use, and that the memory will be
- securely wiped after use.
+ memory location while it is in use, and that the memory will be securely
+ wiped after use.
 \end_layout
 
 \end_body
