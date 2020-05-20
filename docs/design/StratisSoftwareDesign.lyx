@@ -1006,14 +1006,12 @@ Querying stratisd state via D-Bus
 \end_layout
 
 \begin_layout Standard
-Instead of providing overly verbose stratisd internal state logging, stratisd
- exposes a reporting interface.
- This allows users to query the state of stratisd's internal data structures
- for debugging and error reporting purposes.
+stratisd exposes a reporting interface that allows users to query the state
+ of stratisd's internal data structures for debugging and error reporting.
  The D-Bus query returns a JSON string that can be parsed to detect state
- programmatically; however, the report interface is unstable and, as such,
+ programmatically; however, the report interface is unstable, and consequently
  the names and schemas of provided reports do not follow the semantic versioning
- rules to which the rest of Stratis's API conforms.
+ rules to which the rest of stratisd's API conforms.
 \end_layout
 
 \begin_layout Section
