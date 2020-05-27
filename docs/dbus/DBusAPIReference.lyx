@@ -329,6 +329,26 @@ on that can be queried for each object, including the signatures of all
 \end_layout
 
 \begin_layout Paragraph
+Idempotency
+\end_layout
+
+\begin_layout Standard
+It is intended that all operations that can be requested via the D-Bus API
+ be idempotent.
+ By this is meant that if an operation is requested repeatedly, and there
+ are no intervening actions, then the operation should succeed every time,
+ or it should fail every time.
+ Since the return values may encode information about actions taken these
+ may differ between different invocations.
+ However if an error is returned that should always be the same error.
+ Lack of idempotency as defined here constitutes a bug.
+\end_layout
+
+\begin_layout Subsection
+Standard Interfaces
+\end_layout
+
+\begin_layout Paragraph
 Structure of the Return Value
 \end_layout
 
@@ -360,22 +380,6 @@ literal "false"
 \end_layout
 
 \begin_layout Paragraph
-Idempotency
-\end_layout
-
-\begin_layout Standard
-It is intended that all operations that can be requested via the D-Bus API
- be idempotent.
- By this is meant that if an operation is requested repeatedly, and there
- are no intervening actions, then the operation should succeed every time,
- or it should fail every time.
- Since the return values may encode information about actions taken these
- may differ between different invocations.
- However if an error is returned that should always be the same error.
- Lack of idempotency as defined here constitutes a bug.
-\end_layout
-
-\begin_layout Paragraph
 Duplicate Device Nodes in Method Arguments
 \end_layout
 
@@ -388,7 +392,7 @@ Some methods expect an array of device nodes as an argument.
  they are passed as arguments.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Manager interface
 \end_layout
 
@@ -525,7 +529,7 @@ Version The current stratisd version.
  Signature: sqs.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 pool interface
 \end_layout
 
@@ -768,7 +772,7 @@ Uuid The UUID of the pool.
  Signature: s.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 filesystem interface
 \end_layout
 
@@ -842,7 +846,7 @@ Uuid The UUID of the filesystem.
  Signature: s.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 blockdev interface
 \end_layout
 
@@ -960,7 +964,62 @@ Uuid The UUID of the blockdev.
  Signature: s.
 \end_layout
 
+\begin_layout Subsubsection
+Report interface
+\end_layout
+
+\begin_layout Standard
+The Report interface is an unstable interface for querying internal stratisd
+ data structure state.
+ It provides reports as JSON, and while the reports can be parsed programmatical
+ly, the names and schemas of provided reports do not follow the semantic
+ versioning scheme that the rest of the D-Bus API does.
+ The reports are subject to change at any time.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Description
+GetReport This method allows fetching a report by name.
+ If a report by the supplied name does not exist, an error is returned.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+name: The name of the report as a string
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: (bs)qs
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if the report name requested is a valid report name and JSON was returned
+ successfully.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+A valid JSON string representing the report requested.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Subsection
+Non-standard Interfaces
+\end_layout
+
+\begin_layout Subsubsection
 FetchProperties interface
 \end_layout
 
@@ -1063,57 +1122,6 @@ TotalPhysicalUsed The total amount of physical space already used in the
  Signature: s
 \end_layout
 
-\end_deeper
-\begin_layout Subsection
-Report interface
-\end_layout
-
-\begin_layout Standard
-The Report interface is an unstable interface for querying internal stratisd
- data structure state.
- It provides reports as JSON, and while the reports can be parsed programmatical
-ly, the names and schemas of provided reports do not follow the semantic
- versioning scheme that the rest of the D-Bus API does.
- The reports are subject to change at any time.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-GetReport This method allows fetching a report by name.
- If a report by the supplied name does not exist, an error is returned.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-name: The name of the report as a string
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bs)qs
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if the report name requested is a valid report name and JSON was returned
- successfully.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-A valid JSON string representing the report requested.
- Signature: s.
-\end_layout
-
-\end_deeper
 \end_deeper
 \begin_layout Section
 Stratis interface versioning
