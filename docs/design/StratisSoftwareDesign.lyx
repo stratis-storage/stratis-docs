@@ -1001,6 +1001,19 @@ Most stratisd D-Bus methods require root permissions.
 Prevent Spoofing
 \end_layout
 
+\begin_layout Subsection
+Querying stratisd state via D-Bus
+\end_layout
+
+\begin_layout Standard
+stratisd exposes a reporting interface that allows users to query the state
+ of stratisd's internal data structures for debugging and error reporting.
+ The D-Bus query returns a JSON string that can be parsed to detect state
+ programmatically; however, the report interface is unstable, and consequently
+ the names and schemas of provided reports do not follow the semantic versioning
+ rules to which the rest of stratisd's API conforms.
+\end_layout
+
 \begin_layout Section
 Internals
 \end_layout
