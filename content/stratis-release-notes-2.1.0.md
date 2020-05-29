@@ -1,6 +1,6 @@
 +++
 title = "Stratis 2.1.0 Release Notes"
-date = 2020-03-31
+date = 2020-06-02
 weight = 9
 template = "page.html"
 render = true
@@ -84,6 +84,25 @@ changes:
 All commands now verify that stratis is communicating with a compatible
 version of stratisd and will fail with an appropriate error if stratisd is
 found to have an incompatible version.
+
+Usage
+-----
+To create an encrypted pool, a user must first ensure that a key is placed
+in the kernel keyring. We strongly encourage using the commands available
+via the stratis `key` subcommand for this task. This key, which is secret,
+has a corresponding key description, which is public.
+
+An encrypted pool is then created by specifying the key description
+when using the `pool create` command.
+
+It is necessary that the correct key and corresponding key description be set
+in the kernel keyring in order to set up a previously encrypted pool. Setting
+up a previously encrypted pool requires an explicit `pool unlock` command from
+the user. This command will attempt to unlock the devices belonging to any
+previously encrypted pool; it can only unlock all devices if a key for every
+encrypted pool is in the keyring. Once the devices belonging to a previously
+encrypted pool have been unlocked, the pool will be set up, and can be used in
+exactly the same manner as an unencrypted pool.
 
 <!-- more -->
 
