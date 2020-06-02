@@ -457,6 +457,11 @@ devices device nodes of devices to form the pool.
  Signature: as.
 \end_layout
 
+\begin_layout Description
+key_desc an optional key description of the key to use to encrypt the pool.
+ Signature: (bs)
+\end_layout
+
 \end_deeper
 \begin_layout Description
 Returns: Signature: (b(oao))qs.
@@ -516,6 +521,112 @@ True if the pool was destroyed, otherwise false.
 \begin_layout Enumerate
 The UUID of the pool destroyed, or a default value if no action was taken.
  Signature: s.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+SetKey This method sets a key in the kernel keyring.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+key_desc key description to assign to the set key.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+key_fd file descriptor through which to read the key data.
+ Signature: h.
+\end_layout
+
+\begin_layout Description
+interactive if true, reading the key ends when a newline is reached.
+ Signature: b.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: (bb)qs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if the key state was changed.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+True if the key was newly set in the keyring.
+ False if a key with the given key description already existed.
+ Signature: b.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+UnsetKey This method unsets a key in the kernel keyring.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+key_desc key description of the key to unset.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+False if the key did not exist in the keyring.
+ Signature: b.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+UnlockPool Unlock locked devices that have been determined to belong to
+ a Stratis pool.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+pool_uuid the UUID of the pool devices to unlock.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: (bas)qs
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+False if the return value is a none type.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+Array containing the UUIDs of all of the devices that were newly unlocked.
+ Signature: as.
 \end_layout
 
 \end_deeper
@@ -1120,6 +1231,25 @@ TotalPhysicalSize The total physical size of the pool in bytes.
 TotalPhysicalUsed The total amount of physical space already used in the
  pool.
  Signature: s
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Manager
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+KeyList List of key descriptions that are currently in the kernel keyring.
+ Signature: as.
+ Introduced in D-Bus version: 2-r1.
+\end_layout
+
+\begin_layout Description
+LockedPoolUuids List of pool UUIDs corresponding to pool devices that have
+ not yet been unlocked.
+ Signature: as.
+ Introduced in D-Bus version: 2-r1.
 \end_layout
 
 \end_deeper
