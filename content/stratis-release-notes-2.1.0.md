@@ -1,12 +1,10 @@
 +++
 title = "Stratis 2.1.0 Release Notes"
-date = 2020-06-02
+date = 2020-06-03
 weight = 9
 template = "page.html"
 render = true
 +++
-
-UNRELEASED
 
 Stratis 2.1.0 introduces support for encryption.
 
