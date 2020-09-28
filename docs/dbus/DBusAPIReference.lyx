@@ -302,6 +302,11 @@ It is expected that the client will identify the object path of the pool
  object by locating it using its Name or Uuid property.
 \end_layout
 
+\begin_layout Standard
+The org.freedesktop.dbus.ObjectManager.InterfacesAdded and org.freedesktop.dbus.ObjectM
+anager.InterfacesRemoved signals are emitted as appropriate.
+\end_layout
+
 \begin_layout Subsection
 org.freedesktop.dbus.Introspectable
 \end_layout
@@ -632,7 +637,7 @@ Array containing the UUIDs of all of the devices that were newly unlocked.
 \end_deeper
 \end_deeper
 \begin_layout Subsubsection*
-Propeties
+Properties
 \end_layout
 
 \begin_layout Description
@@ -1052,6 +1057,24 @@ InitializationTime
 \end_layout
 
 \begin_layout Description
+PhysicalPath The physical path of the blockev.
+ This may be diferent from the device represented by the Devnode property.
+ For example, in the presence of encryption, the PhysicalPath property is
+ the device on which the Stratis 
+\emph on
+LUKS2
+\emph default
+ metadata is written; the Devnode property is the opened device on which
+ the 
+\emph on
+Stratis
+\emph default
+ metadata is written.
+ Signature: s.
+ Introduced in D-Bus version: 2-r2.
+\end_layout
+
+\begin_layout Description
 Pool The object path of the parent pool.
  This property is constant.
  Signature: o.
@@ -1250,6 +1273,13 @@ LockedPoolUuids List of pool UUIDs corresponding to pool devices that have
  not yet been unlocked.
  Signature: as.
  Introduced in D-Bus version: 2-r1.
+\end_layout
+
+\begin_layout Description
+LockedPools Map of pool UUIDs to associated key descriptions.
+ Includes only UUIDs corresponding to locked pools.
+ Signature: a{ss}.
+ Introduced in D-Bus version: 2-r2.
 \end_layout
 
 \end_deeper
