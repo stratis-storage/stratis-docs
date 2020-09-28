@@ -1,7 +1,7 @@
 +++
 title = "stratis-cli 2.1.1 Release Notes"
 date = 2020-07-14
-weight = 10
+weight = 11
 template = "page.html"
 render = true
 +++
