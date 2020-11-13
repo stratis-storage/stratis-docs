@@ -16,11 +16,11 @@ in an environment where the system clock indicated a time earlier than when
 it had previously been running. See [stratisd issue 1509] for further
 details.
 
+<!-- more -->
+
 This release also includes significant refactoring of the stratisd metadata
 handling for clarity and modularity and to use types to enforce distinctions
 among the sizes of different metadata regions ([stratisd issue 1573]).
-
-<!-- more -->
 
 Additional changes include demoting a log message to a level appropriate
 to its significance ([stratisd issue 1485]) and specifying the stratisd PID
