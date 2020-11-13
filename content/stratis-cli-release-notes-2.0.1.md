@@ -11,6 +11,8 @@ Sunday January 21, 2020
 stratis-cli 2.0.1 contains a number of internal improvements as well as
 some improvements to certain error messages.
 
+<!-- more -->
+
 We expect that most current users will notice very little if any change;
 we hope that new users will benefit from error messages that they can
 more directly relate to the commands that they have typed. In order to
@@ -22,8 +24,6 @@ field displayed by any of the `list` subcommands.
 
 Contributors to the source will observe that our CI now requires 100% code
 coverage.
-
-<!-- more -->
 
 Please consult the changelog for additional information about the release.
 

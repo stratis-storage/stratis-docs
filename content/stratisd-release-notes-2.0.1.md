@@ -11,6 +11,8 @@ February 10, 2020
 stratisd 2.0.1 contains a number of internal improvements as well as
 enhanced logging.
 
+<!-- more -->
+
 A code defect which made it possible to leave the thinpool suspended on an
 error was fixed ([stratisd issue 1730]).
 
@@ -22,8 +24,6 @@ D-Bus interfaces.
 
 All macros were rewritten to use fully qualified names to improve code
 stability.
-
-<!-- more -->
 
 Please consult the changelog for additional information about the release.
 

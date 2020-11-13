@@ -50,6 +50,8 @@ This release also extends the D-Bus interface in a few ways:
 
 Please consult the D-Bus API Reference for the precise D-Bus specification.
 
+<!-- more -->
+
 This release allows the user to specify their preferred log level more
 directly and succinctly with the `--log-level` CLI option.
 
@@ -74,7 +76,5 @@ stratisd 2.2.0.
 
 We would like to thank our external contributors carzacc and poizen18 for
 their work on bash tab-completion.
-
-<!-- more -->
 
 Please consult the changelogs for additional information about the release.
