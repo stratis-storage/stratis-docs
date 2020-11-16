@@ -51,10 +51,12 @@ The `Unbind` method reverses a `Bind` action.
 Remarks
 -------
 
-The `Bind` method may be called with any Clevis pin and configuration.
-However the Stratis project supports only the "tang" and "tpm" pins as those
-are the pins that may be designated via `stratis`. Support for additional
-Clevis policies may be introduced into `stratis` in later releases.
+The `Bind` method may be called with any Clevis pin and configuration;
+we expect that any valid Clevis pin and configuration can be used to bind the
+devices in a pool. However the Stratis project officially supports only the
+"tang" and "tpm" pins as those are the pins that may be designated via
+`stratis`. Support for additional Clevis policies may be introduced into
+`stratis` in later releases.
 
 <!-- more -->
 
