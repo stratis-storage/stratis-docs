@@ -1,6 +1,6 @@
 +++
 title = "Stratis 2.3.0 Release Notes"
-date = 2020-11-09 # FIXME
+date = 2020-11-20
 weight = 14
 template = "page.html"
 render = true
