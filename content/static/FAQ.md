@@ -36,7 +36,7 @@ Yes, Stratis will work with virtually any block device, and Stratis has been tes
 
 ### How do I mount and use Stratis filesystems, once they’ve been created?
 
-Stratis pools and filesystems both are given names are part of the creation process. Stratis creates links to filesystems under `/stratis/<pool-name>/<filesystem-name>`. These may be used in `/etc/fstab`, but if pools or filesystems are renamed in the future, be sure to update `/etc/fstab` accordingly. Alternatively you can use the blkid tool to get the [XFS](https://en.wikipedia.org/wiki/XFS) filesystem UUID, and use that, which remains constant across renames. See `man fstab` for more information.
+Stratis pools and filesystems both are given names as part of the creation process. Stratis creates links to filesystems under `/stratis/<pool-name>/<filesystem-name>`. These may be used in `/etc/fstab`, but if pools or filesystems are renamed in the future, be sure to update `/etc/fstab` accordingly. Alternatively you can use the blkid tool to get the [XFS](https://en.wikipedia.org/wiki/XFS) filesystem UUID, and use that, which remains constant across renames. See `man fstab` for more information.
 
 ### Why do new filesystems show up as huge (1 terabyte) when using df?
 
