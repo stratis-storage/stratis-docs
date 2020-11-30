@@ -28,7 +28,7 @@ website-test: website-build
 	zola serve
 
 yamllint:
-	yamllint --strict .travis.yml
+	yamllint --strict .github/workflows/main.yml
 
 check:
 	(cd ./docs/design ; $(MAKE) check)
