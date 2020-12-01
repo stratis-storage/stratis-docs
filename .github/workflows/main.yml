@@ -1,0 +1,38 @@
+---
+name: stratis-docs CI
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  check:
+    env:
+      TASK: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Miscellaneous checks
+        run: make -f Makefile $TASK
+
+  # VERIFICATION OF TEST INFRASTRUCTURE
+  yamllint:
+    env:
+      TASK: yamllint
+      PYTHON: 3.7.6
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON }}
+      - name: Install dependencies
+        run: pip3 install yamllint==1.23.0
+      - name: Run yamllint
+        run: make -f Makefile $TASK
