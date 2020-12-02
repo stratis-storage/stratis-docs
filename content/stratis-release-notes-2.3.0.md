@@ -71,6 +71,14 @@ to a keyfile. An accidental newline character in the data may cause the
 contents of the file to be truncated at the newline when read in one context
 while all the data may be read from the file in some other context.
 
+We are not aware that such a mistake would result in any error in Stratis's
+operation when Stratis is used in the way that we recommend. We explicitly
+acknowledge that it might be possible, through some direct interaction with
+the stratisd D-Bus API, or by, e.g., setting a key in the kernel keyring
+without using stratis, to manufacture a situation where stratisd could not
+bind the devices in a pool, even when the correct key is set in the kernel
+keyring. We would not treat such a situation as evidence of a bug in Stratis.
+
 <!-- more -->
 
 Please consult the changelogs for additional information about the release.
