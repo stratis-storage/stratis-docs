@@ -64,7 +64,9 @@ using Clevis, the primary key, which is the key in the kernel keyring which
 was originally used to encrypt each device, must be supplied. stratisd
 obtains the appropriate key from the kernel keyring in order to provide it
 to the Clevis binding mechanism. The correct key must be present in the
-keyring for the bind operation to succeed.
+keyring for the bind operation to succeed. It is not necessary for the user
+to specify the key, stratisd obtains the necessary information from the
+LUKS2 metadata on the devices in the pool.
 
 In general, it is unwise to write a key consisting of arbitrary binary data
 to a keyfile. An accidental newline character in the data may cause the
