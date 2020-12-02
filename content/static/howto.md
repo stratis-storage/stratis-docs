@@ -42,6 +42,7 @@ sdc      8:32   0    2T  0 disk
 sdd      8:48   0    8G  0 disk
 sde      8:64   0    8G  0 disk
 sdf      8:80   0    8G  0 disk
+sdg	 8:96   0    8G  0 disk
 sr0     11:0    1 1024M  0 rom
 
 # blkid -p /dev/sda
@@ -173,10 +174,16 @@ Name             Total Physical Size  Total Physical Used
 stratis_howto                  1 TiB               52 MiB
 ```
 
-## `add-cache`: Add a block device as a cache device (typically something like SSD)
+## `init-cache`: Initialize cache and add block device as cache device (typically something like SSD)
 
 ```
-# stratis pool add-cache 3_amigos /dev/sde
+# stratis pool init-cache 3_amigos /dev/sde
+```
+
+## `add-cache`: Add a block device as cache to a pool with an existing cache
+
+```
+# stratis pool add-cache 3_amigos /dev/sdg
 ```
 
 ## `destroy`: Destroy a pool, no file systems can exist in pool
