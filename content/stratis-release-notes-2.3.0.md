@@ -59,6 +59,18 @@ devices in a pool. However the Stratis project officially supports only the
 `stratis`. Support for additional Clevis policies may be introduced into
 `stratis` in later releases.
 
+When binding a supplementary encryption policy to the devices in a pool
+using Clevis, the primary key, which is the key in the kernel keyring which
+was originally used to encrypt each device, must be supplied. stratisd
+obtains the appropriate key from the kernel keyring in order to provide it
+to the Clevis binding mechanism. The correct key must be present in the
+keyring for the bind operation to succeed.
+
+In general, it is unwise to write a key consisting of arbitrary binary data
+to a keyfile. An accidental newline character in the data may cause the
+contents of the file to be truncated at the newline when read in one context
+while all the data may be read from the file in some other context.
+
 <!-- more -->
 
 Please consult the changelogs for additional information about the release.
