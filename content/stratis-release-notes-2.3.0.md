@@ -7,7 +7,7 @@ render = true
 +++
 
 Stratis 2.3.0 adds additional flexibility to its encryption support via
-Clevis [clevis].
+[Clevis].
 
 stratis 2.3.0
 -------------
@@ -85,4 +85,4 @@ keyring. We would not treat such a situation as evidence of a bug in Stratis.
 
 Please consult the changelogs for additional information about the release.
 
-[clevis]: https://github.com/latchset/clevis
+[Clevis]: https://github.com/latchset/clevis
