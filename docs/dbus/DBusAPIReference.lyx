@@ -618,6 +618,28 @@ pool_uuid the UUID of the pool devices to unlock.
  Signature: s.
 \end_layout
 
+\begin_layout Description
+unlock_method the method to use to unlock the pool, may be 
+\begin_inset Quotes eld
+\end_inset
+
+keyring
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+clevis
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Signature: s.
+ Introduced in D-Bus version: 2-r3.
+\end_layout
+
 \end_deeper
 \begin_layout Description
 Returns: Signature: (bas)qs
@@ -721,6 +743,40 @@ True if any data devices were added, otherwise false.
 \begin_layout Enumerate
 The object paths of the newly added data devices.
  Signature: ao.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+Bind This method binds the devices in a pool, which must already have been
+ encrypted using a key in the kernel keyring, to a supplementary Clevis
+ encryption policy.
+ Introduced in D-Bus version: 2-r3.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+pin a Clevis pin
+\end_layout
+
+\begin_layout Description
+json a JSON formatted Clevis configuration
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if any new bindings were added, otherwise false.
+ Signature: b.
 \end_layout
 
 \end_deeper
@@ -863,6 +919,26 @@ True if a new snapshot was created, otherwise false.
 \begin_layout Enumerate
 The object path of the newly created snapshot.
  Signature: o.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+Unbind This method unbinds an existing Clevis encryption policy from the
+ encrypted devices in a pool.
+ Introduced in D-Bus version 2-r3.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+1.
+ True if some Clevis bindings were removed, otherwise false.
+ Signature: b.
 \end_layout
 
 \end_deeper
@@ -1240,9 +1316,21 @@ pool
 
 \begin_deeper
 \begin_layout Description
+ClevisInfo The optional Clevis metadata for this pool in JSON format.
+ Signature: (b, (s, s)).
+ Introduced in D-Bus version: 2-r3.
+\end_layout
+
+\begin_layout Description
 HasCache Whether or not the pool has a cache.
  Signature: b.
  Introduced in D-Bus version: 2-r1.
+\end_layout
+
+\begin_layout Description
+KeyDescription The optional description of the key in the kernel keyring.
+ Signature: (b, s).
+ Introduced in D-Bus version: 2-r2.
 \end_layout
 
 \begin_layout Description
