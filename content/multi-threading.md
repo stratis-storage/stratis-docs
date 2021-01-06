@@ -1,0 +1,97 @@
++++
+title = "Multi-threading Support in stratisd"
+date =
+weight =
+template = "page.html"
+render = true
++++
+
+Introducing Support for Multi-threading in stratisd
+---------------------------------------------------
+
+stratisd is an entirely single-threaded application;
+it is a daemon with a single event loop that consults a list of possible
+event sources in a prescribed order, handling the events on each event
+source before proceeding to the next.
+The event sources are udev, device-mapper, and D-Bus events which are
+handled in that order. stratisd can also be terminated cleanly by an
+interrupt signal, which it checks for on every loop iteration.
+
+This means that every action taken by stratisd must be completed before
+another action is performed. For example, if a client issues a D-Bus message
+to create a filesystem, that command will be processed, the engine will
+create a filesystem, and a response will be transmitted on the D-Bus before
+any other action can be taken. If another D-Bus message is issued before the
+first is completed, the engine will continue to process D-Bus messages until
+none are left.
+
+For this reason, stratisd itself can not parallelize long-running
+operations. It is well known that, for example, filesystem creation can be
+time consuming, as it is necessary to write the filesystem metadata when
+creating the filesystem. Ideally, stratisd would be able to run such time
+consuming operations in parallel, initiating one operation and then
+proceeding to initiate another before the first operation completes.
+
+Additionally, as in the example above, if stratisd is continually receiving
+D-Bus messages, it will not proceed to deal with a device-mapper event,
+even if the device-mapper event is urgent and not in any conflict with the
+D-Bus messages, for example, if it is associated with a different pool than
+any D-Bus messages.
+
+For these reasons, the next release introduces multi-threading capabilities
+into stratisd. These capabilities do not solve all the problems that multi-
+threading is intended to solve, but lay the essential foundation for multi-
+threaded event handling.
+
+We have chosen to implement multi-threading using the Rust [tokio] crate.
+The alternative is to use operating system threads explicitly via the
+Rust standard library [thread] module. We have chosen `tokio` in order to
+get the benefits of code reuse from the `tokio` runtime, and because we
+expect that this choice will allow stratisd to operate efficiently while 
+consuming fewer operating system resources.
+
+Before discussing tokio, however, it is necessary to discuss the Rust
+keyword `async` and the operator, `await`.
+
+async, await, and Future
+------------------------
+The `async` keyword was introduced in Rust [1.39]. Much information is
+available
+via the blog post. However, the key things to understand are the following:
+
+* Adding the `async` keyword to a code block or function causes the block 
+or function to be transformed to a block or function implementing the
+[Future] trait.
+
+* Invoking a function or executing a block that implements the `Future` trait
+has no effect.
+
+* Applying the `await` operatior to the result of such an invocation forces
+the computation to begin to be executed.
+
+* It is forbidden to apply the `await` operator outside an `async` block or
+function.
+
+The alert reader will notice that these rules appear to prohibit all execution
+of any `async` code , since the `async` keyword defers
+all computation, but the `await` operator, which forces the computation,
+can only be used within a block or function with the `async` keyword.
+
+The `tokio` runtime resolves this difficulty for us.
+
+Multi-threading Support via tokio
+---------------------------------
+
+TODO
+
+Statistics
+----------
+Using `tokio` increases the size of the `stratisd` executable by about 1 MiB,
+which at `stratisd`'s current size is an increase of approximately 20%.
+
+<!-- more -->
+
+[tokio] https://tokio.rs/
+[thread] https://doc.rust-lang.org/std/thread/
+[1.39] https://blog.rust-lang.org/2019/11/07/Rust-1.39.0.html
+[Future] https://doc.rust-lang.org/std/future/trait.Future.html
