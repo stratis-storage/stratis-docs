@@ -17,7 +17,7 @@ The event sources are udev, device-mapper, and D-Bus events which are
 handled in that order. stratisd can also be terminated cleanly by an
 interrupt signal, which it checks for on every loop iteration.
 
-This means that every action taken by stratisd must be completed before
+Consequently, every action taken by stratisd must be completed before
 another action is performed. For example, if a client issues a D-Bus message
 to create a filesystem, that command will be processed, the engine will
 create a filesystem, and a response will be transmitted on the D-Bus before
@@ -43,14 +43,15 @@ into stratisd. These capabilities do not solve all the problems that multi-
 threading is intended to solve, but lay the essential foundation for multi-
 threaded event handling.
 
-We have chosen to implement multi-threading using the Rust [tokio] crate.
+We have chosen to implement multi-threading using the Rust [tokio] and
+[async-std] crates.
 The alternative is to use operating system threads explicitly via the
 Rust standard library [thread] module. We have chosen `tokio` in order to
 get the benefits of code reuse from the `tokio` runtime, and because we
 expect that this choice will allow stratisd to operate efficiently while 
 consuming fewer operating system resources.
 
-Before discussing tokio, however, it is necessary to discuss the Rust
+Before discussing `tokio`, however, it is necessary to discuss the Rust
 keyword `async` and the operator, `await`.
 
 async, await, and Future
@@ -59,7 +60,7 @@ The `async` keyword was introduced in Rust [1.39]. Much information is
 available
 via the blog post. However, the key things to understand are the following:
 
-* Adding the `async` keyword to a code block or function causes the block 
+* Adding the `async` keyword to a code block or function causes the block
 or function to be transformed to a block or function implementing the
 [Future] trait.
 
@@ -77,10 +78,7 @@ of any `async` code , since the `async` keyword defers
 all computation, but the `await` operator, which forces the computation,
 can only be used within a block or function with the `async` keyword.
 
-The `tokio` runtime resolves this difficulty for us.
-
-Multi-threading Support via tokio
----------------------------------
+To have any of this `async` code executed requires an `executor`.
 
 TODO
 
@@ -92,6 +90,7 @@ which at `stratisd`'s current size is an increase of approximately 20%.
 <!-- more -->
 
 [tokio] https://tokio.rs/
+[async-std] https://book.async.rs/
 [thread] https://doc.rust-lang.org/std/thread/
 [1.39] https://blog.rust-lang.org/2019/11/07/Rust-1.39.0.html
 [Future] https://doc.rust-lang.org/std/future/trait.Future.html
