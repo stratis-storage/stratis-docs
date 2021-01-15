@@ -48,7 +48,7 @@ We have chosen to implement multi-threading using the Rust [tokio] and
 The alternative is to use operating system threads explicitly via the
 Rust standard library [thread] module. We have chosen `tokio` in order to
 get the benefits of code reuse from the `tokio` runtime, and because we
-expect that this choice will allow stratisd to operate efficiently while 
+expect that this choice will allow stratisd to operate efficiently while
 consuming fewer operating system resources.
 
 Before discussing `tokio`, however, it is necessary to discuss the Rust
@@ -78,9 +78,29 @@ of any `async` code , since the `async` keyword defers
 all computation, but the `await` operator, which forces the computation,
 can only be used within a block or function with the `async` keyword.
 
-To have any of this `async` code executed requires an `executor`.
+To have any of this `async` code executed requires an `executor` about which
+more later.
 
-TODO
+async-std implementations for the Rust standard libary
+------------------------------------------------------
+async-std is a crate that supplies async reimplementations of some Rust standard
+library modules: fs, io, net, path, and
+sync. Generally, these implementations wrap the Rust standard library
+implementations to allow asynchronous computations.
+
+`stream` is a module for asynchronous iterators. Each
+element of a `Stream` can be accessed asynchronously. `Stream`s can be
+composed in the same ways that iterators can be composed, typically by
+using the standard methods, such as `filter`.
+
+Example: Implementation of Stream for DmFd
+------------------------------------------
+The struct DmFd and its implementation comprise the basic mechanism by
+which stratisd handles device mapper events. In particular, DmFd implements
+the `Stream` trait, and a higher level stratisd function includes a loop
+which repeatedly invokes `next()` on the DmFd object. `next()` is an
+asynchronous function, so at every iteration of the loop the computation
+must be forced with the `await` keyword.
 
 Statistics
 ----------
@@ -90,7 +110,7 @@ which at `stratisd`'s current size is an increase of approximately 20%.
 <!-- more -->
 
 [tokio] https://tokio.rs/
-[async-std] https://book.async.rs/
+[async-std] https://async.rs/
 [thread] https://doc.rust-lang.org/std/thread/
 [1.39] https://blog.rust-lang.org/2019/11/07/Rust-1.39.0.html
 [Future] https://doc.rust-lang.org/std/future/trait.Future.html
