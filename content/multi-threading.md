@@ -102,6 +102,11 @@ which repeatedly invokes `next()` on the DmFd object. `next()` is an
 asynchronous function, so at every iteration of the loop the computation
 must be forced with the `await` keyword.
 
+The `unsafe` boundary in `stratisd`
+----------------------------------
+TODO: Discussion of our wrapper libraries. Implementing Send and Sync.
+TODO: Requirements of unsafe code.
+
 Statistics
 ----------
 Using `tokio` increases the size of the `stratisd` executable by about 1 MiB,
