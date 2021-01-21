@@ -81,6 +81,41 @@ can only be used within a block or function with the `async` keyword.
 To have any of this `async` code executed requires an `executor` about which
 more later.
 
+Making the engine `Send`
+-----------------------
+Another essential component of the transformation from single-threaded to
+multi-threaded operation
+is transforming the stratisd `Engine` trait and the sim
+and real engine that implement the trait so that they are `Send`. That is
+ownership of the engine can be transferred between threads without any
+possibility that there will be a race condition on the engine between
+the threads.
+
+Of course, core Rust has an ownership model that makes any sharing between
+threads impossible. However, there are many cases where it is necessary to
+have two pointers to the same object. Rust supports this via the reference-
+counted pointers in the standard library, Rc and Arc pointers. The
+pointers share the common property that any pointer can be cloned to
+make another copy of itself. When all pointers to an object are collected,
+so is the object itself. When there are two pointers to an object, it is
+indeed possible for the object to become shared between threads, as ownership
+of one pointer is transferred but the other is left behind.
+
+Rust must guarantee that the reference counts are always correct, otherwise
+the object pointed may be reclaimed early or leak permanently. For this
+reason, it has two flavors of reference-counted pointers,
+Rc pointers and Arc pointers. What distinguishes Arc from Rc pointers is that
+the Arc pointers implement atomic updates on their reference counters. Atomic
+updates
+guarantee that there will never be a race condition on the reference counters.
+Consequently, Arc pointers are always `Send`, but `Rc` pointers never are.
+
+Our chief concern in the single-threaded stratisd implementation is that
+the engine itself must be shared. stratisd implements an optional, but
+vital, D-Bus layer, and it is necessary that the D-Bus connection have
+a reference to the engine so that when D-Bus method calls are received
+the D-Bus layer can invoke engine methods.
+
 async-std implementations for the Rust standard libary
 ------------------------------------------------------
 async-std is a crate that supplies async reimplementations of some Rust standard
