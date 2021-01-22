@@ -13,7 +13,7 @@ TODO
 \end{abstract}
 
 \section{Introduction}
-stratisd is an entirely single-threaded application; it is a daemon with a single event loop that consults a list of possible event sources in a prescribed order, handling the events on each event source before proceeding to the next. The event sources are udev, device-mapper, and D-Bus events which are handled in that order. stratisd can also be terminated cleanly by an interrupt signal, which it checks for on every loop iteration.
+stratisd is an entirely single-threaded application; it is a daemon with a single event loop that consults a list of possible event sources in a prescribed order, handling the events on each event source before proceeding to the next. The event sources are udev, device-mapper, and D-Bus and events are handled in order of their source. stratisd can also be terminated cleanly by an interrupt signal, which it checks for on every loop iteration.
 
 Consequently, every action taken by stratisd must be completed before another action is performed. For example, if a client issues a D-Bus message to create a filesystem, that command will be processed, the engine will create a filesystem, and a response will be transmitted on the D-Bus before any other action can be taken. If another D-Bus message is issued before the first is completed, the engine will continue to process D-Bus messages until none are left.
 
@@ -24,7 +24,10 @@ Additionally, as in the example above, if stratisd is continually receiving D-Bu
 For these reasons, the next release introduces multi-threading capabilities into stratisd. These capabilities do not solve all the problems that multi-threading is intended to solve, but lay the essential foundation for multi-threaded event handling.
 
 \section{Challenges}
-TODO: cryptsetup C library is single-threaded.
+\subsection{cryptsetup}
+\texttt{libcryptsetup}\footnote{\texttt{https://mbroz.fedorapeople.org/libcryptsetup\_API/}}, which is the library that stratisd depends on for encryption operations, either through the libcryptsetup-rs Rust bindings\footnote{\texttt{https://crates.io/crates/libcryptsetup-rs}} or via invocations of Clevis command line utilities\footnote{\texttt{https://github.com/latchset/clevis}} does not itself support multi-threading. If stratisd were to use it in a multi-threaded manner, undefined behavior would undoubtedly result.
+
+For cryptsetup operations that are initiated by Clevis, multi-threading is not possible, since at this time stratisd must invoke Clevis command-line utilites. However, for the operations that stratisd does directly via its Rust bindings, stratisd must enforce single-threading, and does so.
 
 \section{Multi-threading Choices}
 We have chosen to implement multi-threading using the Rust tokio\footnote{\texttt{https://tokio.rs/}} and async-std\footnote{\texttt{https://async.rs/}} crates. The alternative is to use operating system threads explicitly via the Rust standard library thread\footnote{\texttt{https://doc.rust-lang.org/std/thread/}} module. We have chosen `tokio` in order to get the benefits of code reuse from the `tokio` runtime, and because we expect that this choice will allow stratisd to operate efficiently while consuming fewer operating system resources.
