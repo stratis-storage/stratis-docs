@@ -29,6 +29,8 @@ For these reasons, the next release introduces multi-threading capabilities into
 
 For cryptsetup operations that are initiated by Clevis, multi-threading is not possible, since at this time stratisd must invoke Clevis command-line utilites. However, for the operations that stratisd does directly via its Rust bindings, stratisd must enforce single-threading, and does so.
 
+stratisd achieves this single-threaded operation by defining a single mutex within the stratisd crypt module, which manages all interaction between stratisd and the libcryptsetup library. Every publicly available method must enter the mutex before an operation can be performed.
+
 \section{Multi-threading Choices}
 We have chosen to implement multi-threading using the Rust tokio\footnote{\texttt{https://tokio.rs/}} and async-std\footnote{\texttt{https://async.rs/}} crates. The alternative is to use operating system threads explicitly via the Rust standard library thread\footnote{\texttt{https://doc.rust-lang.org/std/thread/}} module. We have chosen `tokio` in order to get the benefits of code reuse from the `tokio` runtime, and because we expect that this choice will allow stratisd to operate efficiently while consuming fewer operating system resources.
 
