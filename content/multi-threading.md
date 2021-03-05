@@ -21,8 +21,10 @@ completed before another action is performed. For example, if a client issues
 a D-Bus message to create a filesystem, that command will be processed, the
 engine will create a filesystem, and a response will be transmitted on the
 D-Bus before any other action can be taken. If another D-Bus message is
-issued before the first is completed, the engine will continue to process
-D-Bus messages until none are left.
+received before the first is completed, that D-Bus message will then be
+processed.  The engine will continue to process D-Bus messages until none are
+left, preventing it from handling any other categories of signals or
+events while any D-Bus messages remain.
 
 For this reason, stratisd itself can not parallelize long-running
 operations. It is well known that, for example, filesystem creation can be
