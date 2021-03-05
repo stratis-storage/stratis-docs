@@ -270,7 +270,7 @@ For example, consider that two conflicting commands may be handled at the
 same time: one command to delete a filesystem and the other to rename
 the same filesystem. If both commands are being handled in separate threads
 each will read the same data based on the filesystem object. Then, either
-one may enter the engine mutex. If the rename action enters the mutex first,
+one may enter the engine mutex. If the rename task enters the mutex first,
 it will be the first to place a message on the dbus channel. The DbusTreeHandler
 will remove the rename message first and then the remove message placed
 on the dbus channel after the remove request completes. Clearly,
