@@ -103,7 +103,11 @@ This is the receiver for the stratisd D-Bus channel.
 
 stratisd defines a DbusUdevHandler task which removes udev event information
 from the stratisd udev channel, allows the engine to process it, and puts
-resulting D-Bus action information on the stratisd D-Bus channel.
+message that may be necessary as a result of the engine processing the udev
+event on the stratisd dbus channel. Currently, a udev event may result in
+a pool being set up; when that happens an add message must be placed on the
+dbus channel for every filesystem or block device belonging to the pool,
+as well as an add message for the pool itself.
 
 
 Sharing the Engine Between Tasks
