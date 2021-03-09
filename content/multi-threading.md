@@ -8,15 +8,15 @@ render = true
 
 Introducing Support for Multi-threading in stratisd
 ===================================================
-stratisd is an entirely single-threaded application;
+`stratisd` is an entirely single-threaded application;
 it is a daemon with a single event loop that consults a list of possible
 event sources in a prescribed order, handling the events on each event
 source before proceeding to the next.
 The event sources are udev, device-mapper, and D-Bus events which are
-handled in that order. stratisd can also be terminated cleanly by an
+handled in that order. `stratisd` can also be terminated cleanly by an
 interrupt signal, which it checks for on every loop iteration.
 
-Because stratisd is single threaded, every action taken by stratisd must be
+Because `stratisd` is single threaded, every action taken by `stratisd` must be
 completed before another action is performed. For example, if a client issues
 a D-Bus message to create a filesystem, that command will be processed, the
 engine will create a filesystem, and a response will be transmitted on the
@@ -26,21 +26,21 @@ processed.  The engine will continue to process D-Bus messages until none are
 left, preventing it from handling any other categories of signals or
 events while any D-Bus messages remain.
 
-For this reason, stratisd itself can not parallelize long-running
+For this reason, `stratisd` itself can not parallelize long-running
 operations. It is well known that, for example, filesystem creation can be
 time consuming, as it is necessary to write the filesystem metadata when
-creating the filesystem. Ideally, stratisd would be able to run such time
+creating the filesystem. Ideally, `stratisd` would be able to run such time
 consuming operations in parallel, initiating one operation and then
 proceeding to initiate another before the first operation completes.
 
-Additionally, as in the example above, if stratisd is continually receiving
+Additionally, as in the example above, if `stratisd` is continually receiving
 D-Bus messages, it will not proceed to deal with a device-mapper event,
 even if the device-mapper event is urgent and not in any conflict with the
 D-Bus messages, for example, if it is associated with a different pool than
 any D-Bus messages.
 
 For these reasons, the next release introduces multi-threading capabilities
-into stratisd. These capabilities do not solve all the problems that multi-
+into `stratisd`. These capabilities do not solve all the problems that multi-
 threading is intended to solve, but lay the essential foundation for multi-
 threaded event handling.
 
@@ -48,7 +48,7 @@ We have chosen to implement multi-threading using the Rust [tokio] crate.
 The alternative is to use operating system threads explicitly via the
 Rust standard library [thread] module. We have chosen `tokio` in order to
 get the benefits of code reuse from the `tokio` runtime, and because we
-expect that this choice will allow stratisd to operate efficiently while
+expect that this choice will allow `stratisd` to operate efficiently while
 consuming fewer operating system resources.
 
 We have also made use of the newest version of the [dbus] crate, which
@@ -61,7 +61,7 @@ multi-threading:
 * object - an instance of a Rust struct and the methods implemented for it.
 * task - A task is a program which has been designed so that it can
 be run concurrently  with its fellow tasks. The multi-threaded incarnation
-of stratisd consists of a set of tasks, some code to facilitate interactions
+of `stratisd` consists of a set of tasks, some code to facilitate interactions
 between the tasks, and the `tokio` runtime.
 * context - the context of a process is all the information required to
 begin running the process when it resumes after having been suspended by the
@@ -100,7 +100,7 @@ an object.
 
 Design
 ======
-stratisd divides its work among a number of tasks which handle
+`stratisd` divides its work among a number of tasks which handle
 different event sources. Some tasks are non-blocking, others are blocking
 tasks. Non-blocking tasks may yield, and can share a single thread with
 other non-blocking tasks. The tasks communicate using two unbounded MPSC
@@ -123,8 +123,8 @@ layers. Access to the dbus tree is controlled by a read/write lock.
 
 The stratisd engine
 -------------------
-The stratisd engine is the core of the stratisd daemon. It manages all the
-essentially functionality of stratisd. Access to the engine is controlled
+The `stratisd` engine is the core of the `stratisd` daemon. It manages all the
+essentially functionality of `stratisd`. Access to the engine is controlled
 by a mutex.
 
 The dbus channel
@@ -151,14 +151,14 @@ it receives the signal it sets `should_exit` to true and finishes.
 device-mapper event task
 ------------------------
 The device-mapper event task loops forever waiting for a device-mapper event.
-On receipt of any event, it locks the stratisd engine, and processes the
+On receipt of any event, it locks the `stratisd` engine, and processes the
 event. It yields only when waiting for a new device-mapper event, it blocks
 on the engine mutex.
 
 udev event handling task
 ------------------------
 The udev event handling task uses a polling mechanism to detect udev events.
-If a udev event is detected it places a message on the stratisd udev channel.
+If a udev event is detected it places a message on the `stratisd` udev channel.
 It reads `should_exit` after every udev event or, if no udev event has
 occurred, after a designated time interval. If  `should_exit` is `true` when
 read it returns immediately.
@@ -167,34 +167,34 @@ D-Bus Tasks
 -----------
 The management of the D-Bus layer is handled by several cooperating tasks.
 The dbus crate supplies one task, which detects D-Bus messages and places
-them on its own unbounded channel. The stratisd tasks are the
+them on its own unbounded channel. The `stratisd` tasks are the
 DbusTreeHandler task, the DbusConnectionHandler task, and the
 DbusUdevHandler task.
 
 DbusTreeHandler task
 ---------------------
-stratisd defines a DbusTreehandler task which updates the dbus tree and
+`stratisd` defines a DbusTreehandler task which updates the dbus tree and
 may also handle emitting D-Bus signals. It is the unique receiver on
-the stratisd dbus channel and the only task which obtains a write lock
+the `stratisd` dbus channel and the only task which obtains a write lock
 on the dbus tree. It is a non-blocking task.
 
 DbusConnectionHandler task
 --------------------------
-stratisd defines a DbusConnectionHandler task which spawns a
+`stratisd` defines a DbusConnectionHandler task which spawns a
 new task for every D-Bus method call. Each spawned task obtains a read
 lock on the dbus tree before it begins to process the D-Bus method call,
 and may also lock the engine. If it locks the engine, it blocks on the lock.
-Each spawned task may place messages on the stratisd dbus channel. These
+Each spawned task may place messages on the `stratisd` dbus channel. These
 tasks are responsible for sending replies to D-Bus message on the D-Bus.
 This is the only part of the implementation where new tasks can be spawned
-during stratisd's regular operation.
+during `stratisd`'s regular operation.
 
 DbusUdevHandler task
 --------------------
-stratisd defines a DbusUdevHandler task which removes udev event information
-from the stratisd udev channel, allows the engine to process it, and puts
+`stratisd` defines a DbusUdevHandler task which removes udev event information
+from the `stratisd` udev channel, allows the engine to process it, and puts
 any messages that may be necessary as a result of the engine processing the
-udev event on the stratisd dbus channel. Currently, a udev event may result in
+udev event on the `stratisd` dbus channel. Currently, a udev event may result in
 a pool being set up; when that happens an add message must be placed on the
 dbus channel for every filesystem or block device belonging to the pool,
 as well as an add message for the pool itself. The DbusUdevHandler locks
@@ -206,7 +206,7 @@ Properties and Consequences
 
 Unbounded Channels
 ----------------
-Both the stratisd udev channel and the dbus channel are "unbounded channels".
+Both the `stratisd` udev channel and the dbus channel are "unbounded channels".
 These "unbounded" channels are actually bounded, but the bound on the number
 of messages allowed is the max value of usize. It is assumed that other
 machine limits will be encountered before usize MAX number of messages is
@@ -216,7 +216,7 @@ placing a message on the channel, sending always succeeds.
 We chose to make the dbus channel unbounded, as there exist two situations
 where a large number of messages may be placed on the channel. When a pool
 is constructed, the number of messages placed on the channel is proportional
-to the number of devices in the pool. On startup, when stratisd sets up
+to the number of devices in the pool. On startup, when `stratisd` sets up
 a pool from its constituent devices, the number of messages is proportional
 to the number of devices and to the number of filesystems that the pool
 supports. We prefer to use an unbounded channel rather than to bound the
@@ -252,7 +252,7 @@ this situation can only arise if many messages require long-running actions
 to be taken and if these messages are sent in parallel.
 
 In any case, the improvement with respect to a single-threaded approach is
-obvious. In the existing single threaded design, stratisd would be
+obvious. In the existing single threaded design, `stratisd` would be
 unable to handle any other events until all the D-Bus messages had been
 handled. With the multi-threaded design, udev and device-mapper events can
 be handled when they arrive, interspersed with the handling of the D-Bus
@@ -270,8 +270,8 @@ Each such task must:
 1. Acquire a read lock on the dbus tree.
 2. Query the tree in order to find the necessary information to call the engine
 method.
-3. Enter a mutex on the stratisd engine.
-4. Operate on the stratisd engine.
+3. Enter a mutex on the `stratisd` engine.
+4. Operate on the `stratisd` engine.
 5. Place any required messages on the dbus channel.
 6. Exit the mutex.
 7. Relinquish the read lock.
@@ -345,11 +345,11 @@ update is performed on the dbus tree.
 
 Error Behavior
 --------------
-stratisd exits immediately if any task encounters an error.
+`stratisd` exits immediately if any task encounters an error.
 
 Ensuring a Clean and Prompt Exit
 --------------------------------
-On SIGINT, stratisd should exit promptly and cleanly. This is ensured by:
+On SIGINT, `stratisd` should exit promptly and cleanly. This is ensured by:
 1. Having a separate signal handling task that waits on SIGINT. The tokio
 scheduler will ensure that this task is run regularly; thus the signal
 can not be ignored. Note that in the single-threaded case it is possible
@@ -369,7 +369,7 @@ which at `stratisd`'s current size is an increase of approximately 20%.
 
 Remarks
 =======
-Preliminary multi-threading support will be included in the next stratisd
+Preliminary multi-threading support will be included in the next `stratisd`
 release, 2.4.0.
 
 <!-- more -->
