@@ -80,11 +80,11 @@ shared memory.
 for the operation to complete and is not able to be replaced in the same
 thread by another task until the operation is completed. Examples of typical
 operations are I/O or network interactions. Another sort of operation is
-the aquistion of a shared resource via a mutex or other synchronisation
+the acquisition of a shared resource via a mutex or other synchronization
 primitive.
 * blocking - a blocking task is a task that may block.
 * non-blocking - a non-blocking task is a task that does not need to wait
-for any operation to complete; if it initates an operation that may take
+for any operation to complete; if it initiates an operation that may take
 a while to complete, it is able to yield to another task, and may be resumed
 later from the instruction where it yielded.
 * mutex - a synchronization primitive which enforces mutual exclusion. With
@@ -94,7 +94,7 @@ a mutex is already held by another task, a task requesting the mutex may
 block or it may yield until the mutex can be obtained.
 * read/write lock - a mutex which is relaxed in so far as that it allows
 multiple tasks to share an object if none mutate the object. If a task
-mutates the object then it must obtain exclusive possesion of the mutex.
+mutates the object then it must obtain exclusive possession of the mutex.
 * lock - to enter a mutex guarding an object is synonymous with locking
 an object.
 
@@ -150,7 +150,7 @@ it receives the signal it sets `should_exit` to true and finishes.
 
 device-mapper event task
 ------------------------
-The device-mapper event task loops forever waiting for a devicemapper event.
+The device-mapper event task loops forever waiting for a device-mapper event.
 On receipt of any event, it locks the stratisd engine, and processes the
 event. It yields only when waiting for a new device-mapper event, it blocks
 on the engine mutex.
@@ -247,7 +247,7 @@ The dbus crate's message channel is unbounded, so D-Bus messages can not be
 dropped although they may be handled very slowly if there is a backlog.
 Depending on the client's configuration, this may cause the client to hang
 indefinitely waiting for a response or the client may receive a message
-indcating that no response was transmitted in the allotted time. However,
+indicating that no response was transmitted in the allotted time. However,
 this situation can only arise if many messages require long-running actions
 to be taken and if these messages are sent in parallel.
 
@@ -255,7 +255,7 @@ In any case, the improvement with respect to a single-threaded approach is
 obvious. In the existing single threaded design, stratisd would be
 unable to handle any other events until all the D-Bus messages had been
 handled. With the multi-threaded design, udev and device-mapper events can
-be handled when they arive, interspersed with the handling of the D-Bus
+be handled when they arrive, interspersed with the handling of the D-Bus
 messages.
 
 One Task per D-Bus Message Model
@@ -281,7 +281,7 @@ in which the messages arrive, the order in which messages complete may not
 be the same, because a later task may enter the engine mutex before an earlier
 task.
 
-The motivation for this design is obvious, athough the benefits are not
+The motivation for this design is obvious, although the benefits are not
 yet realized in this preliminary multi-threading implementation. In future,
 we expect to relax the requirement that each task have exclusive access to
 the entire engine and lock only the relevant parts of the engine. With that
@@ -313,11 +313,11 @@ described in (1) are somewhat easier to observe.
 tree by returning rich result types from the engine methods.
 
 Given two distinct mutating D-Bus methods running in separate threads
-there is a possiblity of a situation rather analogous to a race-condition
+there is a possibility of a situation rather analogous to a race-condition
 arising. Two tasks may read the dbus tree, update the internal engine state,
 and then send update messages on the dbus channel. It is uncertain which
 task will acquire the engine mutex. This is
-partially analagous to the classic race-condition where two processes read a
+partially analogous to the classic race-condition where two processes read a
 single variable, and then both update that variable in an undetermined order.
 
 What makes this analogy only partial is the interposition of the engine,
