@@ -54,6 +54,49 @@ consuming fewer operating system resources.
 We have also made use of the newest version of the [dbus] crate, which
 includes support for multi-threading via the [dbus-tokio] crate.
 
+Nomenclature
+============
+The following words have a precise definition in the context of
+multi-threading:
+* object - an instance of a Rust struct and the methods implemented for it.
+* task - A task is a program which has been designed so that it can
+be run concurrently  with its fellow tasks. The multi-threaded incarnation
+of stratisd consists of a set of tasks, some code to facilitate interactions
+between the tasks, and the `tokio` runtime.
+* context - the context of a process is all the information required to
+begin running the process when it resumes after having been suspended by the
+operating system scheduler. A context switch is the action of storing this
+information for the process being suspended and loading the information for
+the process being resumed.
+* thread - a thread is a sub-division of a process. When an operating system
+switches processes, a context switch is required. When an operating
+system switches threads, the new thread shares much of its process' context
+with the previous thread. Consequently, switching between threads, as opposed
+to processes, may be an order of magnitude less expensive. All threads
+belonging to a process share the same memory and may communicate via this
+shared memory.
+* runtime - the `tokio` runtime manages scheduling of tasks.
+* block - a task is said to block on an operation if the task must wait
+for the operation to complete and is not able to be replaced in the same
+thread by another task until the operation is completed. Examples of typical
+operations are I/O or network interactions. Another sort of operation is
+the aquistion of a shared resource via a mutex or other synchronisation
+primitive.
+* blocking - a blocking task is a task that may block.
+* non-blocking - a non-blocking task is a task that does not need to wait
+for any operation to complete; if it initates an operation that may take
+a while to complete, it is able to yield to another task, and may be resumed
+later from the instruction where it yielded.
+* mutex - a synchronization primitive which enforces mutual exclusion. With
+`tokio` the exclusion is enforced on a particular object. If a task obtains
+a mutex, it has exclusive use of the object until it releases the mutex.  If
+a mutex is already held by another task, a task requesting the mutex may
+block or it may yield until the mutex can be obtained.
+* read/write lock - a mutex which is relaxed in so far as that it allows
+multiple tasks to share an object if none mutate the object. If a task
+mutates the object then it must obtain exclusive possesion of the mutex.
+* lock - to enter a mutex guarding an object is synonymous with locking
+an object.
 
 Design
 ======
@@ -64,83 +107,99 @@ other non-blocking tasks. The tasks communicate using two unbounded MPSC
 (Multi-Producer Single-Consumer) channels; a channel for udev events and
 a channel for D-Bus updates.
 
-Non-blocking Tasks
-------------------
-signal handling task - The signal handling task is a non-blocking
-task which waits for SIGINT. If it receives the signal it sets a shared flag
-to true and finishes.
+Termination Variable
+--------------------
+One boolean variable, `should_exit`, is shared among some of the tasks.
+It is set to true only if SIGINT is detected. It is observed only by the
+udev task, which checks its value on every iteration of its loop, and
+immediately returns if the value is `true`. For all other tasks, termination
+is handled by `tokio` constructs. The udev task requires special handling
+because it does not yield and because it contains a non-terminating loop.
 
-device-mapper event task - The device-mapper event task loops forever
-waiting for a devicemapper event. On receipt of any event, it locks the
-stratisd engine, and processes the event. It yields only when waiting for a
-new device-mapper event.
-
-Blocking Tasks
+The dbus `tree`
 --------------
-udev event handling task - The udev event handling task uses a polling
-mechanism to detect udev events. If a udev event is detected it places a
-message on the stratisd udev event channel. It blocks until the channel has
-room. It observes the signal handling task's shared flag and exits if the
-flag is set to true.
+The dbus tree is a data structure which contains the state of the D-Bus
+layers. Access to the dbus tree is controlled by a read/write lock.
+
+The stratisd engine
+-------------------
+The stratisd engine is the core of the stratisd daemon. It manages all the
+essentially functionality of stratisd. Access to the engine is controlled
+by a mutex.
+
+The dbus channel
+----------------
+The dbus channel is an unbounded multi-producer, single-consumer channel.
+It carries messages instructing the DbusTreeHandler how to update the dbus
+tree. The DbusTreeHandler task is the unique consumer of the messages.
+The DbusConnectionHandler, which processes D-Bus messages sent by the client,
+and the DbusUdevhandler, which handles udev events, may both place messages
+on the dbus channel.
+
+The udev channel
+----------------
+The udev channel is an unbounded multi-producer, single-consumer channel.
+It carries messages about udev events to the DbusUdevHandler. There is
+only one producer for this channel, the udev event handling task,
+which monitors udev events and places those events on the channel.
+
+signal handling task
+--------------------
+The signal handling task is a non-blocking task which waits for SIGINT. If
+it receives the signal it sets `should_exit` to true and finishes.
+
+device-mapper event task
+------------------------
+The device-mapper event task loops forever waiting for a devicemapper event.
+On receipt of any event, it locks the stratisd engine, and processes the
+event. It yields only when waiting for a new device-mapper event, it blocks
+on the engine mutex.
+
+udev event handling task
+------------------------
+The udev event handling task uses a polling mechanism to detect udev events.
+If a udev event is detected it places a message on the stratisd udev channel.
+It reads `should_exit` after every udev event or, if no udev event has
+occurred, after a designated time interval. If  `should_exit` is `true` when
+read it returns immediately.
 
 D-Bus Tasks
 -----------
 The management of the D-Bus layer is handled by several cooperating tasks.
 The dbus crate supplies one task, which detects D-Bus messages and places
-them on its own unbounded channel.
+them on its own unbounded channel. The stratisd tasks are the
+DbusTreeHandler task, the DbusConnectionHandler task, and the
+DbusUdevHandler task.
 
-stratisd defines a DbusConnectionHandler task, which has ownership of the
-receiver end of the dbus channel. The DbusConnectionHandler task spawns a
-new task for every D-Bus method call. Each method call task obtains a read
-lock on the D-Bus tree before it begins to process the D-Bus method call.
+DbusTreeHandler task
+---------------------
+stratisd defines a DbusTreehandler task which updates the dbus tree and
+may also handle emitting D-Bus signals. It is the unique receiver on
+the stratisd dbus channel and the only task which obtains a write lock
+on the dbus tree. It is a non-blocking task.
+
+DbusConnectionHandler task
+--------------------------
+stratisd defines a DbusConnectionHandler task which spawns a
+new task for every D-Bus method call. Each spawned task obtains a read
+lock on the dbus tree before it begins to process the D-Bus method call,
+and may also lock the engine. If it locks the engine, it blocks on the lock.
+Each spawned task may place messages on the stratisd dbus channel. These
+tasks are responsible for sending replies to D-Bus message on the D-Bus.
 This is the only part of the implementation where new tasks can be spawned
-during stratisd's operation. Each task may also place messages on the stratisd
-D-Bus channel.
+during stratisd's regular operation.
 
-stratisd defines a DbusTreehandler task which updates the stratisd D-Bus
-interface, e.g., adds and removes object paths, emits signals, and so forth.
-This is the receiver for the stratisd D-Bus channel.
-
+DbusUdevHandler task
+--------------------
 stratisd defines a DbusUdevHandler task which removes udev event information
 from the stratisd udev channel, allows the engine to process it, and puts
-message that may be necessary as a result of the engine processing the udev
-event on the stratisd dbus channel. Currently, a udev event may result in
+any messages that may be necessary as a result of the engine processing the
+udev event on the stratisd dbus channel. Currently, a udev event may result in
 a pool being set up; when that happens an add message must be placed on the
 dbus channel for every filesystem or block device belonging to the pool,
-as well as an add message for the pool itself.
+as well as an add message for the pool itself. The DbusUdevHandler locks
+the engine when processing a udev event, but does not block on the lock.
 
-
-Sharing the Engine Between Tasks
---------------------------------
-Several tasks must share the stratisd engine. The device-mapper event handling
-task requires the engine so that the engine can handle the events, take
-action if necessary, and update its internal state accordingly. The
-DbusConnectionHandler task requires the engine so that it can transmit
-the D-Bus methods to the engine and receive its response. The udev event
-handling task requires the engine so that it can notify the engine of
-a received event and, if necessary, put an updates to the D-Bus layer
-that resulted from the engine processing that event on the stratisd D-Bus
-channel.
-
-To manage this sharing the engine is guarded by a mutex, and each task
-must enter the mutex to begin operating on the engine. The device-mapper
-and DbusUdevHandler tasks may yield while waiting to enter the mutex. A
-DbusConnectionHandler task blocks on the mutex.
-
-Sharing the dbus Tree Between Tasks
--------------------------------------
-The dbus tree is a data structure implemented by the dbus crate which
-abstractly contains the information that is available to clients of stratisd
-over the D-Bus. It must be shared by the DbusConnectionHandler and the
-DbusTreeHandler; the DbusConnectionhandler needs to read the tree to process
-D-Bus method calls, the DbusTreeHandler must both read and write the tree,
-to add and to remove D-Bus object paths. Access to the dbus tree is
-guarded by a Read-Write lock: the DbusConnectionHandler must obtain a read
-lock, while the DbusTreeHandler requires a write lock. Since a new task
-is spawned for every D-Bus method call, several tasks may be holding the
-write lock at any given time. Note that separate tasks are not guaranteed
-to run each on a separate thread; they may also be run in sequence, depending
-on the decisions of the tokio scheduler.
 
 Properties and Consequences
 ===========================
