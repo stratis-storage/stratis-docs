@@ -208,10 +208,11 @@ Unbounded Channels
 ----------------
 Both the `stratisd` udev channel and the dbus channel are "unbounded channels".
 These "unbounded" channels are actually bounded, but the bound on the number
-of messages allowed is the max value of usize. It is assumed that other
-machine limits will be encountered before usize MAX number of messages is
-added to the channel. Because both channels are unbounded, tasks do not block
-placing a message on the channel, sending always succeeds.
+of messages allowed on the channel is the maximum value of the Rust usize type.
+It is assumed that other machine limits will be encountered before the number
+of messages on the channel reaches that limit. Because both channels are
+unbounded, tasks do not block placing a message on the channel, sending
+always succeeds.
 
 We chose to make the dbus channel unbounded, as there exist two situations
 where a large number of messages may be placed on the channel. When a pool
