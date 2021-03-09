@@ -184,8 +184,8 @@ DbusConnectionHandler task
 new task for every D-Bus method call. Each spawned task obtains a read
 lock on the dbus tree before it begins to process the D-Bus method call,
 and may also lock the engine. If it locks the engine, it blocks on the lock.
-Each spawned task may place messages on the `stratisd` dbus channel. These
-tasks are responsible for sending replies to the D-Bus message on the D-Bus.
+Each spawned task may place messages on the `stratisd` dbus channel. Each
+task is responsible for sending replies to its D-Bus message on the D-Bus.
 This is the only part of the implementation where new tasks can be spawned
 during `stratisd`'s regular operation.
 
