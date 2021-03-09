@@ -245,13 +245,11 @@ rapidly.
 We do not believe that this restriction will prove important in practice.
 The dbus crate's message channel is unbounded, so D-Bus messages can not be
 dropped although they may be handled very slowly if there is a backlog.
-A client will be able to observe this delay as a response to a D-Bus
-message may be very much delayed. Depending on the client's configuration,
-this may cause the client to hang indefinitely waitinf for a response
-or the client may receive a message indcating that no response was transmitted
-in the allotted time. However, this situation can only arise if many messages
-require long-running actions to be taken and if these messages are sent in
-parallel.
+Depending on the client's configuration, this may cause the client to hang
+indefinitely waiting for a response or the client may receive a message
+indcating that no response was transmitted in the allotted time. However,
+this situation can only arise if many messages require long-running actions
+to be taken and if these messages are sent in parallel.
 
 In any case, the improvement with respect to a single-threaded approach is
 obvious. In the existing single threaded design, stratisd would be
