@@ -40,9 +40,9 @@ D-Bus messages, for example, if it is associated with a different pool than
 any D-Bus messages.
 
 For these reasons, the next release introduces multi-threading capabilities
-into `stratisd`. These capabilities do not solve all the problems that multi-
-threading is intended to solve, but lay the essential foundation for multi-
-threaded event handling.
+into `stratisd`. These capabilities do not solve all the problems that
+multi-threading is intended to solve, but lay the essential foundation for
+multi-threaded event handling.
 
 We have chosen to implement multi-threading using the Rust [tokio] crate.
 The alternative is to use operating system threads explicitly via the
