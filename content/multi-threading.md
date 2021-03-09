@@ -124,7 +124,7 @@ layers. Access to the dbus tree is controlled by a read/write lock.
 The stratisd engine
 -------------------
 The `stratisd` engine is the core of the `stratisd` daemon. It manages all the
-essentially functionality of `stratisd`. Access to the engine is controlled
+essential functionality of `stratisd`. Access to the engine is controlled
 by a mutex.
 
 The dbus channel
