@@ -1,7 +1,7 @@
 +++
 title = "Multi-threading Support in stratisd"
-date =
-weight =
+date = 2021-03-10
+weight = 15
 template = "page.html"
 render = true
 +++
