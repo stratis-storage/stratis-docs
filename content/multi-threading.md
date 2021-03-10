@@ -152,8 +152,8 @@ device-mapper event task
 ------------------------
 The device-mapper event task loops forever waiting for a device-mapper event.
 On receipt of any event, it locks the `stratisd` engine, and processes the
-event. It yields only when waiting for a new device-mapper event, it blocks
-on the engine mutex.
+event. It yields when waiting for a new device-mapper event or when waiting
+for a lock on the engine.
 
 udev event handling task
 ------------------------
