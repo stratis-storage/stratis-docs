@@ -235,7 +235,7 @@ deadlock.
 
 Bounded Number of Blocking Threads
 ----------------------------------
-We have accepted, at this time, the tokio default for the number of blocking
+We have accepted, at this time, the `tokio` default for the number of blocking
 threads, which is 512. Because the DbusConnectionHandler's generated tasks
 are blocking, this places an upper bound on the number of
 distinct D-Bus messages that can be handled concurrently. Note that it
@@ -351,7 +351,7 @@ Error Behavior
 Ensuring a Clean and Prompt Exit
 --------------------------------
 On SIGINT, `stratisd` should exit promptly and cleanly. This is ensured by:
-1. Having a separate signal handling task that waits on SIGINT. The tokio
+1. Having a separate signal handling task that waits on SIGINT. The `tokio`
 scheduler will ensure that this task is run regularly; thus the signal
 can not be ignored. Note that in the single-threaded case it is possible
 for the signal handling code never to be reached.
