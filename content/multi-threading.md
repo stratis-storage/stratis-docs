@@ -346,7 +346,33 @@ update is performed on the dbus tree.
 
 Error Behavior
 --------------
-`stratisd` exits immediately if any task encounters an error.
+`stratisd` exits if any task returns an error, using the same mechanism
+and general procedure that it uses on receipt of SIGINT. Causes of error
+may include:
+* an error when polling for udev events
+* an error when polling for device-mapper events
+* failure to properly set up a D-Bus connection on startup
+* an error when consuming a message on one of the `stratisd` channels
+
+A properly handled error within the `stratisd` engine will not
+result in the termination of any tasks. In the case of a D-Bus method call,
+for example, an error result is interpreted by the D-Bus layer, and some
+representation of that error is then incorporated into the message returned
+on the D-Bus.
+
+We have taken great care to avoid panics within `stratisd`. Nonetheless,
+it is reasonable to discuss possible behavior on any panic which may
+occur.
+
+If one of the dynamically spawned DbusTreeHandler tasks experiences a panic
+while executing, `stratisd` will not be terminated. Only the currently running
+task will fail to complete.  When a new D-Bus message is received, a new task
+will be spawned and will execute as usual.
+
+However, a panic that occurs during the execution of a task like the
+udev event handling task, of which there is only one spawned when
+`stratisd` is started, will cause `stratisd` to exit.
+
 
 Ensuring a Clean and Prompt Exit
 --------------------------------
