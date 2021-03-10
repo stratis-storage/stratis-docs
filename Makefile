@@ -34,6 +34,7 @@ check:
 	(cd ./docs/design ; $(MAKE) check)
 	(cd ./docs/dbus ; $(MAKE) check)
 	(cd ./docs/style ; $(MAKE) check)
+	(make website-distrib; make clean)
 
 clean:
 	- rm -Rf $(SITE)
