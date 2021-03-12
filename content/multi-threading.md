@@ -401,7 +401,7 @@ release, 2.4.0.
 
 <!-- more -->
 
-[tokio] https://tokio.rs/
-[thread] https://doc.rust-lang.org/std/thread/
-[dbus] https://crates.io/crates/dbus
-[dbus-tokio] https://crates.io/crates/dbus-tokio/
+[tokio]: https://tokio.rs/
+[thread]: https://doc.rust-lang.org/std/thread/
+[dbus]: https://crates.io/crates/dbus
+[dbus-tokio]: https://crates.io/crates/dbus-tokio/
