@@ -6,7 +6,7 @@ template = "page.html"
 render = true
 +++
 
-Wednesday October 2, 2019
+*mulhern, Stratis Team*
 
 With this release stratis now recognizes an environment variable,
 `STRATIS_DBUS_TIMEOUT`. This environment variable controls the timeout for

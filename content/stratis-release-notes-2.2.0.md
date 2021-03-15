@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 Stratis 2.2.0 now places Stratis filesystem symlinks in `/dev/stratis`,
 rather than `/stratis`. Stratis creates and maintains the symlinks by means
 of udev rules, rather than directly via stratisd as previously.

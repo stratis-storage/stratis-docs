@@ -6,7 +6,7 @@ template = "page.html"
 render = true
 +++
 
-February 10, 2020
+*mulhern, Stratis Team*
 
 stratisd 2.0.1 contains a number of internal improvements as well as
 enhanced logging.

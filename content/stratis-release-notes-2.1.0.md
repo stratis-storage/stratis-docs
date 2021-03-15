@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 Stratis 2.1.0 introduces support for encryption.
 
 It supports per-pool encryption of the devices that form a pool's data

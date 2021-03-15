@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 Stratis 2.2.1 is a bug fix release. It fixes the following bugs:
 
 * It was possible to cause stratisd to hang by leaving open a D-Bus

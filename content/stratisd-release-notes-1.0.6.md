@@ -6,7 +6,7 @@ template = "page.html"
 render = true
 +++
 
-Wednesday October 2, 2019
+*mulhern, Stratis Team*
 
 This release includes one significant bug fix and a substantial refactoring.
 

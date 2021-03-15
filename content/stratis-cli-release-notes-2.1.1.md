@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 stratis-cli 2.1.1 fixes a bug where if one encrypted pool could not be
 unlocked, execution terminated, and no attempt was made to unlock any other
 pools that might need to be unlocked ([stratis issue 618]).
