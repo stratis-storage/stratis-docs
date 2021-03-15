@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 Stratis 2.3.0 adds additional flexibility to its encryption support via
 [Clevis].
 

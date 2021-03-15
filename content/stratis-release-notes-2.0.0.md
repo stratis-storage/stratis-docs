@@ -6,7 +6,7 @@ template = "page.html"
 render = true
 +++
 
-Wednesday November 6, 2019
+*mulhern, Stratis Team*
 
 Stratis 2.0 is a significant update for both the daemon and the CLI. The
 changes to the daemon are covered first, followed by the changes to the

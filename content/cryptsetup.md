@@ -6,7 +6,7 @@ template = "page.html"
 render = true
 +++
 
-Monday January 13, 2020
+*John Baublitz, Stratis Team*
 
 One major focus in the Stratis project recently has been adding an encryption layer
 for data in Stratis pools. Cryptsetup provides a library backend for programmatically

@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 We would like to thank Red Hat for hosting a Katacoda tutorial for Stratis at
 [lab.redhat.com/stratis]. We hope that the tutorial will provide an easy and
 pleasant introduction to Stratis for new users.

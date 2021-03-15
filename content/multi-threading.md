@@ -6,6 +6,8 @@ template = "page.html"
 render = true
 +++
 
+*mulhern, Stratis Team*
+
 Introducing Support for Multi-threading in stratisd
 ===================================================
 `stratisd` is an entirely single-threaded application;
