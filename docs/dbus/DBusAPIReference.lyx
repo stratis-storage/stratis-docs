@@ -1412,6 +1412,10 @@ The proposed scheme also leaves room for supporting two interfaces at once.
  be accessed through org.storage.stratis2.filesystem.r4.
  This interface would provide the new feature or change to the interface,
  maintaining backwards compatibility through org.storage.stratis2.filesystem.
+ As of stratisd v2.4.0, interfaces are carried forward unchanged if no changes
+ were made to the next revision version so that the entire API for that
+ release can be accessed through the revision number corresponding to the
+ minor version of the release.
 \end_layout
 
 \begin_layout Subsection
