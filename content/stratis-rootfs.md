@@ -72,7 +72,7 @@ service to set up pools at filesystem mount time. Similarly to the initramfs, D-
 is not available at this point in the boot process. For this, we use the same JSON
 RPC mechanism for IPC. The service file used to set up filesystems in `/etc/fstab` is
 roughly equivalent to the generated service files in the initramfs. It can be invoked
-using the following entry in `/etc/fstab`:
+setting the following entry in `/etc/fstab`:
 
 `/dev/stratis/mypool/myfs / xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID] 1 1`
 
