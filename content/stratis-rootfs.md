@@ -91,6 +91,13 @@ and stratisd-min now allows users to perform recovery actions in the emergency c
 by starting stratisd-min and running the necessary commands using stratis-min. This
 will make rescuing systems that do not boot significantly easier moving forward.
 
+### Scope of dracut modules and systemd service files
+While our dracut modules and systemd service files are meant to work for almost all
+users, they may not meet the requirements of everyone using them. We encourage those
+with more advanced configurations to design their own configurations and reach out
+for guidance as needed. Our configuration is also meant as a template that you can
+build on!
+
 ### Conclusion
 While this took quite a bit of effort to put all of the pieces together, the Linux
 boot utilities had all of the features we needed to accomplish this. We're excited
