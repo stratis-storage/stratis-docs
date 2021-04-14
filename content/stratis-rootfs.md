@@ -30,11 +30,12 @@ a simple approach of processing each new request using a Tokio task.
 [`serde_json`].
 
 This approach proved successful and we were able to implement an IPC mechanism
-that left our internal stratisd API unchanged.
+that left our internal stratisd API unchanged. The alternate IPC mechanism is
+distributed in a separate pair of executables, stratis-min and stratisd-min.
 
 ### Support in the initramfs
-The next step was to integrate stratisd with a minimal IPC mechanism into the
-initramfs. This involved quite a bit of configuration for dracut and systemd.
+The next step was to integrate stratisd-min into the initramfs. This involved quite a
+bit of configuration for dracut and systemd.
 
 Our current model uses systemd generators that are enabled by passing information on
 the kernel command line at boot to properly set up and unlock any devices that need
@@ -69,20 +70,28 @@ works quite well.
 ### `/etc/fstab` or `.mount` files the right way
 Because systemd generates mount files from `/etc/fstab`, we also needed to provide a
 service to set up pools at filesystem mount time. Similarly to the initramfs, D-Bus
-is not available at this point in the boot process. For this, we use the same JSON
-RPC mechanism for IPC. The service file used to set up filesystems in `/etc/fstab` is
-roughly equivalent to the generated service files in the initramfs. It can be invoked
-setting the following entry in `/etc/fstab`:
+is not available at this point in the boot process. For this, we use stratisd-min.
+The service file used to set up filesystems in `/etc/fstab` is roughly equivalent to
+the generated service files in the initramfs. It can be invoked setting the following
+entry in `/etc/fstab`:
 
-`/dev/stratis/mypool/myfs / xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID] 1 1`
+`/dev/stratis/mypool/myfs / xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID].service,x-systemd.after=stratis-fstab-setup@[POOL_UUID].service 1 1`
 
-where `POOL_UUID` is replaced by the pool containing your filesystems.
+where `POOL_UUID` is replaced by the UUID of the pool containing your filesystems.
 
 This will cause the setup script to be run and the mount will not proceed until it has
 been completed successfully.
 
-### Conclusion
+### Recovery console
+While we mention above that stratisd could previously be used in the initramfs, there
+is one major caveat: it could started but commands could not be issued. This had
+one major drawback of not allowing users to interact with stratisd in the recovery
+console. D-Bus is not available in the recovery console, so the move to stratis-min
+and stratisd-min now allows users to perform recovery actions in the emergency console
+by starting stratisd-min and running the necessary commands using stratis-min. This
+will make rescuing systems that do not boot significantly easier moving forward.
 
+### Conclusion
 While this took quite a bit of effort to put all of the pieces together, the Linux
 boot utilities had all of the features we needed to accomplish this. We're excited
 for future work with other teams to make using Stratis as the root filesystem
