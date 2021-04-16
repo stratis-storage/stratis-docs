@@ -18,7 +18,7 @@ Stratis relies on D-Bus for interprocess communication between the daemon and th
 client. D-Bus does not currently ship in the initramfs so the first order of business
 was to choose an alternate form of IPC. Because we require the ability to pass a file
 descriptor from the client to the daemon, this made Unix sockets the only reasonable
-transport mechanism. After evalutating several JSON RPC libraries with Unix socket
+transport mechanism. After evaluating several JSON RPC libraries with Unix socket
 support, we decided to write a minimal RPC interface ourselves. This was due to a
 few constraints:
 
@@ -91,7 +91,7 @@ continue running in the background until it either succeeds or fails.
 
 ### Recovery console
 While we mention above that stratisd could previously be used in the initramfs, there
-is one major caveat: it could started but commands could not be issued. This had
+is one major caveat: it could be started but commands could not be issued. This had
 one major drawback of not allowing users to interact with stratisd in the recovery
 console. D-Bus is not available in the recovery console, so the move to stratis-min
 and stratisd-min now allows users to perform recovery actions in the emergency console
