@@ -67,20 +67,27 @@ with the mounted Stratis filesystem as the root directory. It requires a bit mor
 configuration after the fact (manual `/etc/fstab` or `.mount` file configuration) but
 works quite well.
 
-### `/etc/fstab` or `.mount` files the right way
-Because systemd generates mount files from `/etc/fstab`, we also needed to provide a
-service to set up pools at filesystem mount time. Similarly to the initramfs, D-Bus
-is not available at this point in the boot process. For this, we use stratisd-min.
-The service file used to set up filesystems in `/etc/fstab` is roughly equivalent to
-the generated service files in the initramfs. It can be invoked setting the following
-entry in `/etc/fstab`:
+### `/etc/fstab` or `.mount` files
+We now also provide a systemd service to manage setting up devices in /etc/fstab.
+For devices that require a passphrase or are critical for a working system, the
+following line can be used:
 
-`/dev/stratis/mypool/myfs / xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID].service,x-systemd.after=stratis-fstab-setup@[POOL_UUID].service 1 1`
+`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID]`
 
-where `POOL_UUID` is replaced by the UUID of the pool containing your filesystems.
+The absense of `nofail` here is due to the fact that `nofail` causes the boot to
+proceed prior to a successful mount. This means that passphrase prompts
+will not work properly, and most users will want critical system partitions to be
+mounted successfully or else have the boot fail.
 
-This will cause the setup script to be run and the mount will not proceed until it has
-been completed successfully.
+For devices that do not require interaction to set up, such as unencrypted devices or
+devices that have Clevis bindings, and are not critical for a working system, the
+following line can be optionally used:
+
+`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID],nofail`
+
+The addition of `nofail` here will cause mounting of this device to proceed
+independently from the boot which can speed up boot times. The set up process will
+continue running in the background until it either succeeds or fails.
 
 ### Recovery console
 While we mention above that stratisd could previously be used in the initramfs, there
