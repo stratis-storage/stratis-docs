@@ -74,7 +74,7 @@ following line can be used:
 
 `/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID]`
 
-The absense of `nofail` here is due to the fact that `nofail` causes the boot to
+The absence of `nofail` here is due to the fact that `nofail` causes the boot to
 proceed prior to a successful mount. This means that passphrase prompts
 will not work properly, and most users will want critical system partitions to be
 mounted successfully or else have the boot fail.
@@ -110,6 +110,10 @@ While this took quite a bit of effort to put all of the pieces together, the Lin
 boot utilities had all of the features we needed to accomplish this. We're excited
 for future work with other teams to make using Stratis as the root filesystem
 for Linux installations even easier!
+
+### Release version
+All of the utilities required for booting from a Stratis filesystem as the root
+filesystem will be included in stratisd 2.4.0.
 
 <!-- more -->
 
