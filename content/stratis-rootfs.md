@@ -53,9 +53,6 @@ The required information on the kernel command line is:
 the desired Stratis filesystem. This is required by dracut.
 * ` stratis.rootfs.pool_uuid=[POOL_UUID]`: The UUID of the pool that contains the
 root filesystem.
-* ` stratis.rootfs.uuid_paths=/dev/disk/by-uuid/[DEVICE_UUID]`: The UUID of one of the
-devices required to assemble the Stratis pool. All devices in the pool must be
-specified and this kernel command line parameter can be specified multiple times.
 
 If the user requires networking (for example, unlocking a pool using Tang), the
 parameter `rd.neednet=1` is required as well.
