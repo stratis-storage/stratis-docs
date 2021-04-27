@@ -65,11 +65,11 @@ configuration after the fact (manual `/etc/fstab` or `.mount` file configuration
 works quite well.
 
 ### `/etc/fstab` or `.mount` files
-We now also provide a systemd service to manage setting up devices in /etc/fstab.
-For devices that require a passphrase or are critical for a working system, the
-following line can be used:
+We now also provide a systemd service to manage setting up non-root filesystems in
+/etc/fstab.  For devices that require a passphrase or are critical for a working
+system, the following line can be used:
 
-`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID]`
+`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID] 0 2`
 
 The absence of `nofail` here is due to the fact that `nofail` causes the boot to
 proceed prior to a successful mount. This means that passphrase prompts
@@ -80,11 +80,16 @@ For devices that do not require interaction to set up, such as unencrypted devic
 devices that have Clevis bindings, and are not critical for a working system, the
 following line can be optionally used:
 
-`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID],nofail`
+`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID],x-systemd.after=stratis-fstab-setup@[POOL_UUID],nofail 0 2`
 
 The addition of `nofail` here will cause mounting of this device to proceed
 independently from the boot which can speed up boot times. The set up process will
 continue running in the background until it either succeeds or fails.
+
+Because the root filesystem is mostly set up in the initramfs, the entry is slightly
+different and does not require the `stratis-fstab-setup` service. It should be:
+
+`/dev/stratis/[STRATIS_SYMLINK] / xfs defaults 0 1`
 
 ### Recovery console
 While we mention above that stratisd could previously be used in the initramfs, there
