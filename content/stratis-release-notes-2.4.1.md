@@ -11,8 +11,8 @@ render = true
 Stratis 2.4.1 is a bug fix release, which addresses a flaw in the
 multi-threading implementation.
 
-A user could observe the problem by finding that most commands issued by the 
-cli to the daemon would not properly return and the D-Bus connection would
+A user could observe the behavior caused by the flaw when CLI commands would
+either take far longer to complete than normal or the D-Bus connection would
 eventually time out.
 
 The cause of the observed problem was that stratisd was accepting a
@@ -42,7 +42,7 @@ block devices.
 
 Previously, stratisd made use of the dbus-tokio crate to implement the
 multi-threading aspects of D-Bus method handling. With this release, it no
-longer depends on dbus-tokio, but handles the implementation using the   
+longer depends on dbus-tokio, but handles the implementation using the
 tokio crate directly.
 
 Please consult the [stratisd] and [stratis] changelogs for additional
