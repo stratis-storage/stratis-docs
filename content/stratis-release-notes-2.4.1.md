@@ -1,6 +1,6 @@
 +++
 title = "Stratis 2.4.1 Release Notes"
-date = 2021-05-12
+date = 2021-05-13
 weight = 18
 template = "page.html"
 render = true
