@@ -1,6 +1,6 @@
 +++
 title = "Stratis 2.4.1 Release Notes"
-date = 2021-05-13
+date = 2021-05-14
 weight = 18
 template = "page.html"
 render = true
@@ -33,10 +33,12 @@ associated with r4 D-Bus interfaces were not being sent appropriately,
 now they are.
 
 In addition, stratisd 2.4.1 includes logging, at the trace level, of lock
-aquisitions and releases.
+aquisitions and releases and additional logging in the systemd generators
+included with the release.
 
-The stratis-cli 2.4.1 release includes an improvement to the listing of
-block devices.
+The stratis-cli 2.4.1 release includes:
+* an improvement to the listing of block devices
+* a new report with key `managed_objects_report`
 
 <!-- more -->
 
