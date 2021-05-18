@@ -27,15 +27,15 @@ password to unlock an encrypted Stratis root filesystem. Please consult
 Stratis support for a root filesystem.
 
 We decided to implement this division due to a problem which would ensue
-if stratisd was installed but plymouth was not. In that case, the dracut
-module would not be installed in the initrd, and a subsequent reboot, when
-using a Stratis root filesystem, would fail.
+if stratisd was installed but plymouth was not. In that case, the regeneration
+of the initramfs on kernel updates would fail and render the system unbootable
+with the new kernel.
 
 The solution of adding plymouth as a hard requirement for stratisd would
 place an unnecessary dependency burden on a user who did not choose to
 maintain a Stratis root filesystem. However, without such a requirement a
-user who did choose to maintain a Stratis root filesystem might encounter a
-failure to boot if plymouth was not installed when the initrd was created.
+user who had stratisd but not plymouth installed would eventually end up
+with an unbootable system.
 
 We believe that a separate subpackage is the most robust and flexible
 solution; it is one which requires no manual intervention by the user.
