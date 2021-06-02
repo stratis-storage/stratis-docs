@@ -12,27 +12,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  check:
-    env:
-      TASK: check
-    runs-on: ubuntu-latest
+  checks:
+    strategy:
+      matrix:
+        include:
+          - dependencies: lyx zola
+            task: make -f Makefile check
+          - dependencies: yamllint
+            task: make -f Makefile yamllint
+    runs-on: ubuntu-18.04
+    container: fedora:33
     steps:
       - uses: actions/checkout@v2
-      - name: Miscellaneous checks
-        run: make -f Makefile $TASK
-
-  # VERIFICATION OF TEST INFRASTRUCTURE
-  yamllint:
-    env:
-      TASK: yamllint
-      PYTHON: 3.8.6
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON }}
       - name: Install dependencies
-        run: pip3 install yamllint==1.26.0
-      - name: Run yamllint
-        run: make -f Makefile $TASK
+        run: >
+          dnf install -y
+          make
+          python-unversioned-command
+          ${{ matrix.dependencies }}
+      - name: Run test
+        run: ${{ matrix.task }}
