@@ -1,6 +1,6 @@
 +++
 title = "stratisd 2.4.2 Release Notes"
-date = 2021-06-1
+date = 2021-06-01
 weight = 20
 template = "page.html"
 render = true
