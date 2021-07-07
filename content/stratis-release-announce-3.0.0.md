@@ -31,7 +31,7 @@ engine. In particular, changes to the way errors are managed internally will
 not allow us to ensure consistency of error codes returned over the D-Bus with
 the ones that were previously used.
 
-Since we are increasing the major version dropping the stratisd 2 D-Bus API is
+Since we are increasing the major version, dropping the stratisd 2 D-Bus API is
 an obvious next step.
 
 We are reviewing other possible API changes at this time in order to minimize
