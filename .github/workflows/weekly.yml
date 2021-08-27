@@ -1,0 +1,31 @@
+---
+name: stratis-docs weekly
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    -cron: 20 0 * * 0
+
+  workflow_dispatch:
+
+jobs:
+  next-fedora-python-checks:
+    strategy:
+      matrix:
+        include:
+          - dependencies: lyx zola
+            task: make -f Makefile check
+          - dependencies: yamllint
+            task: make -f Makefile yamllint
+    runs-on: ubuntu-18.04
+    container: fedora:34
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: >
+          dnf install -y
+          make
+          python-unversioned-command
+          ${{ matrix.dependencies }}
+      - name: Run test
+        run: ${{ matrix.task }}
