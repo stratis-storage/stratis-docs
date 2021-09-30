@@ -412,30 +412,6 @@ Methods
 \end_layout
 
 \begin_layout Description
-ConfigureSimulator This method is solely used to configure the simulator
- engine.
- Invoking it on the real engine is a no-op.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-denominator the denominator of the fraction that determines the frequency
- of unusual occurences, generally failures.
- Signature: u.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: qs.
-\end_layout
-
-\end_deeper
-\begin_layout Description
 CreatePool This method creates a single pool with the specified name and
  blockdevs.
 \end_layout
@@ -465,6 +441,12 @@ devices device nodes of devices to form the pool.
 \begin_layout Description
 key_desc an optional key description of the key to use to encrypt the pool.
  Signature: (bs)
+\end_layout
+
+\begin_layout Description
+clevis_info an optional input specifying the Clevis binding method and necessary
+ parameters.
+ Signature: (b(ss))
 \end_layout
 
 \end_deeper
@@ -550,11 +532,6 @@ key_fd file descriptor through which to read the key data.
  Signature: h.
 \end_layout
 
-\begin_layout Description
-interactive if true, reading the key ends when a newline is reached.
- Signature: b.
-\end_layout
-
 \end_deeper
 \begin_layout Description
 Returns: Signature: (bb)qs.
@@ -569,34 +546,6 @@ True if the key state was changed.
 \begin_layout Enumerate
 True if the key was newly set in the keyring.
  False if a key with the given key description already existed.
- Signature: b.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-UnsetKey This method unsets a key in the kernel keyring.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-key_desc key description of the key to unset.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: bqs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-False if the key did not exist in the keyring.
  Signature: b.
 \end_layout
 
@@ -654,6 +603,34 @@ False if the return value is a none type.
 \begin_layout Enumerate
 Array containing the UUIDs of all of the devices that were newly unlocked.
  Signature: as.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+UnsetKey This method unsets a key in the kernel keyring.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+key_desc key description of the key to unset.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+False if the key did not exist in the keyring.
+ Signature: b.
 \end_layout
 
 \end_deeper
@@ -748,8 +725,8 @@ The object paths of the newly added data devices.
 \end_deeper
 \end_deeper
 \begin_layout Description
-Bind This method binds the devices in a pool, which must already have been
- encrypted using a key in the kernel keyring, to a supplementary Clevis
+BindClevis This method binds the devices in a pool, which must already have
+ been encrypted using a key in the kernel keyring, to a supplementary Clevis
  encryption policy.
  Introduced in D-Bus version: 2-r3.
 \end_layout
@@ -782,6 +759,35 @@ True if any new bindings were added, otherwise false.
 \end_deeper
 \end_deeper
 \begin_layout Description
+BindKeyring This method binds the devices in a pool, which must already
+ have been encrypted using Clevis, to a supplementary passphrase designated
+ by the key description.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+key_desc a kernel keyring key description
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if any new bindings were added, otherwise false.
+ Signature: b.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
 CreateFilesystems This method allows creating multiple filesystems, specified
  by name, on a pool.
 \end_layout
@@ -793,9 +799,9 @@ Arguments:
 
 \begin_deeper
 \begin_layout Description
-specs The specification for each filesystem to be created, currently just
- a name.
- Signature: as.
+specs The specification for each filesystem to be created, currently a name
+ and an optional size.
+ Signature: a(s(bs)).
 \end_layout
 
 \end_deeper
@@ -845,6 +851,80 @@ True if any filesystems were destroyed, otherwise False.
 \begin_layout Enumerate
 An array of the UUIDs of the filesystems destroyed.
  Signature: as.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+InitCache This method initializes a cache for a pool.
+ Prior to calling this, AddCacheDevs will fail.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Arguments:
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+devices this argument has the same meaning as the device argument of CreatePool.
+ Signature: as.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Returns: Signature: (bao)qs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if any cache devices were added and the cache was created, otherwise
+ false.
+ Signature: b.
+\end_layout
+
+\begin_layout Enumerate
+The object paths of the newly added cache devices.
+ Signature: ao.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+RebindClevis This method regenerates Clevis bindings for devices in a pool
+ using the original input.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if all bindings were successfully regenerated.
+ Because of the nature of Clevis binding regeneration, this method will
+ always return true on success.
+ Signature: b.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Description
+RebindKeyring This method switches the key description (and thus the passphrase)
+ associated with the devices on the pool.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Returns: Signature: bqs.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if the new key description is different from the previous, otherwise
+ false.
+ Signature: b,
 \end_layout
 
 \end_deeper
@@ -924,8 +1004,8 @@ The object path of the newly created snapshot.
 \end_deeper
 \end_deeper
 \begin_layout Description
-Unbind This method unbinds an existing Clevis encryption policy from the
- encrypted devices in a pool.
+UnbindClevis This method unbinds an existing Clevis encryption policy from
+ the encrypted devices in a pool.
  Introduced in D-Bus version 2-r3.
 \end_layout
 
@@ -935,9 +1015,26 @@ Returns: Signature: bqs.
 \end_layout
 
 \begin_deeper
+\begin_layout Enumerate
+True if some Clevis bindings were removed, otherwise false.
+ Signature: b.
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Description
-1.
- True if some Clevis bindings were removed, otherwise false.
+UnbindKeyring This method unbinds an existing keyring passphrase from the
+ encrypted devices in a pool.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Returns: Signature: bqs
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+True if some keyring passphrase bindings were removed, otherwise false.
  Signature: b.
 \end_layout
 
@@ -961,6 +1058,12 @@ Name The name of the pool.
 \begin_layout Description
 Uuid The UUID of the pool.
  This property is constant.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
+AvailableActions The level of operations permitted for a given pool.
+ Can be fully_operational, no_ipc_requests, no_pool_changes.
  Signature: s.
 \end_layout
 
