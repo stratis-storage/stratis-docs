@@ -513,6 +513,24 @@ The UUID of the pool destroyed, or a default value if no action was taken.
 \end_deeper
 \end_deeper
 \begin_layout Description
+EngineStateReport This method returns JSON representing the internal state
+ of the daemon.
+ The method signature is stable, but the JSON output format is not guaranteed
+ to be stable.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Returns: Signature: sqs
+\end_layout
+
+\begin_layout Enumerate
+The JSON output representing the engine state.
+ Signature: s.
+\end_layout
+
+\end_deeper
+\begin_layout Description
 SetKey This method sets a key in the kernel keyring.
 \end_layout
 
@@ -1045,6 +1063,12 @@ Properties
 \end_layout
 
 \begin_layout Description
+AvailableActions The level of operations permitted for a given pool.
+ Can be fully_operational, no_ipc_requests, no_pool_changes.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
 Encrypted Whether or not the pool is encrypted.
  Signature: b.
  Introduced in D-Bus version: 2-r1.
@@ -1058,12 +1082,6 @@ Name The name of the pool.
 \begin_layout Description
 Uuid The UUID of the pool.
  This property is constant.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-AvailableActions The level of operations permitted for a given pool.
- Can be fully_operational, no_ipc_requests, no_pool_changes.
  Signature: s.
 \end_layout
 
@@ -1119,6 +1137,12 @@ Properties
 \end_layout
 
 \begin_layout Description
+Created The time the filesystem was created.
+ This property is constant.
+ Signature: s.
+\end_layout
+
+\begin_layout Description
 Devnode The device node of the filesystem's corresponding thin device.
  This property is constant.
  Signature: s.
@@ -1133,6 +1157,11 @@ Name The name of the filesystem.
 Pool The object path of the parent pool.
  This property is constant.
  Signature: o.
+\end_layout
+
+\begin_layout Description
+Size The size of the filesystem in bytes.
+ Signature: s.
 \end_layout
 
 \begin_layout Description
@@ -1460,17 +1489,9 @@ KeyList List of key descriptions that are currently in the kernel keyring.
 \end_layout
 
 \begin_layout Description
-LockedPoolUuids List of pool UUIDs corresponding to pool devices that have
- not yet been unlocked.
- Signature: as.
- Introduced in D-Bus version: 2-r1.
-\end_layout
-
-\begin_layout Description
-LockedPools Map of pool UUIDs to associated key descriptions.
- Includes only UUIDs corresponding to locked pools.
- Signature: a{ss}.
- Introduced in D-Bus version: 2-r2.
+LockedPoolsWithDevs Map from pool UUIDs to corresponding pool devices and
+ encryption information for pools that have not yet been unlocked.
+ Signature: a{sv}.
 \end_layout
 
 \end_deeper
