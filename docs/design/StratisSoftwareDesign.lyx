@@ -9,6 +9,9 @@
 
 \end_preamble
 \use_default_options true
+\begin_modules
+logicalmkup
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -197,8 +200,8 @@ Goal: Bring advanced features to users in a simpler form
 Linux storage features are modular and stackable.
  This promotes flexibility and allows independent development efforts, but
  leads to a huge number of possible configurations.
- This requires the user to manage the stack because there's not enough commonality
- to enable effective automation.
+ This requires the user to manage the stack because there's not enough commonali
+ty to enable effective automation.
 \end_layout
 
 \begin_layout Standard
@@ -252,8 +255,8 @@ pool
 Unfortunately, existing VMFs aren't easily used on enterprise Linux distribution
 s like RHEL.
  ZFS isn't an option RHEL can embrace due to licensing, Ubuntu notwithstanding.
- Btrfs has no licensing issues, but maintaining up-to-date support for
- it in enterprise kernels proved difficult.
+ Btrfs has no licensing issues, but maintaining up-to-date support for it
+ in enterprise kernels proved difficult.
 \end_layout
 
 \begin_layout Standard
@@ -306,8 +309,8 @@ Requirements
 \emph on
 Make features easier to use in combination with each other
 \emph default
-: thin provisioning, snapshots, integrity, redundancy, multipath, encryption,
- hardware reconfiguration, monitoring, and a caching tier
+: thin provisioning, snapshots, multipath, encryption, hardware reconfiguration,
+ monitoring, and a caching tier
 \end_layout
 
 \begin_layout Enumerate
@@ -450,45 +453,8 @@ Allows root fs, all other filesystems except /boot to use Stratis.
 \end_layout
 
 \begin_layout Enumerate
-Limited environment – no Python or DBus – but can use device-mapper
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-Bootable (planned – see 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Stratis-version-4.0"
-
-\end_inset
-
-)
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Feels like a 
-\begin_inset Quotes eld
-\end_inset
-
-real
-\begin_inset Quotes erd
-\end_inset
-
- filesystem if no secondary filesystem is needed for boot
-\end_layout
-
-\begin_layout Enumerate
-Enables Stratis features to be used by system image, e.g.
- booting from a snapshot, and allowing /boot to grow
-\end_layout
-
-\begin_layout Enumerate
-Requires explicit support in bootloader (Grub2)
-\end_layout
-
-\begin_layout Enumerate
-device-mapper not available
+Limited environment – alternate IPC mechanism that works in the initrd is
+ available
 \end_layout
 
 \end_deeper
@@ -504,17 +470,6 @@ Persistent memory
 \begin_deeper
 \begin_layout Enumerate
 Block-appearing pmem can be used by Stratis
-\end_layout
-
-\begin_layout Enumerate
-byte-addressible pmem see 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Stratis-version-4.0"
-
-\end_inset
-
-
 \end_layout
 
 \end_deeper
@@ -567,8 +522,8 @@ Stratis simplifies many aspects of local storage provisioning and configuration.
 For example, installing the OS to a Stratis pool using Anaconda.
  After selecting the disks to use for the pool, the first benefit would
  be the complex flow around sizing of filesystems could be omitted.
- Second, since Stratis has an API, Anaconda could use it directly, instead
- of needing work in Blivet to build an API on top of command line tools.
+ Second, since Stratis has an API, Anaconda could use it, instead of needing
+ work in Blivet to build an API on top of command line tools.
 \end_layout
 
 \begin_layout Standard
@@ -623,12 +578,6 @@ Future Stratis Position in the Linux Storage Management Stack
 
 \end_layout
 
-\begin_layout Standard
-There are existing libraries that handle CLI-to-API for both Anaconda and
- Cockpit.
- These could be extended to support Stratis, or not.
-\end_layout
-
 \begin_layout Section
 Conceptual Model
 \end_layout
@@ -667,8 +616,6 @@ Attributes and features of a pool
 \begin_layout Standard
 A pool is created with an initial set of one or more blockdevs.
  Blockdevs may also be added after the pool is created.
- Blockdevs may eventually be removable from a pool, if certain preparations
- are performed and conditions are met.
  The pool's primary collection of blockdevs is called the 
 \emph on
 data tier
@@ -683,11 +630,6 @@ cache tier
 \emph default
  that uses a separate collection of faster blockdevs to improve performance
  instead of increasing the pool's capacity.
-\end_layout
-
-\begin_layout Standard
-Both tiers have their own independent data redundancy level.
- which may be none, raid1, raid5, raid6, or raid10 (the default is none).
 \end_layout
 
 \begin_layout Standard
@@ -712,7 +654,6 @@ filesystems per pool.
 A new filesystem is either a new empty filesystem or a snapshot of an existing
  filesystem within the pool.
  Stratis currently does not distinguish between snapshots and filesystems.
- (May change.)
 \end_layout
 
 \begin_layout Section
@@ -997,10 +938,6 @@ Most stratisd D-Bus methods require root permissions.
  policy files.
 \end_layout
 
-\begin_layout Subsubsection
-Prevent Spoofing
-\end_layout
-
 \begin_layout Subsection
 Querying stratisd state via D-Bus
 \end_layout
@@ -1012,6 +949,39 @@ stratisd exposes a reporting interface that allows users to query the state
  programmatically; however, the report interface is unstable, and consequently
  the names and schemas of provided reports do not follow the semantic versioning
  rules to which the rest of stratisd's API conforms.
+\end_layout
+
+\begin_layout Section
+JSON RPC IPC mechanism
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Standard
+Due to restrictions in the initramfs where D-Bus is not currently present,
+ there is an alternate mechanism for IPC in the initramfs.
+ This IPC mechanism implements a JSON RPC framework passed over Unix sockets.
+ The motivation for using Unix sockets is that:
+\end_layout
+
+\begin_layout Enumerate
+They are available in the initramfs as a form of IPC
+\end_layout
+
+\begin_layout Enumerate
+They allow passing file descriptors from process to process in the same
+ network packet as the JSON
+\end_layout
+
+\begin_layout Standard
+The JSON RPC IPC mechanism uses the exact same code for the stratisd storage
+ engine and is simply a thin layer that handles all of the network operations
+ and input parsing to provide arguments to the engine.
+ The initramfs IPC API is more limited than that of the D-Bus API and is
+ not versioned for backwards compatibility given that it is expected that
+ the corresponding CLI will be used to communicate with the minimal daemon.
 \end_layout
 
 \begin_layout Section
@@ -1043,36 +1013,8 @@ Fast snapshots of existing filesystems
 \end_layout
 
 \begin_layout Enumerate
-The ability to add (and eventually remove) individual blockdevs to grow
- the available space available to filesystems
-\end_layout
-
-\begin_layout Enumerate
-User-selectable redundancy level (per-pool granularity)
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-in a future version
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Enumerate
-Integrity checking
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-in a future version
-\end_layout
-
-\end_inset
-
-
+The ability to add individual blockdevs to grow the physical space available
+ to filesystems
 \end_layout
 
 \begin_layout Enumerate
@@ -1116,148 +1058,16 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsubsection
-Integrity (optional)
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-in a future version
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This layer uses the dm-integrity target to enable the detection of incorrect
- data as it is read, by using extra space to record the results of checksum/hash
- functions on the data blocks, and then comparing the results with what
- the blockdev actually returned.
- This will enable Stratis to detect data corruption when the pool is non-redunda
-nt, and to repair the corruption when the pool is redundant.
- It should also be possible to use DIF
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-See https://oss.oracle.com/projects/data-integrity/
-\end_layout
-
-\end_inset
-
- information if present.
-\end_layout
-
-\begin_layout Subsubsection
-Redundancy (optional)
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-in a future version
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-A Stratis pool may optionally be configured to spread data across multiple
- physical disks, so that the loss of any one disk does not cause data loss.
- Stratis uses conventional RAID technology (1, 5, 6, 10, 1E
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-See ‘linux/Documentation/device-mapper/dm-raid.txt’ for more info
-\end_layout
-
-\end_inset
-
-) as specified, and converts Layer 0 blockdevs into a smaller-sized amount
- of storage with the specified raid properties.
-\end_layout
-
-\begin_layout Standard
-Since Stratis supports more blockdevs than are RAID-able (generally 8 or
- fewer is best for a raidset
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-More are supported by DM, but too many increase the likelihood of individual
- failures.
-\end_layout
-
-\end_inset
-
-), and differently-sized blockdevs, a redundant Stratis pool may contain
- multiple raid sets (all of the same global type).
- Depending on layout, there may be some amount of space in a pool’s blockdevs
- that cannot be used because it cannot be used in a RAID set.
- Stratis will intensively manage raidsets, extending them across newly added
- blockdevs or creating new raidsets; and handling the removal of blockdevs
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-in a future version
-\end_layout
-
-\end_inset
-
-.
- Stratis may use dm-raid’s reshape capabilities when possible, although
- this changes the stripe size and could cause issues.
-\end_layout
-
-\begin_layout Standard
-Stratis cannot support redundancy with a single disk, but we may wish to
- reserve the small space for raid metadata and other uses even on one-disk
- Stratis pools.
- This will allow the pool to be made redundant (in the version when we support
- this) without encountering ugly edge cases.
-\end_layout
-
-\begin_layout Subsubsection
 Flex
 \end_layout
 
 \begin_layout Standard
-Whether blockdevs are part of raidsets or used directly, pools need to cope
- with the addition or removal 
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-in a future version
-\end_layout
-
-\end_inset
-
- of them.
+Pools need to cope with the addition of block devices.
 \end_layout
 
 \begin_layout Standard
 Stratis allows adding a blockdev to an existing pool, and using it to grow
  the pool's allocated space.
-\end_layout
-
-\begin_layout Standard
-Removal of a blockdev involves calculating if a blockdev can be removed
- from the pool with no effect, removed with loss of redundancy, not removed
- without data loss, or if removal would be possible after a data movement
- and reorganization step.
- The data-movement capability could also be used in the case of a failing
- disk.
-\end_layout
-
-\begin_layout Standard
-Marking a newly-added blockdev as ‘spare’ would keep it in reserve so a
- failing disk can be immediately removed and replaced without possibly exceeding
- total pool capacity in the interim.
 \end_layout
 
 \begin_layout Standard
@@ -1292,11 +1102,6 @@ reference "subsec:Metadata-Volume-(MDV)"
 \end_layout
 
 \begin_layout Standard
-All devices in this layer may be built on L0, L1, or L2 devices, depending
- on configuration.
-\end_layout
-
-\begin_layout Standard
 The initial sizes of all flex layer devices should be chosen to allow an
  entire pool to fit within a single blockdev of the minimum size (1 GiB).
 \end_layout
@@ -1314,13 +1119,11 @@ The two linear targets from L3 are used as a metadata device and data device
 \end_layout
 
 \begin_layout Standard
-Stratis manages the thinpool device by extending the two L3 subdevices when
- either runs low on available blocks.
+Stratis manages the thinpool device by extending the two subdevices in the
+ thinpool when either runs low on available blocks.
  If the pool approaches a point where it no longer has empty lower-level
  space to extend onto, Stratis alerts the user and takes action to avoid
  data corruption.
- Actions could include switching filesystems to read-only mode, running
- fstrim, or progressively throttling writes.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1353,10 +1156,6 @@ Stratis monitors each filesystem’s usage against its capacity and automaticall
  extends them online without user intervention.
  Extending involves changing the thin dev's logical size, and then using
  a tool such as xfs_growfs to grow the filesystem.
- Stratis also periodically will run fstrim to reclaim unused space during
- idle periods.
- Idle periods will be found based upon current and historical system I/O
- activity levels.
 \end_layout
 
 \begin_layout Subsection
@@ -1364,11 +1163,10 @@ Data Tier Metadata
 \end_layout
 
 \begin_layout Standard
-Stratis must track the blockdevs that make up the data tier of the pool
- (L0), integrity parameters (L1), the raidsets that are created from the
- data blockdevs (L2), the three linear targets that span the L2 devices
- (L3), the thinpool device (L4) and the attributes of the thin devices (L5)
- and filesystems created from the thinpool (L7).
+Stratis must track the blockdevs that make up the data tier of the pool,
+ the three linear targets that span the block devices, the thinpool device
+ and the attributes of the thin devices and filesystems created from the
+ thinpool.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1489,13 +1287,13 @@ Metadata Volume (MDV)
 \end_layout
 
 \begin_layout Standard
-(Specific DM targets such as raid, integrity, and thinpool also place their
- own metadata on disk.)
+(Specific DM targets such as the thinpool also place their own metadata
+ on disk.)
 \end_layout
 
 \begin_layout Standard
-Information on levels 0-4 is duplicated across all blockdevs within an on-disk
- metadata format called the Blockdev Data Area (BDA).
+Information is duplicated across all blockdevs within an on-disk metadata
+ format called the Blockdev Data Area (BDA).
  The BDA consists of a binary Signature Block, and the Metadata Area (MDA),
  which stores information in a text-based JSON format.
  Both the binary and text-based portions of the BDA define redundancy and
@@ -3000,7 +2798,7 @@ data_tier: An object describing the data tier.
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="4">
+<lyxtabular version="3" rows="2" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -3045,7 +2843,7 @@ description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3054,7 +2852,7 @@ blockdev
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3063,7 +2861,7 @@ object
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3072,125 +2870,11 @@ y
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Settings and mappings describing block devices that make up the tier
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-integrity
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-object
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TBD settings and mappings associated with integrity support
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-raid
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-object
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TBD settings and mappings associated with redundancy (RAID) support
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-vdo
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-object
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TBD settings and mappings associated with VDO
+Settings and mappings describing block devices that make up the tier
 \end_layout
 
 \end_inset
@@ -3688,18 +3372,6 @@ uniquely identifying information for the blockdev, such as SCSI VPD83 or
 \end_layout
 
 \begin_layout Description
-integrity: (TBD) Settings and mappings associated with integrity support.
-\end_layout
-
-\begin_layout Description
-raid: (TBD) Settings and mappings associated with RAID support.
-\end_layout
-
-\begin_layout Description
-vdo: (TBD) Settings and mappings associated with VDO support.
-\end_layout
-
-\begin_layout Description
 cap: An object describing a view of the top-level linear device provided
  by the backstore to the flex layer.
 \end_layout
@@ -4181,31 +3853,29 @@ Bad things happen.
 
 \begin_layout Standard
 In order to recover from disk errors, Stratis uses CRCs over the critical
- L0-L4 metadata, and writes duplicate copies to a single blockdev, as well
- as across multiple blockdevs, when possible.
+ metadata, and writes duplicate copies to a single blockdev, as well as
+ across multiple blockdevs, when possible.
  It takes this approach – copies – rather than a mechanism that might make
  it possible to partially repair corrupted metadata for three reasons:
 \end_layout
 
 \begin_layout Enumerate
-This metadata is relatively small – it concerns disks and raidsets, of which
- the pool will have only a small number, so having multiple entire copies
- isn't terribly wasteful.
+This metadata is relatively small.
 \end_layout
 
 \begin_layout Enumerate
 Partially reconstructed information has limited value.
  This is due to the layered nature of Stratis.
  It's not sufficient to know some subset of the device mapping levels.
- Since they are layered, recovering e.g.
- L0-L2 layouts allows no data to be recovered without also knowing how L3
- and L4 are mapped on top, and vice versa.
+ Since they are layered, recovering only some layouts allows no data to
+ be recovered without also knowing how others are mapped on top, and vice
+ versa.
 \end_layout
 
 \begin_layout Enumerate
-L0-L4 metadata should require relatively few updates per day, since the
- changes it would reflect are blockdevs being added/removed from the pool,
- or thinpool data device expansions.
+Stratis metadata on the block devices should require relatively few updates
+ per day, since the changes it would reflect are blockdevs being added to
+ the pool, or thinpool data device expansions.
  Infrequent updates reduces the likelihood of corruption
 \begin_inset Foot
 status collapsed
@@ -4220,13 +3890,13 @@ citation needed?
 \end_layout
 
 \begin_layout Standard
-L5-L7 is stored on the Metadata Volume on an XFS filesystem.
+Filesystem metadata is stored on the Metadata Volume on an XFS filesystem.
  Partial data recovery of that information is possible.
 \end_layout
 
 \begin_layout Standard
-In addition to Stratis-specific metadata, device-mapper layers such as cache,
- raid, thin, as well as XFS filesystems, all have their own metadata.
+In addition to Stratis-specific metadata, device-mapper layers such as thin,
+ as well as XFS filesystems, all have their own metadata.
  Stratis would rely on running each of their specific repair/fsck tools
  in case they reported errors.
 \end_layout
@@ -4254,16 +3924,12 @@ Requirements
 \end_layout
 
 \begin_layout Enumerate
-Caching may be configured for redundancy, or no redundancy.
-\end_layout
-
-\begin_layout Enumerate
 Caching may be configured for write-back and write-through modes.
 \end_layout
 
 \begin_layout Enumerate
 Stratis concatenates all cache blockdevs and uses the resulting device to
- cache the thinpool device (L4).
+ cache the thinpool device.
  This lets all filesystems benefit from the cache.
 \end_layout
 
@@ -4275,10 +3941,6 @@ Cache blocksize should match thinpool datablock size.
 Removing cache tier comes with performance hit and “rewarming” phase 
 \end_layout
 
-\begin_layout Enumerate
-For write-back caching, Cache tier must be redundant if data tier is redundant.
-\end_layout
-
 \begin_layout Subsubsection
 Cache Tier Metadata
 \end_layout
@@ -4288,8 +3950,8 @@ Cache Tier Metadata Requirements
 \end_layout
 
 \begin_layout Enumerate
-Identify all blockdevs that are part of the pool's cache tier, the configured
- redundancy level, and other cache-specific configuration parameters (e.g.
+Identify all blockdevs that are part of the pool's cache tier and other
+ cache-specific configuration parameters (e.g.
  WT/WB, block size, cache policy)
 \end_layout
 
@@ -4442,7 +4104,7 @@ Error handling
 \end_layout
 
 \begin_layout Itemize
-Libraries available for DBus, device-mapper, JSON serialization, and CRC
+Libraries available for D-Bus, devicemapper, JSON serialization, and CRC
 \end_layout
 
 \begin_layout Itemize
@@ -4461,14 +4123,14 @@ Other alternatives considered were C and C++.
 \end_layout
 
 \begin_layout Subsection
-device-mapper names
+devicemapper names
 \end_layout
 
 \begin_layout Standard
 If stratisd terminates unexpectedly and is restarted, it needs to rebuild
  its knowledge of the running system.
  This includes not only re-enumerating blockdevs to find Stratis pool members,
- but also determining the current state of the device-mapper targets that
+ but also determining the current state of the devicemapper targets that
  make up pools.
  A restarting stratisd needs to handle if none, some, or all of the expected
  DM devices are present, and if present DM devices are working correctly,
@@ -4476,7 +4138,7 @@ If stratisd terminates unexpectedly and is restarted, it needs to rebuild
 \end_layout
 
 \begin_layout Standard
-To these ends, Stratis uses consistent naming for device-mapper targets.
+To these ends, Stratis uses consistent naming for devicemapper targets.
  This lets stratisd more easily determine if DM devices already exist, and
  avoids leaking old DM mappings.
 \end_layout
@@ -4729,7 +4391,7 @@ Optional indicator 'private'
 \begin_inset Text
 
 \begin_layout Plain Layout
-pool-id
+pool-id or dev-id
 \end_layout
 
 \end_inset
@@ -4756,7 +4418,8 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-ASCII hex UUID of the associated pool
+ASCII hex UUID of the associated pool or, in the case of encryption, the
+ block device
 \end_layout
 
 \end_inset
@@ -4944,498 +4607,18 @@ See libdm/libdm-common.c _is_whitelisted_char() in the lvm2 code for more.
 .)
 \end_layout
 
-\begin_layout Subsubsection
-Per-Layer Naming Definitions
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 0: Blockdev
-\end_layout
-
-\begin_layout Standard
-Not needed.
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 1: Integrity
-\end_layout
-
-\begin_layout Standard
-TBD
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 2: Redundancy
-\end_layout
-
-\begin_layout Standard
-TBD
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 3: Flex
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Private
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layer-name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layer-role
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-role-unique-id
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-flex
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-thinmeta
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-(none)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Linear device for thinpool metadata
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-flex
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-thindata
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-(none)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Linear device for thinpool data
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-flex
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-mdv
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-(none)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Linear device for Metadata Volume (MDV)
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-Example: stratis-1-private-2836fca3047bba22938475638abcd840-flex-thinmeta
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 4: Thinpool
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Private
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layer-name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layer-role
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-role-unique-id
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-y
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-thinpool
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-pool
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-(none)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Thinpool device
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-Example: stratis-1-private-2836fca3047bba22938475638abcd840-thinpool-pool
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 5: Thin volume
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Private
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layer-name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-layer-role
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-role-unique-id
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-n
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-thin
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-fs
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-32-char ASCII hex fs UUID
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Thin volume
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-Example: stratis-1-2836fca3047bba22938475638abcd840-thin-fs-ca7efca3047bba229384
-75638abc3141
-\end_layout
-
-\begin_layout Subsubsection*
-Layer 6: Encryption
-\end_layout
-
-\begin_layout Standard
-TBD
+\begin_layout Itemize
+Encryption uses device UUIDs because there may be multiple encrypted devices
+ in one pool so using the pool UUID would result in naming collisions
 \end_layout
 
 \begin_layout Subsection
-device-mapper minimum version
+devicemapper minimum version
 \end_layout
 
 \begin_layout Standard
-Stratisd device-mapper minor version 37 or greater, for DM event poll()
- support and support for event_nr in list_devices ioctl.
+Stratisd devicemapper minor version 37 or greater, for DM event poll() support
+ and support for event_nr in list_devices ioctl.
 \end_layout
 
 \begin_layout Subsection
@@ -5451,23 +4634,24 @@ Since we want to allow Stratis to be used for system files, Stratis needs
 
 \begin_layout Standard
 The use of D-Bus is not possible in the preboot environment.
- Therefore, Stratis must tolerate its absence.
+ Therefore, Stratis has an alternate IPC mechanism to be used in the initramfs.
+ This can be accessed through the stratis-min and stratisd-min exectutables.
 \end_layout
 
 \begin_layout Standard
-The most likely implementation of these requirements is a 
-\begin_inset Quotes eld
+Stratis packages distribute a dracut module, systemd generator, and service
+ file to automate set up of all needed pools, encrypted or unencrypted,
+ during the boot process and 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+/etc/fstab
+\end_layout
+
 \end_inset
 
-boot-init
-\begin_inset Quotes erd
-\end_inset
-
- mode for Stratis, in which it discovers blockdevs and activates pools,
- but does not connect to D-Bus, and then exits.
- Then, as part of the systems main phase, Stratis will run again and stay
- running, in order to handle pool monitoring and commands over D-Bus, as
- normal.
+ mount operations.
 \end_layout
 
 \begin_layout Subsection
@@ -5508,30 +4692,100 @@ OS Integration: /dev entries
 
 \begin_layout Standard
 Stratis allows the user to create filesystems, which then can be mounted
- and used via mount(8) and the fstab(5).
- Stratisd creates a /stratis directory.
- It creates /stratis/<poolname> for each pool present on the system, and
- /stratis/<poolname>/<filesystemname> for each filesystem within the pool.
+ and used via 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+mount(8)
+\end_layout
+
+\end_inset
+
+ and the 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+fstab(5)
+\end_layout
+
+\end_inset
+
+.
+ Stratisd provides a udev rule that generates a 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+/dev/stratis
+\end_layout
+
+\end_inset
+
+ directory.
+ It creates 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+/dev/stratis/<poolname>
+\end_layout
+
+\end_inset
+
+ for each pool present on the system, and
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+/dev/stratis/<poolname>/<filesystemname> 
+\end_layout
+
+\end_inset
+
+for each filesystem within the pool.
  Changes such as creations, removals, and renames are reflected in the entries
- under /stratis.
+ under 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+/dev/stratis
+\end_layout
+
+\end_inset
+
+.
  These entries give the user a well-known path to a device to use for mounting
  the Stratis filesystem.
- Filesystems may also be listed in /etc/fstab using XFS UUID.
+ Filesystems may also be listed in 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+/etc/fstab
 \end_layout
 
-\begin_layout Subsection
-Partial Pool Activation
+\end_inset
+
+ using XFS UUID.
+ However, if the device is encrypted, it is recommended that users take
+ advantage of the 
+\begin_inset Flex Code
+status collapsed
+
+\begin_layout Plain Layout
+stratis-fstab-setup@.service
 \end_layout
 
-\begin_layout Standard
-Stratis must handle if some blockdevs that make up a pool are not present.
- Its initial policy is not to activate a pool until all members are present.
- However, there are scenarios where this may not be strictly necessary,
- such as a blockdev that has not had any Flex Layer allocations on it, or
- (in Stratis 2.0) if redundancy allows the RAID Layer to function in a degraded
- state.
- The initial policy will likely be modified over the course of development
- to accommodate these cases.
+\end_inset
+
+ systemd unit file to automate pool unlock prior to mounting.
 \end_layout
 
 \begin_layout Subsection
@@ -5581,21 +4835,15 @@ The backstore is divided into two tiers: the data tier, and an optional
 \begin_layout Standard
 A tier is created with a certain feature set, which results in an internal
  layering of devices as needed to support those features.
- Features such as redundancy, integrity, and dedupe/compression.
  The features a tier supports are fixed at tier creation time.
  However, the block devices that make up the tier may change.
- A blockdev may increase in capacity, or new blockdevs may be added.
+ New blockdevs may be added.
 \end_layout
 
 \begin_layout Standard
 This requires each tier to support:
 \end_layout
 
-\begin_layout Itemize
-Today
-\end_layout
-
-\begin_deeper
 \begin_layout Itemize
 add_blockdev (add a new blockdev to the tier)
 \end_layout
@@ -5604,32 +4852,6 @@ add_blockdev (add a new blockdev to the tier)
 blockdevs (list/iterate)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-Near Future
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-extend_blockdev (start using added space on a blockdev that has become larger)
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Far future
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-prepare_to_remove_blockdev (move data off a blockdev in preparation for
- its removal, if space is available elsewhere)
-\end_layout
-
-\begin_layout Itemize
-remove_blockdev (remove a blockdev that has no data on it)
-\end_layout
-
-\end_deeper
 \begin_layout Standard
 The tier includes optional internal support for multiple features, which
  also are implemented using DM devices.
@@ -5645,8 +4867,7 @@ bottom
 \end_inset
 
  of the tier are blockdevs.
- These blockdevs are mapped through layers that add value, such as integrity
- or compression.
+ These blockdevs are mapped through layers that add value, such as encryption.
 \end_layout
 
 \begin_layout Standard
@@ -5659,8 +4880,6 @@ better
 \end_inset
 
  blockdevs, whose total size is likely different.
- (Integrity and raid will be smaller, vdo will present a single much larger
- block device, etc.)
 \end_layout
 
 \begin_layout Standard
@@ -5687,59 +4906,15 @@ blockdev
 \end_inset
 
 Blockdevs supply available space to the tier.
- Blockdevs may grow, for example if they happen to be further virtualized
- on top of a storage appliance, Amazon EBS, or Ceph block storage.
 \end_layout
 
 \begin_layout Enumerate
-integrity
+encryption
 \begin_inset Newline newline
 \end_inset
 
-When integrity=true, each blockdev's usable space is mapped to the dm-integrity
- target, which will slightly reduce usable space, and cause a performance
- hit, in order to detect corruption on reads.
- It is believed that integrity devices cannot change size.
- Therefore, extending a blockdev may require a second dm-integrity device
- be created.
-\end_layout
-
-\begin_layout Enumerate
-raid
-\begin_inset Newline newline
-\end_inset
-
-when raid=true, Stratis uses the dm-raid target to create software RAID
- in top of the devices presented to it (These may be either 
-\begin_inset Quotes eld
-\end_inset
-
-raw
-\begin_inset Quotes erd
-\end_inset
-
- blockdevs or integrity-enabled blockdevs.) In order to maximize flexibility,
- Stratis creates multiple raidsets by defining a maximum for each raid member's
- size, as well as the number of members in a raidset.
- It also may choose a raid member size smaller than the maximum, in order
- to ensure between 4-8 raidsets are created.
-\begin_inset Newline newline
-\end_inset
-
-if additional block resources are made available, the raid layer constructs
- additional raidsets.
-\end_layout
-
-\begin_layout Enumerate
-vdo
-\begin_inset Newline newline
-\end_inset
-
-When vdo=true, the vdo layer will concatenate the blockdevs it is given
- (if needed) of any previously-mentioned type and create a single VDO device.
- The layer must manage extending both the logical size (the top) in response
- to space requests from above, as well as requesting additional space from
- lower layers to extend the physical size (the bottom) if needed.
+This layer provides optional encryption for all block devices available
+ in the pool.
 \end_layout
 
 \begin_layout Enumerate
@@ -5777,31 +4952,9 @@ greedy
 \begin_inset Quotes erd
 \end_inset
 
- strategy because any mapping that is created and has data on it must be
- maintained for the life of the pool.
- There's no good way to tell when blocks in an existing device mapping become
- used.
- Starting small and then growing allocations gives each layer a way to track
- regions that can be reclaimed if needed.
- This will make eventual support for blockdev removal easier.
-\end_layout
-
-\begin_layout Standard
-Another reason is that space requirements may expand or shrink as a request
- passes down the layers.
- For example, VDO may satisfy a request for more logical space without any
- additional lower-level space needed.
- But, a small request to the RAID layer may require the construction of
- an entirely new raidset with a large minimum size from unused space, if
- the layer's existing capacity is full.
-\end_layout
-
-\begin_layout Subsubsection
-Common Layer API
-\end_layout
-
-\begin_layout Standard
-TBD
+ strategy because it provides a better user experience to allow the amount
+ of space allocated to both data and metadata to be calculated dynamically
+ if requirements change.
 \end_layout
 
 \begin_layout Subsection
@@ -5818,48 +4971,22 @@ When encountering errors, Stratis must handle them if possible, but there
 \end_layout
 
 \begin_layout Standard
-Stratis has operation states for the pools, meta and data extend, and also
- blockdevs (listed
-\begin_inset CommandInset ref
-LatexCommand vpageref
-reference "Blockdev-states"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Subsubsection
-Pool States
-\end_layout
-
-\begin_layout Standard
-In addition to the main states a pool may be in, a Running pool may also
- be Complete or Incomplete, and a Stopped pool may have one of several things
- preventing it from running.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="3">
+<lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="40col%">
-<column alignment="center" valignment="top" width="40col%">
+<column alignment="center" valignment="top" width="50col%">
+<column alignment="left" valignment="top" width="50col%">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-State
+Action availability state
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5868,11 +4995,23 @@ Description
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transitions To
+fully_operational
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+All pool operations are available in this state.
+ No restrictions are imposed.
 \end_layout
 
 \end_inset
@@ -5883,142 +5022,20 @@ Transitions To
 \begin_inset Text
 
 \begin_layout Plain Layout
-Initializing
+no_ipc_requests
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Pool startup In progress
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running, OutOfDataSpace, ReadOnly, Failed
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Pool is read/write - normal operation state
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-OutOfDataSpace, ReadOnly, Failed, Stopping
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-OutOfDataSpace
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Meta data may be changed - new data may not be allocated.
- Data device is update only
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running, ReadOnly, Failed, Stopping
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ReadOnly
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Meta data may not be changed - data is read only
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running, OutOfDataSpace, Failed, Stopping
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Failed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-All IO is failed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Running, OutOfDataSpace, ReadOnly, Stopping
+Pool operations triggered by an IPC request are disabled.
+ This is often due to a failed IPC command that could not be fully rolled
+ back.
+ Manual resolution of the bad roll back state will allow the pool to resume
+ fully operational state again.
 \end_layout
 
 \end_inset
@@ -6029,363 +5046,18 @@ Running, OutOfDataSpace, ReadOnly, Stopping
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stopping
+no_pool_changes
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Pool is in the teardown process
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Pool Extend States
-\end_layout
-
-\begin_layout Standard
-As filesystems write data, the meta and data devices backing the pool may
- need to be extended to accomidate growing pool.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="40col%">
-<column alignment="center" valignment="top" width="40col%">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-State
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Transitions To
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Initializing
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Pool startup In progress
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Good, DataFailed, MetaFailed, MetaAndDataFailed
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Good
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Normal operation
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DataFailed, MetaFailed, MetaAndDataFailed
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DataFailed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Extend of the pool data device failed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Good, MetaAndDataFailed
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MetaFailed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Extend of the pool meta device failed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Good, MetaAndDataFailed
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MetaAndDataFailed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Extend of both the meta and data devices failed
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Good, DataFailed, MetaFailed
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Pool Space States
-\end_layout
-
-\begin_layout Standard
-Pool space available also has several states it can be in.
- The pool may transition freely between these.
- Being in a Critical state can result in the Pool State transitioning to
- Stopped/OutOfSpace.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="40col%">
-<column alignment="center" valignment="top" width="40col%">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-State
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Action
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Good
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Space available is above Low threshold
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-None
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Low
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Space available is below Low threshold but above Critical
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Alert the user, run maintenance operations
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Critical
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Space available below Critical threshold
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Alert the user of critical state, run maintenance operations
+Any operations that modify the state of the pool will be disabled.
+ This includes IPC requests and background operations such as extending
+ the thin pool and filesystem.
 \end_layout
 
 \end_inset
@@ -6675,13 +5347,13 @@ XFS meets the requirements and currently seems like the best choice.
 \end_layout
 
 \begin_layout Subsubsection
-device-mapper
+devicemapper
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset href
 LatexCommand href
-name "device-mapper"
+name "devicemapper"
 target "https://en.wikipedia.org/wiki/Device_mapper"
 literal "false"
 
@@ -6693,7 +5365,7 @@ literal "false"
  multipath devices, caching devices, and more.
  The framework provides the ability to configure and layer these capabilities,
  but no facilities for saving or restoring a configuration.
- device-mapper provides 
+ devicemapper provides 
 \begin_inset CommandInset href
 LatexCommand href
 name "mechanism, but no policy"
@@ -6710,9 +5382,9 @@ Analysis
 \end_layout
 
 \begin_layout Standard
-Using devicmapper directly would require that an upper layer implement its
- own on-disk metadata format and handle some tasks in a similar manner to
- LVM2.
+Using devicemapper directly would require that an upper layer implement
+ its own on-disk metadata format and handle some tasks in a similar manner
+ to LVM2.
 \end_layout
 
 \begin_layout Subsubsection
