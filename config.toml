@@ -18,7 +18,7 @@ build_search_index = true
 hyde_sticky = false
 hyde_theme = "theme-base-10"
 hyde_user_links = [
-    {url = "https://lab.redhat.com/stratis", name = "Tutorial"},
+    {url = "https://lab.redhat.com/stratis-configure", name = "Tutorial"},
     {url = "$BASE_URL/howto", name = "How-To"},
 ]
 hyde_developer_links = [
