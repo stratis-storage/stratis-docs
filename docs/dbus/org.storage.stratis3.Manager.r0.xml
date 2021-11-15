@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+    The Manager interface is the top level interface. It manages the creation
+    and destruction of pools and also exports various global properties.
+-->
+<interface name="org.storage.stratis3.Manager.r0">
+  <!--
+	This method creates a single pool with the specified name and blockdevs.
+    -->
+  <method name="CreatePool">
+    <!-- The name of the pool -->
+    <arg name="name" type="s" direction="in"/>
+    <!--
+	   The optional redundancy specification for the pool.
+      -->
+    <arg name="redundancy" type="(bq)" direction="in"/>
+    <!-- Device nodes of devices to form the pool -->
+    <arg name="devices" type="as" direction="in"/>
+    <!-- Optional key description of the key to use to encrypt the pool -->
+    <arg name="key_desc" type="(bs)" direction="in"/>
+    <!-- FIXME -->
+    <arg name="clevis_info" type="(b(ss))" direction="in"/>
+    <!--
+	   b: true if a pool was created, otherwise false
+	   (oao): the result of the creation action, default values if no pool
+	      was created.
+	      o: The object path of the created pool.
+	      ao: The object paths of all the block devices in the pool.
+      -->
+    <arg name="result" type="(b(oao))" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <method name="DestroyPool">
+    <arg name="pool" type="o" direction="in"/>
+    <arg name="result" type="(bs)" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <method name="EngineStateReport">
+    <arg name="result" type="s" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <method name="ListKeys">
+    <arg name="result" type="as" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <method name="SetKey">
+    <arg name="key_desc" type="s" direction="in"/>
+    <arg name="key_fd" type="h" direction="in"/>
+    <arg name="result" type="(bb)" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <method name="UnlockPool">
+    <arg name="pool_uuid" type="s" direction="in"/>
+    <arg name="unlock_method" type="s" direction="in"/>
+    <arg name="result" type="(bas)" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <method name="UnsetKey">
+    <arg name="key_desc" type="s" direction="in"/>
+    <arg name="result" type="b" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+  <property name="LockedPools" type="a{sa{sv}}" access="read"/>
+  <property name="Version" type="s" access="read">
+    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+</interface>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  The Report interface is an unstable interface for querying internal stratisd
+  data structure state. It provides reports as JSON, and while the reports can
+  be parsed programmatically, the names and schemas of provided reports do not
+  follow the semantic versioning scheme that the rest of the D-Bus API does.
+  The reports are subject to change at any time.
+-->
+<interface name="org.storage.stratis3.Report.r0">
+  <!--
+    This method allows fetching a report by name. If a report by the supplied
+    name does not exist, an error is returned.
+  -->
+  <method name="GetReport">
+    <!-- The name of the report. -->
+    <arg name="name" type="s" direction="in"/>
+    <!-- s: The report. -->
+    <arg name="result" type="s" direction="out"/>
+    <arg name="return_code" type="q" direction="out"/>
+    <arg name="return_string" type="s" direction="out"/>
+  </method>
+</interface>
