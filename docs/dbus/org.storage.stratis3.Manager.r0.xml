@@ -18,7 +18,10 @@
     <arg name="devices" type="as" direction="in"/>
     <!-- Optional key description of the key to use to encrypt the pool -->
     <arg name="key_desc" type="(bs)" direction="in"/>
-    <!-- FIXME -->
+    <!--
+         Optional input specifying the Clevis binding method and necessary
+         parameters.
+     -->
     <arg name="clevis_info" type="(b(ss))" direction="in"/>
     <!--
 	   b: true if a pool was created, otherwise false
@@ -31,8 +34,15 @@
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!-- This method destroys the specified pool. -->
   <method name="DestroyPool">
+    <!-- The object path of the pool to destroy. -->
     <arg name="pool" type="o" direction="in"/>
+    <!--
+       b: true if the pool was destroyed, otherwise false
+       s: The UUID of the pool destroyed or a default value if no action was
+          taken.
+    -->
     <arg name="result" type="(bs)" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
