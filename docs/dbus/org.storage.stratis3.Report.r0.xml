@@ -12,9 +12,9 @@
     name does not exist, an error is returned.
   -->
   <method name="GetReport">
-    <!-- The name of the report. -->
+    <!-- Name of the report. -->
     <arg name="name" type="s" direction="in"/>
-    <!-- s: The report. -->
+    <!-- s: Report. -->
     <arg name="result" type="s" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>

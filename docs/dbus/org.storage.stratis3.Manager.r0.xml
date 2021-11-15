@@ -62,7 +62,7 @@
   </method>
   <!-- Set a key in the kernel keyring. -->
   <method name="SetKey">
-    <!-- Key desription to assign to the set key. -->
+    <!-- Key description to assign to the set key. -->
     <arg name="key_desc" type="s" direction="in"/>
     <!-- File descriptor through which to read the key data. -->
     <arg name="key_fd" type="h" direction="in"/>
