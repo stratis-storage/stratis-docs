@@ -4,15 +4,11 @@
     and destruction of pools and also exports various global properties.
 -->
 <interface name="org.storage.stratis3.Manager.r0">
-  <!--
-	This method creates a single pool with the specified name and blockdevs.
-    -->
+  <!-- Create a single pool with the specified name and blockdevs. -->
   <method name="CreatePool">
-    <!-- The name of the pool -->
+    <!-- Name of the pool. -->
     <arg name="name" type="s" direction="in"/>
-    <!--
-	   The optional redundancy specification for the pool.
-      -->
+    <!-- Optional redundancy specification for the pool. -->
     <arg name="redundancy" type="(bq)" direction="in"/>
     <!-- Device nodes of devices to form the pool -->
     <arg name="devices" type="as" direction="in"/>
@@ -24,60 +20,89 @@
      -->
     <arg name="clevis_info" type="(b(ss))" direction="in"/>
     <!--
-	   b: true if a pool was created, otherwise false
-	   (oao): the result of the creation action, default values if no pool
+	   b: True if a pool was created, otherwise false.
+	   (oao): Result of the creation action, default values if no pool
 	      was created.
-	      o: The object path of the created pool.
-	      ao: The object paths of all the block devices in the pool.
+	      o: Object path of the created pool.
+	      ao: Object paths of all the block devices in the pool.
       -->
     <arg name="result" type="(b(oao))" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
-  <!-- This method destroys the specified pool. -->
+  <!-- Destroy the specified pool. -->
   <method name="DestroyPool">
-    <!-- The object path of the pool to destroy. -->
+    <!-- Object path of the pool to destroy. -->
     <arg name="pool" type="o" direction="in"/>
     <!--
-       b: true if the pool was destroyed, otherwise false
-       s: The UUID of the pool destroyed or a default value if no action was
+       b: True if the pool was destroyed, otherwise false.
+       s: UUID of the pool destroyed or a default value if no action was
           taken.
     -->
     <arg name="result" type="(bs)" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!--
+    Return JSON representing the internal state of the daemon. The method
+    signature is stable, but the JSON output format is not guaranteed to be
+    stable.
+  -->
   <method name="EngineStateReport">
+    <!-- JSON output representing the engine state. -->
     <arg name="result" type="s" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!-- FIXME -->
   <method name="ListKeys">
     <arg name="result" type="as" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!-- Set a key in the kernel keyring. -->
   <method name="SetKey">
+    <!-- Key desription to assign to the set key. -->
     <arg name="key_desc" type="s" direction="in"/>
+    <!-- File descriptor through which to read the key data. -->
     <arg name="key_fd" type="h" direction="in"/>
+    <!--
+      b: True if the key state was changed, otherwise false.
+      b: True if the key was newly set in the keyring. False if a key with the
+	 given key description already existed.
+    -->
     <arg name="result" type="(bb)" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!-- Unlock locked devices that have been determined to belong to a pool. -->
   <method name="UnlockPool">
+    <!-- UUID of the pool devices to unlock. -->
     <arg name="pool_uuid" type="s" direction="in"/>
+    <!-- Method to use to unlock the pool, may be "keyring" or "clevis". -->
     <arg name="unlock_method" type="s" direction="in"/>
+    <!--
+      b: FIXME
+      as: Array containing the UUIDs of all the devices that were unlocked.
+    -->
     <arg name="result" type="(bas)" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!-- Unset a key in the kernel keyring. -->
   <method name="UnsetKey">
+    <!-- Key desription of the key to unset. -->
     <arg name="key_desc" type="s" direction="in"/>
+    <!--
+      b: True if the key was in the keyring, otherwise false.
+    -->
     <arg name="result" type="b" direction="out"/>
     <arg name="return_code" type="q" direction="out"/>
     <arg name="return_string" type="s" direction="out"/>
   </method>
+  <!-- FIXME -->
   <property name="LockedPools" type="a{sa{sv}}" access="read"/>
+  <!-- stratisd version -->
   <property name="Version" type="s" access="read">
     <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
