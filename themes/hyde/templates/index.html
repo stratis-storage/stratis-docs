@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-	<link rel="icon" type="image/png" href="{{ get_url(path="stratis-favicon.png", trailing_slash=false) }}">
+    <link rel="icon" type="image/png" href="{{ get_url(path="stratis-favicon.png", trailing_slash=false) }}">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
@@ -15,7 +15,7 @@
       <link rel="stylesheet" href="{{ get_url(path="poole.css", trailing_slash=false) }}">
       <link rel="stylesheet" href="{{ get_url(path="hyde.css", trailing_slash=false) }}">
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-	  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
       {% if config.generate_rss %}
         <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ get_url(path="rss.xml", trailing_slash=false) }}">
@@ -29,14 +29,13 @@
         {% block sidebar %}
             <div class="sidebar">
                 <div class="container {% if config.extra.hyde_sticky %}sidebar-sticky{% endif %}">
-					<div>
-						<a href="{{ config.base_url }}">
-							<img src="{{ get_url(path="/imgs/stratis_sidebar.png", trailing_slash=false) }}" />
-						</a>
-					</div>
+                    <div>
+                        <a href="{{ config.base_url }}">
+                            <img src="{{ get_url(path="/imgs/stratis_sidebar.png", trailing_slash=false) }}" />
+                        </a>
+                    </div>
                     <div class="sidebar-about">
                         {% block sidebar_about %}
-                            <!-- <a href="{{ config.base_url }}"><h1>{{ config.title }}</h1></a> -->
                             {% if config.description %}
                             <p class="about lead">{{config.description}}</p>
                             {% endif %}
@@ -64,14 +63,14 @@
                         {% block sidebar_contact_nav %}
                         {% for link in config.extra.hyde_contact_links %}
                         <li class="sidebar-nav-item" style="display: inline-block">
-						  <a href="{{link.url | replace(from="$BASE_URL", to=config.base_url)}}">
-						    {% if link.fa %}
-							  <i class="{{link.fa}}"></i>
-							{% else %}
-								{{link.name}}
-							{% endif %}
-					      </a>
-						</li>
+                          <a href="{{link.url | replace(from="$BASE_URL", to=config.base_url)}}">
+                            {% if link.fa %}
+                              <i class="{{link.fa}}"></i>
+                            {% else %}
+                                {{link.name}}
+                            {% endif %}
+                          </a>
+                        </li>
                         {% endfor %}
                         {% endblock sidebar_nav %}
                     </ul>
@@ -84,22 +83,22 @@
                 <div class="posts">
                     {% for page in section.pages | reverse %}
                       <div class="post">
-						<article class="post">
-							<h1 class="post-title">
-							  <a href="{{ page.permalink }}">
-								{{ page.title }}
-							  </a>
-							</h1>
-							<div class="post__summary">
-								{{ page.summary | safe }}
-							</div>
-							<div class="read-more">
-								<a href="{{ page.permalink }}">Read more...</a>
-							</div>
-						</article>
-						{% if not page.summary %}
-							<span class="post-date">{{ page.date | date(format="%Y-%m-%d") }}</span>
-						{% endif %}
+                        <article class="post">
+                            <h1 class="post-title">
+                              <a href="{{ page.permalink }}">
+                                {{ page.title }}
+                              </a>
+                            </h1>
+                            <div class="post__summary">
+                                {{ page.summary | safe }}
+                            </div>
+                            <div class="read-more">
+                                <a href="{{ page.permalink }}">Read more...</a>
+                            </div>
+                        </article>
+                        {% if not page.summary %}
+                            <span class="post-date">{{ page.date | date(format="%Y-%m-%d") }}</span>
+                        {% endif %}
                       </div>
                     {% endfor %}
                 </div>
