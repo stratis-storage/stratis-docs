@@ -20,6 +20,10 @@ endif
 	cp ./docs/design/StratisSoftwareDesign.pdf $(PRE_SITE)
 	cp ./docs/dbus/DBusAPIReference.pdf $(PRE_SITE)
 	cp ./docs/style/StratisStyleGuidelines.pdf $(PRE_SITE)
+	cp ./docs/dbus/blockdev.xml ${PRE_SITE}
+	cp ./docs/dbus/filesystem.xml ${PRE_SITE}
+	cp ./docs/dbus/manager.xml ${PRE_SITE}
+	cp ./docs/dbus/pool.xml ${PRE_SITE}
 
 website-distrib: website-build
 	zola build

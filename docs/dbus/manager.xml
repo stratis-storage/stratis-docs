@@ -1,0 +1,94 @@
+<node name="/org/storage/stratis3">
+  <interface name="org.freedesktop.DBus.Introspectable">
+    <method name="Introspect">
+      <arg name="xml_data" type="s" direction="out" />
+    </method>
+  </interface>
+  <interface name="org.freedesktop.DBus.ObjectManager">
+    <method name="GetManagedObjects" />
+  </interface>
+  <interface name="org.freedesktop.DBus.Properties">
+    <method name="Get">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="property_name" type="s" direction="in" />
+      <arg name="value" type="v" direction="out" />
+    </method>
+    <method name="GetAll">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="props" type="a{sv}" direction="out" />
+    </method>
+    <method name="Set">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="property_name" type="s" direction="in" />
+      <arg name="value" type="v" direction="in" />
+    </method>
+    <signal name="PropertiesChanged">
+      <arg name="interface_name" type="s" />
+      <arg name="changed_properties" type="a{sv}" />
+      <arg name="invalidated_properties" type="as" />
+    </signal>
+  </interface>
+  <interface name="org.storage.stratis3.Manager.r0">
+    <method name="CreatePool">
+      <arg name="name" type="s" direction="in" />
+      <arg name="redundancy" type="(bq)" direction="in" />
+      <arg name="devices" type="as" direction="in" />
+      <arg name="key_desc" type="(bs)" direction="in" />
+      <arg name="clevis_info" type="(b(ss))" direction="in" />
+      <arg name="result" type="(b(oao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="DestroyPool">
+      <arg name="pool" type="o" direction="in" />
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="EngineStateReport">
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="ListKeys">
+      <arg name="result" type="as" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="SetKey">
+      <arg name="key_desc" type="s" direction="in" />
+      <arg name="key_fd" type="h" direction="in" />
+      <arg name="result" type="(bb)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="UnlockPool">
+      <arg name="pool_uuid" type="s" direction="in" />
+      <arg name="unlock_method" type="s" direction="in" />
+      <arg name="result" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="UnsetKey">
+      <arg name="key_desc" type="s" direction="in" />
+      <arg name="result" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <property name="LockedPools" type="a{sa{sv}}" access="read" />
+    <property name="Version" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
+  <interface name="org.storage.stratis3.Report.r0">
+    <method name="GetReport">
+      <arg name="name" type="s" direction="in" />
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+  </interface>
+  <node name="0" />
+  <node name="1" />
+  <node name="2" />
+</node>
