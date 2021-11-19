@@ -23,7 +23,7 @@ hyde_user_links = [
 ]
 hyde_developer_links = [
     {url = "$BASE_URL/StratisSoftwareDesign.pdf", name = "Software Design"},
-    {url = "$BASE_URL/DBusAPIReference.pdf", name = "DBUS API Reference"},
+    {url = "$BASE_URL/DBusAPIReference.pdf", name = "D-Bus API Reference"},
     {url = "$BASE_URL/StratisStyleGuidelines.pdf", name = "Programming Style Guidelines"},
 ]
 hyde_contact_links = [
