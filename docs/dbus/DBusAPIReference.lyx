@@ -108,7 +108,7 @@ status collapsed
 
 \end_inset
 
-Stratisd Version 2.0.0
+Stratisd Version 3.0
 \end_layout
 
 \begin_layout Standard
@@ -171,14 +171,195 @@ This document describes the D-Bus API for the Stratis daemon.
 \end_layout
 
 \begin_layout Section
-Overview
+Standard Interfaces and Methods
 \end_layout
 
 \begin_layout Subsection
-Technical Notes
+org.freedesktop.dbus.ObjectManager interface
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
+The top level D-Bus object implements the 
+\family typewriter
+org.freedesktop.dbus.ObjectManager
+\family default
+ interface.
+ This interface defines the 
+\family typewriter
+GetManagedObjects()
+\family default
+ method, which returns a view of the objects that the D-Bus layer has in
+ its tree.
+ This view constitutes a summary of the state of the pools, devices, and
+ filesystems that Stratis manages.
+ The objects are identified primarily by their D-Bus object paths.
+ However, depending on the interface which an object supports it may also
+ support certain identifying properties.
+ For example, all objects that represent pools support an interface which
+ implements a 
+\family typewriter
+Name
+\family default
+ and a 
+\family typewriter
+Uuid
+\family default
+ property which may be used by the client to identify a pool.
+\end_layout
+
+\begin_layout Standard
+In invoking methods, or obtaining the values of properties, the client must
+ identify existing objects by means of their object paths, either implicitly
+ by invoking a method on an object constructed from an object path, or explicitl
+y, by passing object paths as arguments to a method.
+ For example, the API's 
+\family typewriter
+DestroyPool()
+\family default
+ method requires two object paths:
+\end_layout
+
+\begin_layout Itemize
+the object path of the 
+\family typewriter
+Manager
+\family default
+ object, on which to invoke the 
+\family typewriter
+DestroyPool()
+\family default
+ method
+\end_layout
+
+\begin_layout Itemize
+the object path of the pool object, which is passed as an argument to the
+ 
+\family typewriter
+DestroyPool()
+\family default
+ method
+\end_layout
+
+\begin_layout Standard
+It is expected that the client will identify the object path of the pool
+ object by locating it using its 
+\family typewriter
+Name
+\family default
+ or 
+\family typewriter
+Uuid
+\family default
+ property.
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+org.freedesktop.dbus.ObjectManager.InterfacesAdded
+\family default
+ and 
+\family typewriter
+
+\begin_inset Newline newline
+\end_inset
+
+org.freedesktop.dbus.ObjectManager.InterfacesRemoved
+\family default
+ signals are emitted as appropriate.
+\end_layout
+
+\begin_layout Subsection
+org.freedesktop.dbus.Introspectable
+\end_layout
+
+\begin_layout Standard
+All objects support the 
+\family typewriter
+org.freedesktop.dbus.Introspectable
+\family default
+ interface.
+ This interface has one method, 
+\family typewriter
+Introspect()
+\family default
+, which returns an XML description of the object's interfaces, methods,
+ and properties.
+\end_layout
+
+\begin_layout Section
+Stratisd Interfaces and Methods
+\end_layout
+
+\begin_layout Standard
+Each kind of object implements an identifying interface, i.e., pools implement
+ a pool interface, filesystems implement a filesystem interface, etc.
+ There is a top level manager interface that implements management tasks.
+ The following is a description of the interfaces and their methods and
+ properties.
+\end_layout
+
+\begin_layout Paragraph
+Idempotency
+\end_layout
+
+\begin_layout Standard
+It is intended that all operations that can be requested via the D-Bus API
+ be idempotent.
+ By this is meant that if an operation is requested repeatedly, and there
+ are no intervening actions, then the operation should succeed every time,
+ or it should fail every time.
+ Since the return values may encode information about actions taken these
+ may differ between different invocations.
+ However if an error is returned that should always be the same error.
+ Lack of idempotency as defined here constitutes a bug.
+\end_layout
+
+\begin_layout Paragraph
+Structure of the Return Value
+\end_layout
+
+\begin_layout Standard
+All methods return a return code and an accompanying message, with type
+ signature 
+\begin_inset Quotes eld
+\end_inset
+
+qs
+\begin_inset Quotes erd
+\end_inset
+
+, and may also return data.
+ If a method does return data, then the data is the first element in a triple,
+ followed by the return code and message.
+ The data may be a 
+\begin_inset CommandInset href
+LatexCommand href
+name "container type"
+target "https://dbus.freedesktop.org/doc/dbus-specification.html#container-types"
+literal "false"
+
+\end_inset
+
+ such as a struct or an array.
+ Otherwise, if the method returns no data, the returned value is just a
+ pair of the return code and message.
+\end_layout
+
+\begin_layout Paragraph
+Duplicate Device Nodes in Method Arguments
+\end_layout
+
+\begin_layout Standard
+Some methods expect an array of device nodes as an argument.
+ It is not considered an error if the array contains duplicate items; the
+ items are reduced to a set.
+ The order in which the devices are processed, for example, are added to
+ an existing pool, is not guaranteed to be the same as the order in which
+ they are passed as arguments.
+\end_layout
+
+\begin_layout Paragraph
 Emulating an Option type
 \end_layout
 
@@ -234,1123 +415,36 @@ don't care
  If the value is false, then the pair represents None.
  If the value is true, then the pair represents Some(x) where x is the second
  item of the pair.
-\end_layout
-
-\begin_layout Section
-Standard Interfaces and Methods
-\end_layout
-
-\begin_layout Subsection
-org.freedesktop.dbus.ObjectManager interface
-\end_layout
-
-\begin_layout Standard
-The top level D-Bus object implements the org.freedesktop.dbus.ObjectManager
- interface.
- This interface defines the GetManagedObjects() method, which returns a
- view of the objects that the D-Bus layer has in its tree.
- This view constitutes a summary of the state of the pools, devices, and
- filesystems that Stratis manages.
- The objects are identified primarily by their D-Bus object paths.
- However, depending on the interface which an object supports it may also
- support certain identifying properties.
- For example, all objects that represent pools support an interface which
- implements a Name and a Uuid property which may be used by the client to
- identify a pool.
-\end_layout
-
-\begin_layout Standard
-In invoking methods, or obtaining the values of properties, the client must
- identify existing objects by means of their object paths, either implicitly
- by invoking a method on an object constructed from an object path, or explicitl
-y, by passing object paths as arguments to a method.
- For example, the API's DestroyPool() method requires two object paths:
-\end_layout
-
-\begin_layout Itemize
-the object path of the Manager object, on which to invoke the DestroyPool
- method
-\end_layout
-
-\begin_layout Itemize
-the object path of the pool object, which is passed as an argument to the
- DestroyPool method
-\end_layout
-
-\begin_layout Standard
-It is expected that the client will identify the object path of the pool
- object by locating it using its Name or Uuid property.
-\end_layout
-
-\begin_layout Standard
-The org.freedesktop.dbus.ObjectManager.InterfacesAdded and org.freedesktop.dbus.ObjectM
-anager.InterfacesRemoved signals are emitted as appropriate.
-\end_layout
-
-\begin_layout Subsection
-org.freedesktop.dbus.Introspectable
-\end_layout
-
-\begin_layout Standard
-All objects support the org.freedesktop.dbus.Introspectable interface.
- This interface has one method, Introspect(), which returns an XML description
- of the object's interfaces, methods, and properties.
-\end_layout
-
-\begin_layout Section
-Stratisd Interfaces and Methods
-\end_layout
-
-\begin_layout Standard
-Each kind of object implements an identifying interface, i.e., pools implement
- a pool interface, filesystems implement a filesystem interface, etc.
- There is a top level manager interface that implements management tasks.
- The following is a description of the interfaces and their methods and
- properties.
- Some more detailed information can be obtained from the introspection informati
-on that can be queried for each object, including the signatures of all
- methods and properties.
- 
+ This same scheme is used in the results of various D-Bus method and also
+ for some properties.
 \end_layout
 
 \begin_layout Paragraph
-Idempotency
+UUID format
 \end_layout
 
 \begin_layout Standard
-It is intended that all operations that can be requested via the D-Bus API
- be idempotent.
- By this is meant that if an operation is requested repeatedly, and there
- are no intervening actions, then the operation should succeed every time,
- or it should fail every time.
- Since the return values may encode information about actions taken these
- may differ between different invocations.
- However if an error is returned that should always be the same error.
- Lack of idempotency as defined here constitutes a bug.
-\end_layout
-
-\begin_layout Subsection
-Standard Interfaces
+UUIDs are in simple format, i.e., without hyphens.
 \end_layout
 
 \begin_layout Paragraph
-Structure of the Return Value
+Time format
 \end_layout
 
 \begin_layout Standard
-All methods return a return code and an accompanying message, with type
- signature 
-\begin_inset Quotes eld
-\end_inset
-
-qs
-\begin_inset Quotes erd
-\end_inset
-
-, and may also return data.
- If a method does return data, then the data is the first element in a triple,
- followed by the return code and message.
- The data may be a 
-\begin_inset CommandInset href
-LatexCommand href
-name "container type"
-target "https://dbus.freedesktop.org/doc/dbus-specification.html#container-types"
-literal "false"
-
-\end_inset
-
- such as a struct or an array.
- Otherwise, if the method returns no data, the returned value is just a
- pair of the return code and message.
+Times, such as the initialization time of a block device, are in RFC 3339
+ and ISO 8601 format.
 \end_layout
 
 \begin_layout Paragraph
-Duplicate Device Nodes in Method Arguments
+Size format
 \end_layout
 
 \begin_layout Standard
-Some methods expect an array of device nodes as an argument.
- It is not considered an error if the array contains duplicate items; the
- items are reduced to a set.
- The order in which the devices are processed, for example, are added to
- an existing pool, is not guaranteed to be the same as the order in which
- they are passed as arguments.
+All sizes, whether as parameters, in results, or as properties, are specified
+ in bytes and formatted as strings.
 \end_layout
 
-\begin_layout Subsubsection
-Manager interface
-\end_layout
-
-\begin_layout Standard
-The Manager interface is the top level interface.
- It manages the creation and destruction of pools and also exports various
- global properties.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-ConfigureSimulator This method is solely used to configure the simulator
- engine.
- Invoking it on the real engine is a no-op.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-denominator the denominator of the fraction that determines the frequency
- of unusual occurences, generally failures.
- Signature: u.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: qs.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-CreatePool This method creates a single pool with the specified name and
- blockdevs.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-name the name of the pool.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-redundancy the redundancy specification for the pool.
- Signature: (bq).
- Note that redundancy is an Option argument.
-\end_layout
-
-\begin_layout Description
-devices device nodes of devices to form the pool.
- Signature: as.
-\end_layout
-
-\begin_layout Description
-key_desc an optional key description of the key to use to encrypt the pool.
- Signature: (bs)
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (b(oao))qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if a pool was created, otherwise false.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The result of the creation action, default values if no pool was created.
- Signature: (oao).
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-The object path of the created pool.
- Signature: o.
-\end_layout
-
-\begin_layout Enumerate
-The object paths of all the block devices in the pool.
- Signature: ao.
-\end_layout
-
-\end_deeper
-\end_deeper
-\end_deeper
-\begin_layout Description
-DestroyPool This method destroys the specified pool.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-pool_object_path the object path of the pool to destroy.
- Signature: o.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bs)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if the pool was destroyed, otherwise false.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The UUID of the pool destroyed, or a default value if no action was taken.
- Signature: s.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-SetKey This method sets a key in the kernel keyring.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-key_desc key description to assign to the set key.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-key_fd file descriptor through which to read the key data.
- Signature: h.
-\end_layout
-
-\begin_layout Description
-interactive if true, reading the key ends when a newline is reached.
- Signature: b.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bb)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if the key state was changed.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-True if the key was newly set in the keyring.
- False if a key with the given key description already existed.
- Signature: b.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-UnsetKey This method unsets a key in the kernel keyring.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-key_desc key description of the key to unset.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: bqs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-False if the key did not exist in the keyring.
- Signature: b.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-UnlockPool Unlock locked devices that have been determined to belong to
- a Stratis pool.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-pool_uuid the UUID of the pool devices to unlock.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-unlock_method the method to use to unlock the pool, may be 
-\begin_inset Quotes eld
-\end_inset
-
-keyring
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-clevis
-\begin_inset Quotes erd
-\end_inset
-
-.
- Signature: s.
- Introduced in D-Bus version: 2-r3.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bas)qs
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-False if the return value is a none type.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-Array containing the UUIDs of all of the devices that were newly unlocked.
- Signature: as.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Subsubsection*
-Properties
-\end_layout
-
-\begin_layout Description
-Version The current stratisd version.
- Signature: sqs.
-\end_layout
-
-\begin_layout Subsubsection
-pool interface
-\end_layout
-
-\begin_layout Standard
-The pool interface manages the devices and filesystems within a pool.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-AddCacheDevs This method allows additional cache devices to be added to
- the pool after it is created.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-devices this argument has the same meaning as the device argument of CreatePool.
- Signature: as.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bao)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if any cache devices were added, otherwise false.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The object paths of the newly added cache devices.
- Signature: ao.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-AddDataDevs This method allows additional data devices to be added to the
- pool after it is created.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-devices this argument has the same meaning as the device argument of CreatePool.
- Signature: as.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bao)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if any data devices were added, otherwise false.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The object paths of the newly added data devices.
- Signature: ao.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-Bind This method binds the devices in a pool, which must already have been
- encrypted using a key in the kernel keyring, to a supplementary Clevis
- encryption policy.
- Introduced in D-Bus version: 2-r3.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-pin a Clevis pin
-\end_layout
-
-\begin_layout Description
-json a JSON formatted Clevis configuration
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: bqs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if any new bindings were added, otherwise false.
- Signature: b.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-CreateFilesystems This method allows creating multiple filesystems, specified
- by name, on a pool.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-specs The specification for each filesystem to be created, currently just
- a name.
- Signature: as.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns Signature: (ba(os))qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if any filesystem was added, otherwise false.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-An array of object path/name pairs for each filesystem created.
- Signature: a(os).
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-DestroyFilesystems This method allows destroying multiple filesystems.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-filesystems the object paths of the filesystems to be destroyed.
- Signature: ao.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bas)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if any filesystems were destroyed, otherwise False.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-An array of the UUIDs of the filesystems destroyed.
- Signature: as.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-SetName This allows setting the name of the pool.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-new_name The name to set.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bs)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if an action was taken, otherwise false.
- If the new name is the same as the old name, then no action is considered
- to have been taken.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The UUID of the filesystem or a default UUID if no change was made.
- Signature: s.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-SnapshotFilesystem This method allows a snapshot to be created from an existing
- filesystem
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-origin the object path of the source filesystem of the snapshot.
- Signature: o.
-\end_layout
-
-\begin_layout Description
-snapshot_name the name of the newly created snapshot.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bo)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if a new snapshot was created, otherwise false.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The object path of the newly created snapshot.
- Signature: o.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Description
-Unbind This method unbinds an existing Clevis encryption policy from the
- encrypted devices in a pool.
- Introduced in D-Bus version 2-r3.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Returns: Signature: bqs.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-1.
- True if some Clevis bindings were removed, otherwise false.
- Signature: b.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Subsubsection*
-Properties
-\end_layout
-
-\begin_layout Description
-Encrypted Whether or not the pool is encrypted.
- Signature: b.
- Introduced in D-Bus version: 2-r1.
-\end_layout
-
-\begin_layout Description
-Name The name of the pool.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-Uuid The UUID of the pool.
- This property is constant.
- Signature: s.
-\end_layout
-
-\begin_layout Subsubsection
-filesystem interface
-\end_layout
-
-\begin_layout Standard
-The fileystem interface manages the properties of individual filesystems.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-SetName This allows setting the name of the filesystem.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-name The name to set.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bs)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if an action was taken, otherwise false.
- If the new name is the same as the old name, then no action is considered
- to have been taken.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The UUID of the filesystem, or a default UUID if no change was made.
- Signature: s.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Subsubsection*
-Properties
-\end_layout
-
-\begin_layout Description
-Devnode The device node of the filesystem's corresponding thin device.
- This property is constant.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-Name The name of the filesystem.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-Pool The object path of the parent pool.
- This property is constant.
- Signature: o.
-\end_layout
-
-\begin_layout Description
-Uuid The UUID of the filesystem.
- This property is constant.
- Signature: s.
-\end_layout
-
-\begin_layout Subsubsection
-blockdev interface
-\end_layout
-
-\begin_layout Standard
-The blockdev interface manages the properties of individual blockdevs.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-SetUserInfo This allows setting identifying information for the blockdev
- by the user.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-id The free-form information to set.
- Signature: (bs).
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bs)qs.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if an action was taken, otherwise false.
- If the new information is the same as the old information, then no action
- is considered to have been taken.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-The UUID of the blockdev, or a default UUID if no change was made.
- Signature: s.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Subsubsection*
-Properties
-\end_layout
-
-\begin_layout Description
-Devnode The device node of the blockdev.
- This property is constant.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-HardwareInfo The hardware-derived ID for this blockdev.
- May be empty.
- This property is constant.
- Signature: (bs).
-\end_layout
-
-\begin_layout Description
-InitializationTime
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
- Time that Stratis initialized this blockdev, in ISO 8601 text format (UTC).
-
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
- Signature: t.
-\end_layout
-
-\begin_layout Description
-PhysicalPath The physical path of the blockev.
- This may be diferent from the device represented by the Devnode property.
- For example, in the presence of encryption, the PhysicalPath property is
- the device on which the Stratis 
-\emph on
-LUKS2
-\emph default
- metadata is written; the Devnode property is the opened device on which
- the 
-\emph on
-Stratis
-\emph default
- metadata is written.
- Signature: s.
- Introduced in D-Bus version: 2-r2.
-\end_layout
-
-\begin_layout Description
-Pool The object path of the parent pool.
- This property is constant.
- Signature: o.
-\end_layout
-
-\begin_layout Description
-Tier The tier the blockdev is in, either Data(0) or Cache (1).
- This property is constant.
- Signature: q.
-\end_layout
-
-\begin_layout Description
-UserInfo The user-defined string associated with this blockdev.
- May be empty.
- Signature: (bs).
-\end_layout
-
-\begin_layout Description
-Uuid The UUID of the blockdev.
- This property is constant.
- Signature: s.
-\end_layout
-
-\begin_layout Subsubsection
-Report interface
-\end_layout
-
-\begin_layout Standard
-The Report interface is an unstable interface for querying internal stratisd
- data structure state.
- It provides reports as JSON, and while the reports can be parsed programmatical
-ly, the names and schemas of provided reports do not follow the semantic
- versioning scheme that the rest of the D-Bus API does.
- The reports are subject to change at any time.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-GetReport This method allows fetching a report by name.
- If a report by the supplied name does not exist, an error is returned.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-name: The name of the report as a string
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Returns: Signature: (bs)qs
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-True if the report name requested is a valid report name and JSON was returned
- successfully.
- Signature: b.
-\end_layout
-
-\begin_layout Enumerate
-A valid JSON string representing the report requested.
- Signature: s.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Subsection
-Non-standard Interfaces
-\end_layout
-
-\begin_layout Subsubsection
-FetchProperties interface
-\end_layout
-
-\begin_layout Standard
-The FetchProperties interface is a generic interface supported by filesystems,
- pools, and blockdevs.
- It supplies two methods, which have the same return signature: a{s(bv)}.
- The return value is a table mapping string keys to properties of a filesystem,
- pool, or blockdev.
- Each value is a tuple of a boolean and a variant.
- The boolean indicates whether the second element of the pair represents
- the value requested or not.
- If the first element of the tuple is false, the second element is a string
- containing an error message indicating the cause of the failure to obtain
- the value.
-\end_layout
-
-\begin_layout Subsubsection*
-Methods
-\end_layout
-
-\begin_layout Description
-GetAllProperties This method allows getting all properties of the particular
- pool, filesystem or blockdev.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments: None.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-GetProperties This method allows getting properties specified by a list
- of keys passed as an argument.
- If a key is unrecognized, there is no corresponding entry in the returned
- table.
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Arguments:
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-properties: The list of string keys specifying the names of the properties
- requested.
- Signature: as.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Standard
-Pools, filesystem, and blockdevs each support a different set of properties.
- The properties supported for each are:
-\end_layout
-
-\begin_layout Description
-blockdev
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-TotalPhysicalSize The total physical size of the blockdev in bytes.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-filesystem
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-Used The bytes used by this filesystem.
- Signature: s.
-\end_layout
-
-\end_deeper
-\begin_layout Description
-pool
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-ClevisInfo The optional Clevis metadata for this pool in JSON format.
- Signature: (b, (s, s)).
- Introduced in D-Bus version: 2-r3.
-\end_layout
-
-\begin_layout Description
-HasCache Whether or not the pool has a cache.
- Signature: b.
- Introduced in D-Bus version: 2-r1.
-\end_layout
-
-\begin_layout Description
-KeyDescription The optional description of the key in the kernel keyring.
- Signature: (b, s).
- Introduced in D-Bus version: 2-r2.
-\end_layout
-
-\begin_layout Description
-TotalPhysicalSize The total physical size of the pool in bytes.
- Signature: s.
-\end_layout
-
-\begin_layout Description
-TotalPhysicalUsed The total amount of physical space already used in the
- pool.
- Signature: s
-\end_layout
-
-\end_deeper
-\begin_layout Description
-Manager
-\end_layout
-
-\begin_deeper
-\begin_layout Description
-KeyList List of key descriptions that are currently in the kernel keyring.
- Signature: as.
- Introduced in D-Bus version: 2-r1.
-\end_layout
-
-\begin_layout Description
-LockedPoolUuids List of pool UUIDs corresponding to pool devices that have
- not yet been unlocked.
- Signature: as.
- Introduced in D-Bus version: 2-r1.
-\end_layout
-
-\begin_layout Description
-LockedPools Map of pool UUIDs to associated key descriptions.
- Includes only UUIDs corresponding to locked pools.
- Signature: a{ss}.
- Introduced in D-Bus version: 2-r2.
-\end_layout
-
-\end_deeper
 \begin_layout Section
 Stratis interface versioning
 \end_layout
@@ -1369,8 +463,8 @@ Interface major versions
 
 \begin_layout Standard
 The versioning scheme is currently included in the bus name (for example,
- org.storage.stratis2) and all of the interface names (org.storage.stratis2.pool,
- org.storage.stratis2.filesystem, and so on).
+ org.storage.stratis3) and all of the interface names (org.storage.stratis3.pool,
+ org.storage.stratis3.filesystem, and so on).
  The interface version number corresponds to the major version number of
  stratisd.
 \end_layout
@@ -1380,22 +474,11 @@ Interface minor versions
 \end_layout
 
 \begin_layout Standard
-The proposed scheme also leaves room for supporting two interfaces at once.
- This would arise if enhancements need to be made in a minor release version
- to support new arguments in a method call or a new method altogether.
- For accessing minor release versions of the interface, two things are required.
- First, the minor version of stratisd must be at least that specified in
- the interface.
- Second, the interface must be accessed by appending the letter 'r' and
- the minor version number after a period to the end of the interface name.
- For example, a change to the filesystem interface at version 2.4.0 would
- be accessed through org.storage.stratis2.filesystem.r4.
- This interface would provide the new feature or change to the interface,
- maintaining backwards compatibility through org.storage.stratis2.filesystem.
- As of stratisd v2.4.0, interfaces are carried forward unchanged if no changes
- were made to the next revision version so that the entire API for that
- release can be accessed through the revision number corresponding to the
- minor version of the release.
+The scheme allows supporting multiple interface revisions.
+ For each minor version of stratisd a new revision of each existing interface
+ is introduced, while prior interface revisions continue to be supported.
+ The revision signifier is appended to the interface stem, e.g., org.storage.sratis3.
+pool.r0, org.storage.stratis3.pool.r1.
 \end_layout
 
 \begin_layout Subsection
@@ -1403,18 +486,75 @@ Interface breaking changes
 \end_layout
 
 \begin_layout Standard
-When upgrading stratisd to a version with breaking changes, this should
- work automatically when installing from packages.
- If installing from source, there are some considerations when updating.
+If a user installs from source, there are some considerations when updating
+ to a new major version.
  Because stratisd uses the system bus in D-Bus, D-Bus will only allow stratis
  to bind to the new interface name if the D-Bus policy file allowing this
  is updated.
- When using packaging, this is typically installed at the location /usr/share/db
-us-1/system.d/stratisd.conf on your filesystem or another path supported by
- D-Bus when searching for policy files.
- When stratis releases version 3.0.0, all instances of org.storage.stratis2
- should be replaced with org.storage.stratis3 or else stratis will fail to
- communicate using the CLI or the programmatic API over D-Bus.
+ When a new major version is released this file must be edited or else stratis
+ will fail to communicate using the CLI or the programmatic API over D-Bus.
+\end_layout
+
+\begin_layout Section
+Introspection Data
+\end_layout
+
+\begin_layout Standard
+The introspection data for every kind of object stratisd supports, with
+ accompanying comments describing the use of the parameters and the meaning
+ of the return values is available via the following links:
+\end_layout
+
+\begin_layout Description
+Manager 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://stratis-storage.github.io/manager.xml"
+target "https://stratis-storage.github.io/manager.xml"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+blockdev 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://stratis-storage.github.io/blockdev.xml"
+target "https://stratis-storage.github.io/blockdev.xml"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+filesystem 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://stratis-storage.github.io/filesystem.xml"
+target "https://stratis-storage.github.io/filesystem.xml"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+pool 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://stratis-storage.github.io/pool.xml"
+target "https://stratis-storage.github.io/pool.xml"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
