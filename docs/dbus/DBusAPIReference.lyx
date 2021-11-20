@@ -111,25 +111,6 @@ status collapsed
 Stratisd Version 2.0.0
 \end_layout
 
-\begin_layout Date
-Version 0.11.0
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-
-\backslash
-
-\end_layout
-
-\end_inset
-
-Last modified: 01/10/2020
-\end_layout
-
 \begin_layout Standard
 \begin_inset CommandInset toc
 LatexCommand tableofcontents
@@ -169,8 +150,7 @@ literal "false"
 
 \end_inset
 
-, and is written using \SpecialChar LyX
- 2.3.3.
+, .
  Please ask any questions by opening an issue, and propose changes as pull
  requests.
 \end_layout
