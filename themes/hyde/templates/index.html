@@ -58,6 +58,14 @@
                         {% endfor %}
                         {% endblock sidebar_nav %}
                     </ul>
+                    D-Bus Introspection Files:</br>
+                    <ul class="sidebar-nav">
+                        {% block sidebar_introspect_nav %}
+                        {% for link in config.extra.hyde_introspection_links %}
+                        <li class="sidebar-nav-item"><a href="{{link.url | replace(from="$BASE_URL", to=config.base_url)}}">{{link.name}}</a></li>
+                        {% endfor %}
+                        {% endblock sidebar_nav %}
+		    </ul>
                     Contact Links:</br>
                     <ul class="sidebar-nav">
                         {% block sidebar_contact_nav %}

@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<node name="/org/storage/stratis3">
+  <interface name="org.freedesktop.DBus.Introspectable">
+    <method name="Introspect">
+      <arg name="xml_data" type="s" direction="out" />
+    </method>
+  </interface>
+  <interface name="org.freedesktop.DBus.ObjectManager">
+    <method name="GetManagedObjects" />
+  </interface>
+  <interface name="org.freedesktop.DBus.Properties">
+    <method name="Get">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="property_name" type="s" direction="in" />
+      <arg name="value" type="v" direction="out" />
+    </method>
+    <method name="GetAll">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="props" type="a{sv}" direction="out" />
+    </method>
+    <method name="Set">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="property_name" type="s" direction="in" />
+      <arg name="value" type="v" direction="in" />
+    </method>
+    <signal name="PropertiesChanged">
+      <arg name="interface_name" type="s" />
+      <arg name="changed_properties" type="a{sv}" />
+      <arg name="invalidated_properties" type="as" />
+    </signal>
+  </interface>
+  <!--
+    The Manager interface is the top level interface. It manages the creation
+    and destruction of pools and also exports various global properties.
+  -->
+  <interface name="org.storage.stratis3.Manager.r0">
+    <!-- Create a single pool with the specified name and blockdevs. -->
+    <method name="CreatePool">
+      <!-- Name of the pool. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- Optional redundancy specification for the pool. -->
+      <arg name="redundancy" type="(bq)" direction="in" />
+      <!-- Device nodes of devices to form the pool -->
+      <arg name="devices" type="as" direction="in" />
+      <!-- Optional key description of the key to use to encrypt the pool -->
+      <arg name="key_desc" type="(bs)" direction="in" />
+      <!--
+         Optional Clevis information to use to encrypt the pool.
+         s: Clevis "pin" specification, "tang" or "tpm".
+         s: pin-specfic Clevis configuration
+      -->
+      <arg name="clevis_info" type="(b(ss))" direction="in" />
+      <!--
+         b: True if a pool was created, otherwise false.
+         (oao): Result of the creation action, default values if no pool
+            was created.
+            o: Object path of the created pool.
+            ao: Object paths of all the block devices in the pool.
+      -->
+      <arg name="result" type="(b(oao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Destroy the specified pool. -->
+    <method name="DestroyPool">
+      <!-- Object path of the pool to destroy. -->
+      <arg name="pool" type="o" direction="in" />
+      <!--
+        b: True if the pool was destroyed, otherwise false.
+        s: UUID of the pool destroyed or a default value if no action was
+           taken.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Return JSON representing the internal state of the daemon. The method
+      signature is stable, but the JSON output format is not guaranteed to be
+      stable.
+    -->
+    <method name="EngineStateReport">
+      <!-- JSON output representing the engine state. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Return a list of the Stratis keys in the kernel keyring. -->
+    <method name="ListKeys">
+      <!-- Array of key descriptions. -->
+      <arg name="result" type="as" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Set a Stratis key in the kernel keyring. -->
+    <method name="SetKey">
+      <!-- Key description to assign to the set key. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- File descriptor through which to read the key data. -->
+      <arg name="key_fd" type="h" direction="in" />
+      <!--
+        b: True if the key state was changed, otherwise false.
+        b: True if the key was newly set in the keyring. False if a key with the
+           given key description already existed.
+      -->
+      <arg name="result" type="(bb)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Unlock locked devices belonging to a specified pool. -->
+    <method name="UnlockPool">
+      <!-- UUID of the pool devices to unlock. -->
+      <arg name="pool_uuid" type="s" direction="in" />
+      <!-- Method to use to unlock the pool, may be "keyring" or "clevis". -->
+      <arg name="unlock_method" type="s" direction="in" />
+      <!--
+        b: True if there was no error, and so the list is meaningful, otherwise
+           false.
+        as: Array containing the UUIDs of all the devices that were unlocked.
+      -->
+      <arg name="result" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Unset a key in the kernel keyring. -->
+    <method name="UnsetKey">
+      <!-- Key description of the key to unset. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- b: True if the key was in the keyring, otherwise false. -->
+      <arg name="result" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      a{sa{sv}}: Mapping of Stratis pool UUIDs to device encryption information.
+        s: Stratis pool UUIDs
+        a{sv}: Mapping of device UUIDs to values.
+          s: Stratis device UUIDs
+          v: Encryption information for the device
+    -->
+    <property name="LockedPools" type="a{sa{sv}}" access="read" />
+    <!-- stratisd version -->
+    <property name="Version" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
+  <!--
+    The Report interface is an unstable interface for querying internal stratisd
+    data structure state. It provides reports as JSON, and while the reports can
+    be parsed programmatically, the names and schemas of provided reports do not
+    follow the semantic versioning scheme that the rest of the D-Bus API does.
+    The reports are subject to change at any time.
+  -->
+  <interface name="org.storage.stratis3.Report.r0">
+    <!--
+      This method allows fetching a report by name. If a report by the supplied
+      name does not exist, an error is returned.
+    -->
+    <method name="GetReport">
+      <!-- Name of the report. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- s: Report. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+  </interface>
+  <node name="0" />
+  <node name="1" />
+  <node name="2" />
+</node>

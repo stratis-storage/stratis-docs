@@ -1,0 +1,83 @@
+<node name="/org/storage/stratis3/1">
+  <interface name="org.freedesktop.DBus.Introspectable">
+    <method name="Introspect">
+      <arg name="xml_data" type="s" direction="out" />
+    </method>
+  </interface>
+  <interface name="org.freedesktop.DBus.Properties">
+    <method name="Get">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="property_name" type="s" direction="in" />
+      <arg name="value" type="v" direction="out" />
+    </method>
+    <method name="GetAll">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="props" type="a{sv}" direction="out" />
+    </method>
+    <method name="Set">
+      <arg name="interface_name" type="s" direction="in" />
+      <arg name="property_name" type="s" direction="in" />
+      <arg name="value" type="v" direction="in" />
+    </method>
+    <signal name="PropertiesChanged">
+      <arg name="interface_name" type="s" />
+      <arg name="changed_properties" type="a{sv}" />
+      <arg name="invalidated_properties" type="as" />
+    </signal>
+  </interface>
+  <!-- Properties and methods on a block device. -->
+  <interface name="org.storage.stratis3.blockdev.r0">
+    <!-- Set user-specified information on a block device. -->
+    <method name="SetUserInfo">
+      <!-- The information to set, as a string. -->
+      <arg name="id" type="(bs)" direction="in" />
+      <!--
+        b: True if the information was changed, otherwise false.
+        s: UUID of the specified blockdev, or the default UUID if no change.
+      -->
+      <arg name="changed" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Device node of the block device. -->
+    <property name="Devnode" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!-- Optional hardware id for this block device. -->
+    <property name="HardwareInfo" type="(bs)" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!-- Time that stratisd initialized the block device. -->
+    <property name="InitializationTime" type="t" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!--
+      Physical path of the block device. This may be different from the device
+      represented by the Devnode property. For example, with encryption, the
+      PhysicalPath property is the device on which the Stratis LUKS metadata
+      is written; the Devnode property is the opened device on which the
+      Stratis metadata is written.
+    -->
+    <property name="PhysicalPath" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!-- Object path of the parent pool. -->
+    <property name="Pool" type="o" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!-- Tier the block device occupies, either Data(0) or Cache(1). -->
+    <property name="Tier" type="q" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false" />
+    </property>
+    <!-- Size of the block device's Devnode. -->
+    <property name="TotalPhysicalSize" type="s" access="read" />
+    <!-- Optional user-defined string associated with this block device. -->
+    <property name="UserInfo" type="(bs)" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false" />
+    </property>
+    <!-- Stratis UUID of this block device. -->
+    <property name="Uuid" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
+</node>
