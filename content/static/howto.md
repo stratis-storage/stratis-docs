@@ -150,6 +150,12 @@ You can use `/stratis/<pool name>/<file system name>` but each time you rename a
 # echo "UUID=a38780e5-04e3-49da-8b95-2575d77e947c /mnt xfs defaults 0 0" >> /etc/fstab
 ```
 
+For `systemd.mount` points be sure to include additional required x-systemd options in the fstab line, e.g. set `x-systemd.requres` in order to explicitly configure systemd dependencies on the `stratisd.service`. See `man systemd.mount` for more information.
+
+```
+# echo "UUID=a38780e5-04e3-49da-8b95-2575d77e947c /mnt xfs defaults,x-systemd.requires=stratisd.service 0 0" >> /etc/fstab
+```
+
 # Other useful pool operations
 
 ## `add-data`: Add a disk to an existing pool
