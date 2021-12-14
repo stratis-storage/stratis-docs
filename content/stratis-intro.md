@@ -48,27 +48,25 @@ commands used for creating a filesystem that encrypts data-at-rest, to the
 method an advanced user would use to configure each layer separately:
 
 Stratis commands to create an encrypted pool and filesystem:
-<pre class="file">
-# stratis key set testkey --capture-key
-    passphrase
-# stratis pool create p1 --key-desc testkey /dev/sdb
-# stratis fs create p1 fs1
+
+<pre>
+> stratis key set testkey --capture-key
+    &lt;enter passphrase&gt;
+> stratis pool create p1 --key-desc testkey /dev/sdb
+> stratis fs create p1 fs1
 </pre>
 
 Commands an advanced user would use to configure a similar filesystem: 
 
-<pre class="file">
-# cryptsetup -y -v luksFormat /dev/sdb
-in TUI type YES
-    YES
-enter passphrase
-    passphrase
-verify passphrase
-    passphrase
-# cryptsetup -v luksOpen /dev/sdb luks-device
-# pvcreate /dev/mapper/luks-device
-# vgcreate -L100 -n lv1 vg1
-# mkfs.xfs /dev/mapper/lv1-vg1
+<pre>
+> cryptsetup -y -v luksFormat /dev/sdb
+    &lt;enter "YES"&gt;
+    &lt;enter passphrase&gt;
+    &lt;verify passphrase&gt;
+> cryptsetup -v luksOpen /dev/sdb luks-device
+> pvcreate /dev/mapper/luks-device
+> vgcreate -L100 -n lv1 vg1
+> mkfs.xfs /dev/mapper/lv1-vg1
 </pre>
 
 ### API Example ###
@@ -87,17 +85,25 @@ command-line
 
 Create a pool:
 
->`# busctl call org.storage.stratis3 /org/storage/stratis3 org.storage.stratis3.Manager.r0 CreatePool &quot;s(bq)as(bs)(b(ss))&quot; poolname 0 0 2 /dev/sda /dev/sdb 0 &quot;&quot; 0 &quot;&quot; &quot;&quot;`
+<pre>
+> busctl call org.storage.stratis3 /org/storage/stratis3 org.storage.stratis3.Manager.r0 CreatePool "s(bq)as(bs)(b(ss))" poolname 0 0 2 /dev/sda /dev/sdb 0 "" 0 "" ""
+</pre>
 
 Print version:
 
->`# busctl get-property org.storage.stratis3 /org/storage/stratis3 org.storage.stratis3.Manager.r0 Version`
+<pre>
+> busctl get-property org.storage.stratis3 /org/storage/stratis3 org.storage.stratis3.Manager.r0 Version
+</pre>
 
 Print engine state:
 
->`# busctl call org.storage.stratis3 /org/storage/stratis3 org.storage.stratis3.Manager.r0 EngineStateReport”`
+<pre>
+> busctl call org.storage.stratis3 /org/storage/stratis3 org.storage.stratis3.Manager.r0 EngineStateReport
+</pre>
 
 Get ManagedObjects:
 
->`# busctl call org.storage.stratis3 /org/storage/stratis3 org.freedesktop.DBus.ObjectManager GetManagedObjects`
+<pre>
+> busctl call org.storage.stratis3 /org/storage/stratis3 org.freedesktop.DBus.ObjectManager GetManagedObjects
+</pre>
 
