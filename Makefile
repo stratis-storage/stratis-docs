@@ -28,7 +28,7 @@ endif
 website-distrib: website-build
 	zola build
 
-website-test: website-build
+website-test: website-distrib
 	zola serve
 
 yamllint:
