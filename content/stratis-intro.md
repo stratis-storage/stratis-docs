@@ -15,7 +15,7 @@ storage functionality that works within the existing Linux storage
 management stack.  To achieve this, Stratis prioritizes a straightforward
 command-line experience, a rich API, and a fully automated approach to storage
 management. It builds upon elements of the existing storage stack as much as
-possible.  Specifically, Stratis uses device-mapper, LUKS, XFS, and Clevis. 
+possible.  Specifically, Stratis uses device-mapper, LUKS, XFS, and Clevis.
 Stratis may also incorporate additional technologies in the future.
 
 <!-- more -->
@@ -65,8 +65,10 @@ Commands an advanced user would use to configure a similar filesystem:
     &lt;verify passphrase&gt;
 > cryptsetup -v luksOpen /dev/sdb luks-device
 > pvcreate /dev/mapper/luks-device
-> vgcreate -L100 -n lv1 vg1
-> mkfs.xfs /dev/mapper/lv1-vg1
+> vgcreate vg1 /dev/mapper/luks-device
+> lvcreate -L 100M -T vg1/athinpool
+> lvcreate -V1G -T vg1/athinpool -n thinvolume
+> mkfs.xfs /dev/mapper/vg1-thinvolume
 </pre>
 
 ### API Example ###
