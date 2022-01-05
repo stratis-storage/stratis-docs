@@ -1260,6 +1260,11 @@ tion of an 128-bit value requires 32 hexadecimal digits, the chosen encoding
  except in JSON-formatted metadata where they are unhyphenated.
 \end_layout
 
+\begin_layout Standard
+All checksums are calculated using an implementation of the CRC-32C (Castagnoli)
+ algorithm.
+\end_layout
+
 \begin_layout Subsubsection
 Design Overview
 \end_layout
@@ -1628,7 +1633,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-IEEE CRC32C of signature block (bytes at offset 4 length 508)
+checksum of signature block (bytes at offset 4 length 508)
 \end_layout
 
 \end_inset
@@ -2091,7 +2096,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-IEEE CRC32 covering remainder of MDA header
+checksum covering remainder of MDA header
 \end_layout
 
 \end_inset
@@ -2120,7 +2125,7 @@ IEEE CRC32 covering remainder of MDA header
 \begin_inset Text
 
 \begin_layout Plain Layout
-IEEE CRC32 covering JSON data
+checksum covering JSON data
 \end_layout
 
 \end_inset
@@ -3852,7 +3857,7 @@ Bad things happen.
 \end_layout
 
 \begin_layout Standard
-In order to recover from disk errors, Stratis uses CRCs over the critical
+In order to recover from disk errors, Stratis uses checksums over the critical
  metadata, and writes duplicate copies to a single blockdev, as well as
  across multiple blockdevs, when possible.
  It takes this approach – copies – rather than a mechanism that might make
@@ -4104,7 +4109,7 @@ Error handling
 \end_layout
 
 \begin_layout Itemize
-Libraries available for D-Bus, devicemapper, JSON serialization, and CRC
+Libraries available for D-Bus, devicemapper, and JSON serialization
 \end_layout
 
 \begin_layout Itemize
