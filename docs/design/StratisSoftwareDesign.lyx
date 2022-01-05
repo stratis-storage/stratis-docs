@@ -1242,8 +1242,8 @@ Historically this is the minimum storage unit of a hard drive.
 \end_layout
 
 \begin_layout Standard
-All UUIDs are written as un-hyphenated ASCII encodings of their lower-case
- hexadecimal representation
+UUIDs are written as un-hyphenated ASCII encodings of their lower-case hexadecim
+al representation
 \begin_inset Foot
 status collapsed
 
@@ -1257,7 +1257,7 @@ tion of an 128-bit value requires 32 hexadecimal digits, the chosen encoding
 
 \end_inset
 
-.
+ except in JSON-formatted metadata where they are unhyphenated.
 \end_layout
 
 \begin_layout Subsubsection
