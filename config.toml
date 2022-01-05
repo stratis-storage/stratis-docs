@@ -20,6 +20,7 @@ hyde_theme = "theme-base-10"
 hyde_user_links = [
     {url = "https://lab.redhat.com/stratis-configure", name = "Tutorial"},
     {url = "$BASE_URL/howto", name = "How-To"},
+    {url = "$BASE_URL/users", name = "Clients and Operating Systems"},
 ]
 hyde_developer_links = [
     {url = "$BASE_URL/StratisSoftwareDesign.pdf", name = "Software Design"},
