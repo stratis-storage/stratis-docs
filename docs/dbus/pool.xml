@@ -399,6 +399,10 @@
     <property name="Encrypted" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
+    <!--
+      The maximum number of filesystems that the pool supports. May be
+      increased, but not decreased.
+    -->
     <property name="FsLimit" type="t" access="readwrite" />
     <!-- True if the pool has a cache, otherwise false. -->
     <property name="HasCache" type="b" access="read" />
@@ -413,14 +417,31 @@
     <property name="KeyDescription" type="(b(bs))" access="read" />
     <!-- Name of the pool. -->
     <property name="Name" type="s" access="read" />
+    <!--
+      If true, then all the space on the pool's devices has been allocated
+      to some part of its storage stack. No further allocation, as would be
+      necessary to do if increasing the number of filesystems that the pool
+      supports, is possible.
+    -->
     <property name="NoAllocSpace" type="b" access="read" />
+    <!--
+      True if the pool allows overprovisioning, otherwise false. Setting this
+      property to false will fail if the sum of the logical sizes of the
+      filesystems that the pool contains is more than the physical space
+      available for them.
+    -->
     <property name="Overprovisioning" type="b" access="readwrite" />
     <!--
       Total size of the pool. The sum of the sizes of all the block
       devices in the pool's data tier.
     -->
     <property name="TotalPhysicalSize" type="s" access="read" />
-    <!-- Total space used by the pool for any purpose. -->
+    <!--
+      Total space used in the pool. This includes space allocated by Stratis
+      for pool management and consequently unavailable for any other purpose,
+      as well as all space required by data written to every Stratis
+      filesystem on the pool.
+    -->
     <property name="TotalPhysicalUsed" type="(bs)" access="read" />
     <!-- Stratis UUID of the pool. -->
     <property name="Uuid" type="s" access="read">
