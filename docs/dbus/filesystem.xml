@@ -62,4 +62,27 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
   </interface>
+  <interface name="org.storage.stratis3.filesystem.r1">
+    <method name="SetName">
+      <arg name="name" type="s" direction="in" />
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <property name="Created" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="Devnode" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates" />
+    </property>
+    <property name="Name" type="s" access="read" />
+    <property name="Pool" type="o" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="Size" type="s" access="read" />
+    <property name="Used" type="(bs)" access="read" />
+    <property name="Uuid" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
 </node>

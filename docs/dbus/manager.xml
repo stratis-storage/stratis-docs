@@ -144,6 +144,58 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
   </interface>
+  <interface name="org.storage.stratis3.Manager.r1">
+    <method name="CreatePool">
+      <arg name="name" type="s" direction="in" />
+      <arg name="redundancy" type="(bq)" direction="in" />
+      <arg name="devices" type="as" direction="in" />
+      <arg name="key_desc" type="(bs)" direction="in" />
+      <arg name="clevis_info" type="(b(ss))" direction="in" />
+      <arg name="result" type="(b(oao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="DestroyPool">
+      <arg name="pool" type="o" direction="in" />
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="EngineStateReport">
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="ListKeys">
+      <arg name="result" type="as" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="SetKey">
+      <arg name="key_desc" type="s" direction="in" />
+      <arg name="key_fd" type="h" direction="in" />
+      <arg name="result" type="(bb)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="UnlockPool">
+      <arg name="pool_uuid" type="s" direction="in" />
+      <arg name="unlock_method" type="s" direction="in" />
+      <arg name="result" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <method name="UnsetKey">
+      <arg name="key_desc" type="s" direction="in" />
+      <arg name="result" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <property name="LockedPools" type="a{sa{sv}}" access="read" />
+    <property name="Version" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
   <!--
     The Report interface is an unstable interface for querying internal stratisd
     data structure state. It provides reports as JSON, and while the reports can
@@ -160,6 +212,14 @@
       <!-- Name of the report. -->
       <arg name="name" type="s" direction="in" />
       <!-- s: Report. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+  </interface>
+  <interface name="org.storage.stratis3.Report.r1">
+    <method name="GetReport">
+      <arg name="name" type="s" direction="in" />
       <arg name="result" type="s" direction="out" />
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />

@@ -80,4 +80,37 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
   </interface>
+  <interface name="org.storage.stratis3.blockdev.r1">
+    <method name="SetUserInfo">
+      <arg name="id" type="(bs)" direction="in" />
+      <arg name="changed" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <property name="Devnode" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="HardwareInfo" type="(bs)" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="InitializationTime" type="t" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="PhysicalPath" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="Pool" type="o" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <property name="Tier" type="q" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false" />
+    </property>
+    <property name="TotalPhysicalSize" type="s" access="read" />
+    <property name="UserInfo" type="(bs)" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false" />
+    </property>
+    <property name="Uuid" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
 </node>
