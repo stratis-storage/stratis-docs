@@ -1,7 +1,7 @@
 +++
 title = "Thin provisioning redesign"
 date = 2022-05-18
-weight = 24
+weight = 25
 template = "page.html"
 render = true
 +++
