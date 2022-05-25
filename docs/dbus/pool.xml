@@ -225,4 +225,227 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
   </interface>
+  <interface name="org.storage.stratis3.pool.r1">
+    <!-- Add devices to an already initialized cache. -->
+    <method name="AddCacheDevs">
+      <!-- List of devices to add to the cache. -->
+      <arg name="devices" type="as" direction="in" />
+      <!--
+        b: True if devices were added, otherwise false.
+        ao: Object paths of the newly added devices, may be empty.
+      -->
+      <arg name="results" type="(bao)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Add devices to the pool. -->
+    <method name="AddDataDevs">
+      <!-- List of devices to add. -->
+      <arg name="devices" type="as" direction="in" />
+      <!--
+        b: True if devices were added, otherwise false.
+        ao: Object paths of the newly added devices, may be empty.
+      -->
+      <arg name="results" type="(bao)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Bind an already encrypted pool using Clevis. -->
+    <method name="BindClevis">
+      <!-- Clevis pin. -->
+      <arg name="pin" type="s" direction="in" />
+      <!-- Pin-specific Clevis configuration information. -->
+      <arg name="json" type="s" direction="in" />
+      <!-- True if any new bindings were added, otherwise false. -->
+      <arg name="results" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Bind an already encrypted pool using a Clevis keyring. -->
+    <method name="BindKeyring">
+      <!-- Description of the key in the kernel keyring. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- True if any new bindings were added, otherwise false. -->
+      <arg name="results" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Create filesystems for the pool. -->
+    <method name="CreateFilesystems">
+      <!--
+	 List of specifications for the filesystems.
+         a(s(bs)): List of names and optional size specification.
+           s: Name
+           bs: Optional size specification
+      -->
+      <arg name="specs" type="a(s(bs))" direction="in" />
+      <!--
+        b: True if any filesystem was added, otherwise false.
+        os: Object paths of newly added filesystems.
+      -->
+      <arg name="results" type="(ba(os))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Destroy the specified filesystems. -->
+    <method name="DestroyFilesystems">
+      <!-- List of filesystem object paths to destroy. -->
+      <arg name="filesystems" type="ao" direction="in" />
+      <!--
+        b: True if any filesystems were destroyed, otherwise false.
+        as: UUIDs of destroyed filesystems.
+      -->
+      <arg name="results" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Initialize a cache. -->
+    <method name="InitCache">
+      <!-- List of devices to initialize the cache with. -->
+      <arg name="devices" type="as" direction="in" />
+      <!--
+        b: True if the cache was initialized, otherwise false.
+        ao: Object paths of devices in the cache.
+      -->
+      <arg name="results" type="(bao)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Regenerate Clevis bindings for devices in the pool using the existing
+      Clevis configuration.
+    -->
+    <method name="RebindClevis">
+      <!--
+        True if all bindings were successfully regenerated. Because of the
+        nature of Clevis rebinding generation, this method will always return
+        true on success.
+      -->
+      <arg name="results" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Replace the existing key description with the specified one for devices
+      in the pool.
+    -->
+    <method name="RebindKeyring">
+      <!-- Key description. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- True if the specified key description is different. -->
+      <arg name="results" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Set the pool name. -->
+    <method name="SetName">
+      <!-- Name. -->
+      <arg name="name" type="s" direction="in" />
+      <!--
+        b: True if the name was changed, otherwise false.
+        s: UUID of the pool or a default UUID if no change was made.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Make a snapshot of a Stratis filesystem. -->
+    <method name="SnapshotFilesystem">
+      <!-- Object path of the origin filesystem. -->
+      <arg name="origin" type="o" direction="in" />
+      <!-- Name of the snapshot to be created. -->
+      <arg name="snapshot_name" type="s" direction="in" />
+      <!--
+        b: True if a new filesystem was created, otherwise false.
+        o: Object path of the snapshot.
+      -->
+      <arg name="result" type="(bo)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Remove Clevis encryption from the devices in the pool. -->
+    <method name="UnbindClevis">
+      <!-- True if some Clevis bindings were removed, otherwise false. -->
+      <arg name="results" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Unbind a keyring passphrase from the devices in the pool. -->
+    <method name="UnbindKeyring">
+      <!-- True if some bindings were removed, otherwise false. -->
+      <arg name="results" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Total space allocated from the pool. -->
+    <property name="AllocatedSize" type="s" access="read" />
+    <!--
+      Indicates the current capabilities of the pool. Generally the pool has
+      full capability, but under certain circumstances stratisd may restrict
+      the actions that the pool can perform.
+    -->
+    <property name="AvailableActions" type="s" access="read" />
+    <!--
+      b: True if the Clevis configuration information is consistent for all the
+         block devices in the pool, otherwise false.
+      b(ss): Clevis encryption configuration.
+         b: True if the pool is encrypted using Clevis.
+         ss: Clevis configuration.
+	   s: Clevis pin.
+	   s: Pin-specfic Clevis configuration information.
+    -->
+    <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
+    <!-- True if the pool is encrypted, otherwise false. -->
+    <property name="Encrypted" type="b" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!--
+      The maximum number of filesystems that the pool supports. May be
+      increased, but not decreased.
+    -->
+    <property name="FsLimit" type="t" access="readwrite" />
+    <!-- True if the pool has a cache, otherwise false. -->
+    <property name="HasCache" type="b" access="read" />
+    <!--
+      b: True if the key description information is the same for all the block
+         devices in the pool, otherwise false.
+      bs: Encryption information.
+         b: True if there is a key description for the devices in the pool,
+	    otherwise false.
+	 s: Key description.
+    -->
+    <property name="KeyDescription" type="(b(bs))" access="read" />
+    <!-- Name of the pool. -->
+    <property name="Name" type="s" access="read" />
+    <!--
+      If true, then all the space on the pool's devices has been allocated
+      to some part of its storage stack. No further allocation, as would be
+      necessary to do if increasing the number of filesystems that the pool
+      supports, is possible.
+    -->
+    <property name="NoAllocSpace" type="b" access="read" />
+    <!--
+      True if the pool allows overprovisioning, otherwise false. Setting this
+      property to false will fail if the sum of the logical sizes of the
+      filesystems that the pool contains is more than the physical space
+      available for them.
+    -->
+    <property name="Overprovisioning" type="b" access="readwrite" />
+    <!--
+      Total size of the pool. The sum of the sizes of all the block
+      devices in the pool's data tier.
+    -->
+    <property name="TotalPhysicalSize" type="s" access="read" />
+    <!--
+      Total space used in the pool. This includes space allocated by Stratis
+      for pool management and consequently unavailable for any other purpose,
+      as well as all space required by data written to every Stratis
+      filesystem on the pool.
+    -->
+    <property name="TotalPhysicalUsed" type="(bs)" access="read" />
+    <!-- Stratis UUID of the pool. -->
+    <property name="Uuid" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
 </node>
