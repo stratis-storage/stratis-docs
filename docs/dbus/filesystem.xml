@@ -43,7 +43,7 @@
     <property name="Created" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
-    <!-- Device node of the filesystem's thin device. -->
+    <!-- Filesystem device node. -->
     <property name="Devnode" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates" />
     </property>
@@ -79,7 +79,7 @@
     <property name="Created" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
-    <!-- Device node of the filesystem's thin device. -->
+    <!-- Filesystem device node. -->
     <property name="Devnode" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates" />
     </property>
@@ -115,7 +115,7 @@
     <property name="Created" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
-    <!-- Device node of the filesystem's thin device. -->
+    <!-- Filesystem device node. -->
     <property name="Devnode" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates" />
     </property>
