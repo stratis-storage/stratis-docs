@@ -62,7 +62,7 @@
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
-    <!-- Bind an already encrypted pool using a Clevis keyring. -->
+    <!-- Bind an already encrypted pool using a key in the kernel keyring. -->
     <method name="BindKeyring">
       <!-- Description of the key in the kernel keyring. -->
       <arg name="key_desc" type="s" direction="in" />
@@ -261,7 +261,7 @@
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
-    <!-- Bind an already encrypted pool using a Clevis keyring. -->
+    <!-- Bind an already encrypted pool using a key in the kernel keyring. -->
     <method name="BindKeyring">
       <!-- Description of the key in the kernel keyring. -->
       <arg name="key_desc" type="s" direction="in" />
@@ -484,7 +484,7 @@
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
-    <!-- Bind an already encrypted pool using a Clevis keyring. -->
+    <!-- Bind an already encrypted pool using a key in the kernel keyring. -->
     <method name="BindKeyring">
       <!-- Description of the key in the kernel keyring. -->
       <arg name="key_desc" type="s" direction="in" />
