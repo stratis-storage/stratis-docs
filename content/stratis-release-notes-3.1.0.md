@@ -42,6 +42,6 @@ while the pool is in operation.
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the 3.1.0 release.
 
-[this-post]: @/thin-provisioning-redesign.md
+[this post]: @/thin-provisioning-redesign.md
 [stratisd]: https://github.com/stratis-storage/stratisd/blob/master/CHANGES.txt
 [stratis-cli]: https://github.com/stratis-storage/stratis-cli/blob/master/CHANGES.txt
