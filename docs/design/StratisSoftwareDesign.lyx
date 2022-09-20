@@ -2642,7 +2642,7 @@ boolean
 \begin_inset Text
 
 \begin_layout Plain Layout
-as of stratisd 3.1.0
+as of stratisd 3.2.0
 \end_layout
 
 \end_inset
@@ -3956,8 +3956,7 @@ Metadata Volume (MDV)
 \begin_layout Standard
 The Metadata Volume is formatted with an XFS filesystem that is used by
  Stratis to store information on user-created thin filesystems (L5-L7).
- This information is stored in the filesystem in a TBD format, maybe either
- an individual file-based scheme, or SQLite database.
+ This information is stored in the filesystem as individual JSON files.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5829,8 +5828,8 @@ New tokens may be added without breaking changes to the assignment of existing
 \end_layout
 
 \begin_layout Standard
-The Stratis token has an ID of 0 while the LUKS2 keyring token has an ID
- of 1.
+The Stratis token has an ID of 0, the LUKS2 keyring token has an ID of 1,
+ and the Clevis token has an ID of 2.
 \end_layout
 
 \begin_layout Subsubsection*
