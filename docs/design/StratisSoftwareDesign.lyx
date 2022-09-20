@@ -6114,7 +6114,20 @@ device_uuid
 \begin_inset Quotes erd
 \end_inset
 
-: <DEVICE_UUID>
+: <DEVICE_UUID>,
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\begin_inset Quotes eld
+\end_inset
+
+pool_name
+\begin_inset Quotes erd
+\end_inset
+
+: <POOL_NAME>
 \end_layout
 
 \begin_layout Plain Layout
@@ -6190,6 +6203,27 @@ status collapsed
 This UUID corresponds to the device UUID for this specific block device.
  The device UUID in the token matches the device UUID in the encrypted Stratis
  metadata.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status collapsed
+
+\begin_layout Plain Layout
+
+<POOL_NAME>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This name is duplicated from the pool level metadata and updated when the
+ pool name is changed to facilitate starting pools by name for encrypted
+ devices.
 \end_layout
 
 \begin_layout Subsubsection
