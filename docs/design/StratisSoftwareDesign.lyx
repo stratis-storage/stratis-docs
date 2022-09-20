@@ -5113,6 +5113,21 @@ greedy
  if requirements change.
 \end_layout
 
+\begin_layout Subsubsection
+Block device growth
+\end_layout
+
+\begin_layout Standard
+The logical separation between the backstore and thin pool allows relatively
+ simple support for growing block devices that can change in size like loopback
+ devices or RAID arrays.
+ Because the cap device abstracts away the complexity of the underlying
+ block devices, newly exposed block device segments can be added to the
+ cap device without any support needing to be added to the thin pool.
+ The thin pool will simply see that more space is now available and allocate
+ it lazily as needed.
+\end_layout
+
 \begin_layout Subsection
 Operation States
 \end_layout
