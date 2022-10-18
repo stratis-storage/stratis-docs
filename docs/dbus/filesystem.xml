@@ -134,4 +134,40 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
   </interface>
+  <interface name="org.storage.stratis3.filesystem.r3">
+    <!-- Set the filesystem name. -->
+    <method name="SetName">
+      <!-- The new name of the filesystem. -->
+      <arg name="name" type="s" direction="in" />
+      <!--
+        b: True if the name was changed, otherwise false.
+        s: UUID of the filesystem or a default UUID if no change was made.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Time the filesystem was created. -->
+    <property name="Created" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!-- Filesystem device node. -->
+    <property name="Devnode" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates" />
+    </property>
+    <!-- Name of the filesystem. -->
+    <property name="Name" type="s" access="read" />
+    <!-- Object path of the parent pool. -->
+    <property name="Pool" type="o" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+    <!-- Logical size of the filesystem. -->
+    <property name="Size" type="s" access="read" />
+    <!-- Filesystem usage. -->
+    <property name="Used" type="(bs)" access="read" />
+    <!-- Filesystem UUID. -->
+    <property name="Uuid" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
 </node>
