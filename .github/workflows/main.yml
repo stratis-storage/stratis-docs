@@ -8,27 +8,36 @@ on:
   pull_request:
     branches: [master]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  checks:
-    strategy:
-      matrix:
-        include:
-          - dependencies: lyx zola
-            task: make -f Makefile check
-          - dependencies: yamllint
-            task: make -f Makefile yamllint
+  docs-checks:
+    runs-on: ubuntu-18.04
+    container: fedora:36  # CURRENT DEVELOPMENT ENVIRONMENT
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          components: cargo
+          toolchain: 1.64.0  # CURRENT DEVELOPMENT RUST TOOLCHAIN
+      - name: Install dependencies
+        run: dnf install -y make git gcc g++ lyx
+      - name: Check out zola
+        run: git clone https://github.com/getzola/zola
+      - name: Check out tag
+        run: |
+          git checkout tags/v0.16.1 -b v0.16.1
+          cargo build --release
+        working-directory: zola
+      - name: Run test
+        run: PATH=./zola/target/release:${PATH} make -f Makefile check
+
+  ci-checks:
     runs-on: ubuntu-18.04
     container: fedora:36  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: >
-          dnf install -y
-          make
-          python-unversioned-command
-          ${{ matrix.dependencies }}
+        run: dnf install -y make yamllint
       - name: Run test
-        run: ${{ matrix.task }}
+        run: make -f Makefile yamllint
