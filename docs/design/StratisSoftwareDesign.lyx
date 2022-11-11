@@ -4232,7 +4232,7 @@ Pre-existing pools and caches
 With existing pools stratisd makes use of a rule intended to guard against
  changes in the logical and physical sector size presented by the cap device
  to the layers above.
- stratisd may automatically extend the cap device to accomodate pool usage.
+ stratisd may automatically extend the cap device to accommodate pool usage.
  If the cap device is extended to make use of a block device which has a
  larger logical or physical sector size than the devices that it was using
  previously, the sector sizes exported by the cap device will change to
