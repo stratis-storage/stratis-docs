@@ -4205,6 +4205,164 @@ The above conditions require an implementation which makes use of the LUKS2
  to identify the pool to which a device belongs; the LUKS1 header does not.
 \end_layout
 
+\begin_layout Subsection
+Block Device Characteristic Requirements (stratisd 3.4.0)
+\end_layout
+
+\begin_layout Standard
+stratisd endeavors to enforce sufficient consistency in the characteristics
+ of the block devices that make up a pool to ensure continuous proper operation
+ of Stratis pools.
+\end_layout
+
+\begin_layout Standard
+At present, stratisd takes into account the physical and the logical sector
+ size of a block device, i.e, those values obtained by the BLKBPSZGET and
+ the BLKSSZGET ioctls.
+ stratisd's requirements for creating new pools or pool caches or for adding
+ block devices to an existing pool or its cache are quite stringent.
+ It follows a more relaxed policy with pre-existing pools or caches.
+\end_layout
+
+\begin_layout Subsubsection
+Pre-existing pools and caches
+\end_layout
+
+\begin_layout Standard
+With existing pools stratisd makes use of a rule intended to guard against
+ changes in the logical and physical sector size presented by the cap device
+ to the layers above.
+ stratisd may automatically extend the cap device to accommodate pool usage.
+ If the cap device is extended to make use of a block device which has a
+ larger logical or physical sector size than the devices that it was using
+ previously, the sector sizes exported by the cap device will change to
+ the larger size.
+ This can have the unfortunate effect of making XFS filesystems previously
+ created above the cap device unmountable.
+ To prevent this situation, stratisd enforces the following rule: If the
+ cap device can be extended so that its logical or physical sector size
+ could change, stratisd places the pool in 
+\begin_inset Quotes eld
+\end_inset
+
+no_pool_changes
+\begin_inset Quotes erd
+\end_inset
+
+ mode and logs a warning encouraging the user to migrate their data to a
+ new pool.
+ A pool in 
+\begin_inset Quotes eld
+\end_inset
+
+no_pool_changes
+\begin_inset Quotes erd
+\end_inset
+
+ mode can not take any action, including auto-extending.
+\end_layout
+
+\begin_layout Standard
+With regard to existing pool caches, the danger of dynamically changing
+ sector sizes does not exist.
+ stratisd always makes use of all the block devices belonging to the cache
+ when forming its cache device, so there is no check necessary for existing
+ cache devices.
+\end_layout
+
+\begin_layout Subsubsection
+Newly created pools and caches
+\end_layout
+
+\begin_layout Standard
+If the user wishes to create a new pool or a new cache it is required that
+ all the block devices specified at creation have the same logical and physical
+ sector size.
+\end_layout
+
+\begin_layout Subsubsection
+Adding block devices to an existing pool or to its cache
+\end_layout
+
+\begin_layout Standard
+It is not possible to perform any operations on a pool that is in 
+\begin_inset Quotes eld
+\end_inset
+
+no_pool_changes
+\begin_inset Quotes erd
+\end_inset
+
+ mode, so it is not possible to add additional devices to such a pool's
+ data or cache tier.
+\end_layout
+
+\begin_layout Standard
+As a consequence of this rule, it can be assumed that all pools to which
+ devices are being added can be assumed to have certain properties.
+ In particular, both the data tier and the cache tier have achieved their
+ 
+\begin_inset Flex Emph
+status collapsed
+
+\begin_layout Plain Layout
+terminal sector sizes
+\end_layout
+
+\end_inset
+
+.
+ These are the respective sector sizes that the cap device would have if
+ it were extended across all block devices that belong to the data tier
+ and is the maximum of the respective sector sizes of all the individual
+ block devices in the data tier.
+ Since the cache always makes use of all its devices, it achieves its terminal
+ sector sizes when constructed.
+\end_layout
+
+\begin_layout Standard
+Taking these facts into account, the following rule is used when initializing
+ a cache:
+\end_layout
+
+\begin_layout Enumerate
+all the block devices specified for the cache must have the same logical
+ and physical sector size.
+\end_layout
+
+\begin_layout Enumerate
+the logical sector size of all the devices specified for the cache must
+ be the same as the terminal logical sector size of the data tier.
+\end_layout
+
+\begin_layout Standard
+and the following rule when adding devices to either the data or cache tier:
+\end_layout
+
+\begin_layout Enumerate
+all the block devices specified must have the same logical and physical
+ sector size
+\end_layout
+
+\begin_layout Enumerate
+both sector sizes of all the devices specified must be the same as the respectiv
+e terminal sector sizes of that tier
+\end_layout
+
+\begin_layout Subsubsection
+Notes
+\end_layout
+
+\begin_layout Standard
+Because stratisd must support pools that were previously created without
+ the restrictions of uniform logical and physical sector size that stratisd
+ began imposing in the 3.4.0 release, these rules do not guarantee total uniformit
+y of either physical or logical sector size in the devices that make up
+ a pool or a cache.
+ They guarantee only that the devices that extend the data or cache tier
+ after stratisd 3.4.0 will all have the same logical and physical sector size.
+\end_layout
+
 \begin_layout Section
 Implementation Details
 \end_layout
