@@ -128,7 +128,7 @@ Before saving this file preparatory to a commit, make sure that all insets
 \end_layout
 
 \begin_layout Section*
-Asking Questions and Making Changes to this Document
+About this Document
 \end_layout
 
 \begin_layout Standard
@@ -143,8 +143,6 @@ literal "false"
 
 , and is written using \SpecialChar LyX
 .
- Please use the mailing list (stratis-devel@lists.fedorahosted.org), or open
- an issue on GitHub, for any questions or issues that arise.
 \end_layout
 
 \begin_layout Section*
