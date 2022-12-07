@@ -146,21 +146,16 @@ literal "false"
 \end_layout
 
 \begin_layout Section*
-Executive Summary
+Summary
 \end_layout
 
 \begin_layout Standard
-Stratis is a new tool that meets the needs of Red Hat Enterprise Linux (RHEL)
- users (among others) calling for an easily configured, tightly integrated
- solution for storage that works within the existing Linux storage management
- stack.
+Stratis is an easily configured, tightly integrated solution for storage
+ that works within the existing Linux storage management stack.
  To achieve this, Stratis prioritizes a straightforward command-line experience,
  a rich API, and a fully automated, externally-opaque approach to storage
  management.
- It builds upon elements of the existing storage stack as much as possible,
- to enable delivery within 1-2 years.
- Specifically, Stratis initially plans to use device-mapper and the XFS
- filesystem, but may incorporate other technology in the future.
+ It builds upon elements of the existing storage stack as much as possible.
 \end_layout
 
 \begin_layout Part
