@@ -88,7 +88,7 @@ logicalmkup
 \begin_body
 
 \begin_layout Title
-Stratis Software Design: Version 2.0.0
+Stratis Software Design
 \begin_inset Foot
 status collapsed
 
@@ -100,10 +100,6 @@ This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
 \end_inset
 
 
-\end_layout
-
-\begin_layout Date
-Last modified: 01/10/2020
 \end_layout
 
 \begin_layout Standard
@@ -132,7 +128,7 @@ Before saving this file preparatory to a commit, make sure that all insets
 \end_layout
 
 \begin_layout Section*
-Asking Questions and Making Changes to this Document
+About this Document
 \end_layout
 
 \begin_layout Standard
@@ -146,27 +142,20 @@ literal "false"
 \end_inset
 
 , and is written using \SpecialChar LyX
- 2.3.3.
- Please use the mailing list (stratis-devel@lists.fedorahosted.org), or open
- an issue on GitHub, for any questions or issues that arise.
+.
 \end_layout
 
 \begin_layout Section*
-Executive Summary
+Summary
 \end_layout
 
 \begin_layout Standard
-Stratis is a new tool that meets the needs of Red Hat Enterprise Linux (RHEL)
- users (among others) calling for an easily configured, tightly integrated
- solution for storage that works within the existing Linux storage management
- stack.
+Stratis is an easily configured, tightly integrated solution for storage
+ that works within the existing Linux storage management stack.
  To achieve this, Stratis prioritizes a straightforward command-line experience,
  a rich API, and a fully automated, externally-opaque approach to storage
  management.
- It builds upon elements of the existing storage stack as much as possible,
- to enable delivery within 1-2 years.
- Specifically, Stratis initially plans to use device-mapper and the XFS
- filesystem, but may incorporate other technology in the future.
+ It builds upon elements of the existing storage stack as much as possible.
 \end_layout
 
 \begin_layout Part
@@ -186,7 +175,7 @@ Linux has gained many storage-related features over the years, but each
  layers via different tools to achieve a complete result.
  Furthermore, since each layer's configuration tool only has a command-line
  interface (CLI), higher-level management tools must each construct input
- and parse the human-oriented output for each these layers' CLI.
+ and parse the human-oriented output for each of these layers' CLIs.
  This causes a waste of effort and opportunity for bugs, as each higher-level
  tool builds its own internal API for the feature on top of the lower level
  tool's CLI.
@@ -5466,485 +5455,6 @@ options "plain"
 \begin_layout Part*
 \start_of_appendix
 Appendices
-\end_layout
-
-\begin_layout Section
-Initial options for adapting existing solutions
-\end_layout
-
-\begin_layout Standard
-As part of early requirements-gathering, the team looked at existing projects
- in this space, both as candidates for building upon to create a solution,
- as well as if an existing project could be extended to meet the requirements.
-\end_layout
-
-\begin_layout Subsection
-Extending an existing project
-\end_layout
-
-\begin_layout Subsubsection
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:SSM"
-
-\end_inset
-
-SSM
-\end_layout
-
-\begin_layout Standard
-System Storage Manager (
-\begin_inset CommandInset href
-LatexCommand href
-name "SSM"
-target "https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Storage_Administration_Guide/ch-ssm.html"
-literal "false"
-
-\end_inset
-
-) provides a command line interface to manage storage in existing technologies.
- Our interest in SSM was to determine if it would be an existing project
- we could extend to meet our requirements.
-\end_layout
-
-\begin_layout Standard
-SSM provides a unified interface for three different “backends”: LVM, Btrfs,
- and crypto.
- However, if we wish to provide a simple, unified experience, the first
- step would likely be to pick one of the backends and build around its capabilit
-ies.
- This eliminates complexity from the CLI -- no need for the user to pick
- a backend or encounter commands that happen to not work based upon the
- chosen backend, but obviates much of the point of SSM.
-\end_layout
-
-\begin_layout Standard
-SSM does not provide a programmatic API.
- It internally contains “ssmlib”, which could be enhanced and exposed, but
- would be Python-only.
- ssmlib is also built around executing command-line tools, which can cause
- issues.
-\end_layout
-
-\begin_layout Standard
-SSM is not a daemon.
- We’d need to modify SSM to operate on a daemon model.
- An ongoing presence is needed for fault monitoring but also automatic filesyste
-m and thinpool extensions.
-\end_layout
-
-\begin_layout Standard
-SSM doesn't currently support RAID5/6, thin provisioning, or configuring
- a cache tier.
-\end_layout
-
-\begin_layout Standard
-SSM is written in Python, which would limit its ability to be used in an
- early-boot environment.
-\end_layout
-
-\begin_layout Standard
-SSM does not provide functionality for error recovery.
- If the storage stack encounters an error the user has to use the individual
- tools in the stack to correct.
- Thus greatly diminishing the ease of use aspect and value proposition of
- SSM.
-\end_layout
-
-\begin_layout Subsubsection*
-Analysis
-\end_layout
-
-\begin_layout Standard
-Extending SSM does not meet the requirements.
-\end_layout
-
-\begin_layout Subsubsection
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:LVM2"
-
-\end_inset
-
-LVM2
-\end_layout
-
-\begin_layout Standard
-Logical Volume Manager (
-\begin_inset CommandInset href
-LatexCommand href
-name "LVM2"
-target "https://en.wikipedia.org/wiki/Logical_Volume_Manager_(Linux)"
-literal "false"
-
-\end_inset
-
-) is the nearly universally-used volume manager on Linux.
- It provides the 
-\begin_inset Quotes eld
-\end_inset
-
-policy
-\begin_inset Quotes erd
-\end_inset
-
- that controls device-mapper.
- It adds:
-\end_layout
-
-\begin_layout Itemize
-On-disk metadata format to save and restore configuration across boot
-\end_layout
-
-\begin_layout Itemize
-Usage model built on Physical Volume, Volume Group, and Logical Volume (PV,
- VG, LV) concepts.
-\end_layout
-
-\begin_layout Itemize
-A comprehensive set of command line tools for configuring linear, raid,
- thinpool, cache, and other device-mapper capabilities
-\end_layout
-
-\begin_layout Itemize
-Monitoring, error handling, and recovery
-\end_layout
-
-\begin_layout Itemize
-LV resize; PVs may be added or removed from a VG
-\end_layout
-
-\begin_layout Itemize
-Snapshots and thin snapshots
-\end_layout
-
-\begin_layout Itemize
-Choice of user-guided or automatic allocation/layout within the VG
-\end_layout
-
-\begin_layout Subsubsection*
-Analysis
-\end_layout
-
-\begin_layout Standard
-Adding the capability to manage filesystems to LVM isn't something that
- has been much considered.
- Extending LVM2 would make it very hard to achieve simplicity of interface,
- given the conflicting requirement to maintain backwards compatibility with
- what LVM provides now.
-\end_layout
-
-\begin_layout Subsection
-Building upon existing projects
-\end_layout
-
-\begin_layout Subsubsection
-XFS
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset href
-LatexCommand href
-name "XFS"
-target "https://en.wikipedia.org/wiki/XFS"
-literal "false"
-
-\end_inset
-
- is a highly respected non-volume-managing filesystem.
- To meet the goal of eliminating manual filesystem resizing by the user,
- Stratis requires the filesystem used have online resize (or at least online
- grow) capabilities, which XFS does.
- In the absence of online shrink, Stratis would rely on trim to reclaim
- space from an enlarged but mostly empty filesystem, and return it to the
- thin pool for use by other filesystems.
-\end_layout
-
-\begin_layout Standard
-Use of XFS on top of thin provisioning also makes proper initial sizing
- important, as well as choosing sizes for XFS on-disk allocations that match
- those used by the underlying thin-provisioning layer, to ensure behavior
- with the two layers is optimal.
-\end_layout
-
-\begin_layout Subsubsection*
-Analysis
-\end_layout
-
-\begin_layout Standard
-XFS meets the requirements and currently seems like the best choice.
-\end_layout
-
-\begin_layout Subsubsection
-devicemapper
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset href
-LatexCommand href
-name "devicemapper"
-target "https://en.wikipedia.org/wiki/Device_mapper"
-literal "false"
-
-\end_inset
-
- is a framework provided by the Linux kernel for creating enhanced-functionality
- block devices on top of physical block devices.
- These new devices can add support for RAID, thin provisioning, encryption,
- multipath devices, caching devices, and more.
- The framework provides the ability to configure and layer these capabilities,
- but no facilities for saving or restoring a configuration.
- devicemapper provides 
-\begin_inset CommandInset href
-LatexCommand href
-name "mechanism, but no policy"
-target "http://www.personal.kent.edu/~rmuhamma/OpSystems/Myos/mechanicPolicy.htm"
-literal "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsubsection*
-Analysis
-\end_layout
-
-\begin_layout Standard
-Using devicemapper directly would require that an upper layer implement
- its own on-disk metadata format and handle some tasks in a similar manner
- to LVM2.
-\end_layout
-
-\begin_layout Subsubsection
-LVM2
-\end_layout
-
-\begin_layout Standard
-See 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:LVM2"
-
-\end_inset
-
- for a description of LVM2 capabilities.
-\end_layout
-
-\begin_layout Standard
-LVM is a mature software project that implements volume management.
- For Stratis, the question is whether the benefits of internally using LVM2
- outweigh the costs.
-\end_layout
-
-\begin_layout Subsubsection*
-Issues with Building on LVM2
-\end_layout
-
-\begin_layout Standard
-Note: This assumes the implementation described in Part 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "part:Implementation"
-
-\end_inset
-
-.
-\begin_inset Newline newline
-\end_inset
-
-Note: lvm-team has raised objections to items on this list.
-\end_layout
-
-\begin_layout Itemize
-Policy+mechanism vs policy+policy+mechanism: LVM2 is configurable but has
- limitations.
- e.g.
- we might wish to let the user define a block device as only to be used
- to replace a failed disk in a raidset.
- However LVM raid_fault_policy=
-\begin_inset Quotes erd
-\end_inset
-
-allocate
-\begin_inset Quotes erd
-\end_inset
-
- will use 
-\emph on
-any
-\emph default
- free PV, not just one explicitly reserved.
-\end_layout
-
-\begin_layout Itemize
-A good API needs the ability to convey meaningful and consistent errors
- for other applications to interpret.
- The lvm command line employs a simple exit code strategy.
- The error reason is embedded in stderr in free form text that changes without
- notice.
- Thus it is virtually impossible for any lvm command line wrapper to provide
- meaningful and consistent error codes other than success or failure.
- Note: Lvm has recently added JSON output which contains the ability to
- add more meaningful and useful error codes, but this functionality is not
- implemented and non-trivial in scope to complete.
-\end_layout
-
-\begin_layout Itemize
-lvm-dbus cannot be used because it requires Python and D-Bus, neither of
- which are available in initrd
-\end_layout
-
-\begin_layout Itemize
-Stratis-managed LVM2 devices would show up in LVM2 device & volume listings,
- which would cause user confusion
-\end_layout
-
-\begin_layout Itemize
-Using LVM2 for metadata tracking is good, but only if upper layer has no
- metadata storage needs of its own.
- What about tags? Tags can't store JSON objects since '[]{},
-\begin_inset Quotes erd
-\end_inset
-
-' are not allowed in tags.
-\end_layout
-
-\begin_layout Itemize
-LVM2 metadata format prevents new metadata schemes, such as tracking thin
- volumes separately from PV metadata, or metadata backup copy not also at
- the tail of the blockdev.
-\end_layout
-
-\begin_layout Itemize
-Use of new device-mapper features delayed by LVM2 implementation and release
- cycle.
-\end_layout
-
-\begin_layout Itemize
-One big argument by LVM2 proponents is that LVM2 is a large, long-lived
- project that has learned many things the hard way, and it would be foolish
- to abandon all that value by starting over.
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Must we use the code, or can we take lessons from LVM2 devs and incorporate
- them independently? Maybe fix some things that backwards-compatibility
- makes impossible to fix in LVM2?
-\end_layout
-
-\begin_layout Itemize
-Large parts of the codebase don't benefit Stratis:
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-File-based & configurable Locking: not needed since everything is serialized
- through stratisd
-\end_layout
-
-\begin_layout Itemize
-daemons/* including clvmd
-\end_layout
-
-\begin_layout Itemize
-Udev: stratisd assumes udev & listens for udev events
-\end_layout
-
-\begin_layout Itemize
-Filter/global_filter
-\end_layout
-
-\begin_layout Itemize
-Caching: not needed, daemon is authoritative
-\end_layout
-
-\begin_layout Itemize
-profiles
-\end_layout
-
-\begin_layout Itemize
-preferred names ordering
-\end_layout
-
-\begin_layout Itemize
-lvm.conf display settings: not needed, up to API client
-\end_layout
-
-\begin_layout Itemize
-dev_manager: Stratis layers are predefined, much simpler
-\end_layout
-
-\begin_layout Itemize
-config_tree
-\end_layout
-
-\begin_layout Itemize
-report: beyond Stratis scope
-\end_layout
-
-\begin_layout Itemize
-Command-line tools, option parsing: handled in cli, reduced in scope
-\end_layout
-
-\begin_layout Itemize
-lib/misc/*: not needed or handled via libraries
-\end_layout
-
-\begin_layout Itemize
-Multi-metadata-format support
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-What would Stratis benefit from?
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-on-disk metadata format
-\end_layout
-
-\begin_layout Itemize
-Best policy for duplicate/absent/corrupted block devices
-\end_layout
-
-\begin_layout Itemize
-fault tolerance/recovery
-\end_layout
-
-\begin_layout Itemize
-pool/snapshot monitoring
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Subsubsection*
-Analysis
-\end_layout
-
-\begin_layout Standard
-While we cannot dismiss using LVM as an option for the future, currently
- there are some areas that it does not meet Stratis requirements.
- There are also questions about the best way to interface with LVM that
- need to be resolved prior to its adoption.
-\end_layout
-
-\begin_layout Subsection
-Conclusions
-\end_layout
-
-\begin_layout Standard
-Based on looking at the existing available building blocks, the best option
- is to build Stratis as a new project that initially makes use of XFS and
- device-mapper in its implementation.
- In parallel, request enhancements to LVM2 to enable its substitution for
- device-mapper when the enhancements are implemented.
- This lets Stratis proceed without delay to a point where it can be placed
- in prospective users' hands to start getting feedback, and will allow Stratis
- to eventually use LVM2, and avoid duplicating functionality that LVM2 already
- provides.
 \end_layout
 
 \begin_layout Section
