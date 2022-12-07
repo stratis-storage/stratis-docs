@@ -142,7 +142,7 @@ literal "false"
 \end_inset
 
 , and is written using \SpecialChar LyX
- 2.3.3.
+.
  Please use the mailing list (stratis-devel@lists.fedorahosted.org), or open
  an issue on GitHub, for any questions or issues that arise.
 \end_layout
