@@ -175,7 +175,7 @@ Linux has gained many storage-related features over the years, but each
  layers via different tools to achieve a complete result.
  Furthermore, since each layer's configuration tool only has a command-line
  interface (CLI), higher-level management tools must each construct input
- and parse the human-oriented output for each these layers' CLI.
+ and parse the human-oriented output for each of these layers' CLIs.
  This causes a waste of effort and opportunity for bugs, as each higher-level
  tool builds its own internal API for the feature on top of the lower level
  tool's CLI.
