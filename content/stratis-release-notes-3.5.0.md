@@ -28,7 +28,7 @@ prevents a failure to start an encrypted pool when upgrading from a previous
 contains a fix which eliminates undefined behavior in the management of ioctls
 with large result values. This fix was included in the `stratisd` 3.4.4 release.
 * It requires a new version of the Stratis libblkid-rs library, which fixes a
-memory leak in the `get_tag_value` method used by `'stratisd`. This fix is not
+memory leak in the `get_tag_value` method used by `stratisd`. This fix is not
 included in any previous release.
 
 This release also reduces the problem of repetitive log messages and modifies
