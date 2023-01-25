@@ -938,6 +938,20 @@
       <arg name="return_string" type="s" direction="out" />
     </method>
   </interface>
+  <interface name="org.storage.stratis3.Report.r5">
+    <!--
+      This method allows fetching a report by name. If a report by the supplied
+      name does not exist, an error is returned.
+    -->
+    <method name="GetReport">
+      <!-- Name of the report. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- s: Report. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+  </interface>
   <node name="0" />
   <node name="1" />
   <node name="2" />
