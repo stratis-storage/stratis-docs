@@ -80,7 +80,7 @@ Name             Total Physical Size  Total Physical Used
 stratis_howto                  1 TiB               52 MiB
 ```
 
-A pool with 2 block devices (no redundancy).
+A pool with 2 block devices.
 
 ```
 # stratis pool create tale_of_2_disks /dev/sdd /dev/sdf
@@ -249,13 +249,6 @@ olympic    /dev/sdc            2.00 TiB  In-use  Data
 Pool Name      Device Node    Physical Size   State  Tier
 olympic        /dev/sdc            2.00 TiB  In-use  Data
 stratis_howto  /dev/sdb               1 TiB  In-use  Data
-```
-
-Query redundancies that Stratis supports.
-
-```
-# stratis daemon redundancy
-NONE: 0
 ```
 
 Query the Stratis daemon (`stratisd`) version.
