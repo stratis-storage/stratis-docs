@@ -11,7 +11,7 @@ on:
 jobs:
   next-fedora-docs-checks:
     runs-on: ubuntu-18.04
-    container: fedora:37  # NEXT DEVELOPMENT ENVIRONMENT
+    container: fedora:38  # NEXT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -32,7 +32,7 @@ jobs:
 
   next-fedora-ci-checks:
     runs-on: ubuntu-18.04
-    container: fedora:37  # NEXT DEVELOPMENT ENVIRONMENT
+    container: fedora:38  # NEXT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
