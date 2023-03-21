@@ -1,6 +1,6 @@
 +++
 title = "stratisd 3.5.2 Release Notes"
-date = 2023-03-17
+date = 2023-03-21
 weight = 31
 template = "page.html"
 render = true
@@ -17,15 +17,15 @@ The enhancements are:
 `stratisd-tools`, which incorporates `stratis-dumpmetadata`, an application
 which may be used for troubleshooting.
 * `stratisd` 3.5.2 now depends on `devicemapper-rs` 0.33.1, which includes
-support for synchronization between udev and devicemapper[stratisd pr 3069]. See
-the [devicemapper-rs] changelog for additional details.
+support for synchronization between udev and devicemapper. See
+the [devicemapper-rs] changelog and [stratisd pr 3069] for additional details.
 * `stratisd` 3.5.2 modifies the way takeover by `stratisd` from `stratisd-min`
-is managed during early boot[stratisd pr 3269].
+is managed during early boot. See [stratisd pr 3269] for further details.
 
 
 `stratisd` 3.5.2 also fixes a bug in a script used by the stratisd-dracut
-subpackage[stratisd pr 3256]. This fix was included in the `stratisd` 3.5.1
-release.
+subpackage. This fix was included in the `stratisd` 3.5.1 release. See
+[stratisd pr 3256] for further details.
 
 <!-- more -->
 
