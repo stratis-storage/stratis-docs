@@ -124,3 +124,8 @@ filesystem will be included in stratisd 2.4.0.
 assumes that any unit dependency in `/etc/fstab` is a `.mount` unit file unless explicitly
 specified, so the examples as previously written would cause a failed boot unless `nofail`
 was specified.
+
+### Fedora specific set up
+See [this guide] for specific setup steps on Fedora.
+
+[this guide]: @/stratis-rootfs-fedora.md
