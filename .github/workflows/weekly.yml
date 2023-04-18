@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:38  # NEXT DEVELOPMENT ENVIRONMENT
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           components: cargo
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:38  # NEXT DEVELOPMENT ENVIRONMENT
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: dnf install -y make yamllint
       - name: Run test
