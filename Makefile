@@ -26,6 +26,7 @@ endif
 	cp ./docs/dbus/pool.xml ${PRE_SITE}
 
 website-distrib: website-build
+	mkdir -p templates
 	zola build
 
 website-test: website-distrib
