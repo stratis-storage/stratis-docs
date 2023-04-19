@@ -16,21 +16,14 @@ jobs:
     container: fedora:37  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          components: cargo
-          toolchain: 1.68.0  # CURRENT DEVELOPMENT RUST TOOLCHAIN
       - name: Install dependencies
-        run: dnf install -y make git gcc g++ lyx
-      - name: Check out zola
-        run: git clone https://github.com/getzola/zola
-      - name: Check out tag
-        run: |
-          git checkout tags/v0.16.1 -b v0.16.1
-          cargo build --release
-        working-directory: zola
+        run: dnf install -y make git gcc g++ lyx 'dnf-command(copr)'
+      - name: Enable copr repo
+        run: dnf copr enable atim/zola --assumeyes
+      - name: Install zola
+        run: dnf install zola --assumeyes
       - name: Run test
-        run: PATH=./zola/target/release:${PATH} make -f Makefile check
+        run: make -f Makefile check
 
   ci-checks:
     runs-on: ubuntu-latest
