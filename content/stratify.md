@@ -1,7 +1,7 @@
 +++
 title = "Stratis root filesystem installation with stratify.py"
 date = 2023-04-18
-weight = 31
+weight = 33
 template = "page.html"
 render = true
 +++
