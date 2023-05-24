@@ -388,17 +388,25 @@
 	    "devs": always present, an array of mappings of device information
 	      Contains two keys: "uuid" and "devnode"
 	    "clevis_info": optional, not present if pool is unencrypted.
-	      (b(bs)): information about Clevis configuration for all devices
-	        b: if false, devices have inconsistent Clevis configurations
-	        bs: Clevis configuration information for all devices
-	         b: if false, devices are not encrypted with Clevis
-	         s: Clevis configuration
+	      (bv): information about Clevis configuration for all devices
+	        if b is true:
+	          devices have consistent Clevis information
+	          v = (bs): Clevis configuration information for all devices
+	            b: if false, devices are not encrypted with Clevis
+	            s: Clevis configuration
+	        else:
+	          devices have inconsistent Clevis configurations
+	          v = s: error message explaining inconsistency
 	    "key_description": optional, not present if pool is unencrypted.
-	      (b(bs)): information about kernel key encryption for all devices
-	        b: if false, devices have inconsistent key information
-	        bs: kernel key encryption information for all devices
-	         b: if false, devices are not encrypted with a key
-	         s: key description
+	      (bv): information about kernel key encryption for all devices
+	        if b is true:
+	          devices have consistent key information
+	          v = (bs): key information for all devices
+	            b: if false, devices are not encrypted with a key
+	            s: key description
+	        else:
+	          devices have inconsistent key information
+	          v = s: error message explaining inconsistency
     -->
     <property name="StoppedPools" type="a{sa{sv}}" access="read" />
     <!-- stratisd version -->
@@ -539,17 +547,25 @@
 	    "devs": always present, an array of mappings of device information
 	      Contains two keys: "uuid" and "devnode"
 	    "clevis_info": optional, not present if pool is unencrypted.
-	      (b(bs)): information about Clevis configuration for all devices
-	        b: if false, devices have inconsistent Clevis configurations
-	        bs: Clevis configuration information for all devices
-	         b: if false, devices are not encrypted with Clevis
-	         s: Clevis configuration
+	      (bv): information about Clevis configuration for all devices
+	        if b is true:
+	          devices have consistent Clevis information
+	          v = (bs): Clevis configuration information for all devices
+	            b: if false, devices are not encrypted with Clevis
+	            s: Clevis configuration
+	        else:
+	          devices have inconsistent Clevis configurations
+	          v = s: error message explaining inconsistency
 	    "key_description": optional, not present if pool is unencrypted.
-	      (b(bs)): information about kernel key encryption for all devices
-	        b: if false, devices have inconsistent key information
-	        bs: kernel key encryption information for all devices
-	         b: if false, devices are not encrypted with a key
-	         s: key description
+	      (bv): information about kernel key encryption for all devices
+	        if b is true:
+	          devices have consistent key information
+	          v = (bs): key information for all devices
+	            b: if false, devices are not encrypted with a key
+	            s: key description
+	        else:
+	          devices have inconsistent key information
+	          v = s: error message explaining inconsistency
     -->
     <property name="StoppedPools" type="a{sa{sv}}" access="read" />
     <!-- stratisd version -->
@@ -692,17 +708,25 @@
 	    "devs": always present, an array of mappings of device information
 	      Contains two keys: "uuid" and "devnode"
 	    "clevis_info": optional, not present if pool is unencrypted.
-	      (b(bs)): information about Clevis configuration for all devices
-	        b: if false, devices have inconsistent Clevis configurations
-	        bs: Clevis configuration information for all devices
-	         b: if false, devices are not encrypted with Clevis
-	         s: Clevis configuration
+	      (bv): information about Clevis configuration for all devices
+	        if b is true:
+	          devices have consistent Clevis information
+	          v = (bs): Clevis configuration information for all devices
+	            b: if false, devices are not encrypted with Clevis
+	            s: Clevis configuration
+	        else:
+	          devices have inconsistent Clevis configurations
+	          v = s: error message explaining inconsistency
 	    "key_description": optional, not present if pool is unencrypted.
-	      (b(bs)): information about kernel key encryption for all devices
-	        b: if false, devices have inconsistent key information
-	        bs: kernel key encryption information for all devices
-	         b: if false, devices are not encrypted with a key
-	         s: key description
+	      (bv): information about kernel key encryption for all devices
+	        if b is true:
+	          devices have consistent key information
+	          v = (bs): key information for all devices
+	            b: if false, devices are not encrypted with a key
+	            s: key description
+	        else:
+	          devices have inconsistent key information
+	          v = s: error message explaining inconsistency
     -->
     <property name="StoppedPools" type="a{sa{sv}}" access="read" />
     <!-- stratisd version -->
@@ -843,17 +867,25 @@
 	    "devs": always present, an array of mappings of device information
 	      Contains two keys: "uuid" and "devnode"
 	    "clevis_info": optional, not present if pool is unencrypted.
-	      (b(bs)): information about Clevis configuration for all devices
-	        b: if false, devices have inconsistent Clevis configurations
-	        bs: Clevis configuration information for all devices
-	         b: if false, devices are not encrypted with Clevis
-	         s: Clevis configuration
+	      (bv): information about Clevis configuration for all devices
+	        if b is true:
+	          devices have consistent Clevis information
+	          v = (bs): Clevis configuration information for all devices
+	            b: if false, devices are not encrypted with Clevis
+	            s: Clevis configuration
+	        else:
+	          devices have inconsistent Clevis configurations
+	          v = s: error message explaining inconsistency
 	    "key_description": optional, not present if pool is unencrypted.
-	      (b(bs)): information about kernel key encryption for all devices
-	        b: if false, devices have inconsistent key information
-	        bs: kernel key encryption information for all devices
-	         b: if false, devices are not encrypted with a key
-	         s: key description
+	      (bv): information about kernel key encryption for all devices
+	        if b is true:
+	          devices have consistent key information
+	          v = (bs): key information for all devices
+	            b: if false, devices are not encrypted with a key
+	            s: key description
+	        else:
+	          devices have inconsistent key information
+	          v = s: error message explaining inconsistency
     -->
     <property name="StoppedPools" type="a{sa{sv}}" access="read" />
     <!-- stratisd version -->
