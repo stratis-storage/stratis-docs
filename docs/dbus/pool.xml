@@ -745,6 +745,14 @@
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
+    <!-- Extend the available size of a pool. -->
+    <method name="GrowPhysicalDevice">
+      <!-- UUID of data device belonging to pool to extend. -->
+      <arg name="dev" type="s" direction="in" />
+      <arg name="results" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
     <!-- Initialize a cache. -->
     <method name="InitCache">
       <!-- List of devices to initialize the cache with. -->
@@ -968,6 +976,14 @@
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
+    <!-- Extend the available size of a pool. -->
+    <method name="GrowPhysicalDevice">
+      <!-- UUID of data device belonging to pool to extend. -->
+      <arg name="dev" type="s" direction="in" />
+      <arg name="results" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
     <!-- Initialize a cache. -->
     <method name="InitCache">
       <!-- List of devices to initialize the cache with. -->
@@ -1187,6 +1203,14 @@
         b: True if any filesystems were destroyed, otherwise false.
         as: UUIDs of destroyed filesystems.
       -->
+      <arg name="results" type="(bas)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Extend the available size of a pool. -->
+    <method name="GrowPhysicalDevice">
+      <!-- UUID of data device belonging to pool to extend. -->
+      <arg name="dev" type="s" direction="in" />
       <arg name="results" type="(bas)" direction="out" />
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
