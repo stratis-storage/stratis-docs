@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: dnf install -y make git gcc g++ lyx 'dnf-command(copr)'
+        run: dnf install -y make lyx 'dnf-command(copr)'
       - name: Enable copr repo
         run: dnf copr enable atim/zola --assumeyes
       - name: Install zola
