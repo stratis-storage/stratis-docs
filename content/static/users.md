@@ -11,7 +11,7 @@ you would like any others to be added to the list.
 
 # Supported Operating Systems
 
-* Arch Linux: <https://archlinux.org/packages/community/x86_64/stratisd/>, <https://archlinux.org/packages/community/any/stratis-cli/>
+* Arch Linux: <https://archlinux.org/packages/extra/x86_64/stratisd/>, <https://archlinux.org/packages/extra/any/stratis-cli/>
 * Fedora: <https://src.fedoraproject.org/rpms/stratisd/>, <https://src.fedoraproject.org/rpms/stratis-cli>
 
 # Clients
