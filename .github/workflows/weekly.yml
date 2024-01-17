@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:39  # NEXT DEVELOPMENT ENVIRONMENT
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: dnf install -y make lyx 'dnf-command(copr)'
       - name: Enable copr repo
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:39  # NEXT DEVELOPMENT ENVIRONMENT
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: dnf install -y make yamllint
       - name: Run test
