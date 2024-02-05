@@ -13,7 +13,7 @@ minor release.
 
 `stratisd` 3.6.4 includes a fix for `stratisd-min` handling of the start
 command sent by `stratis-min` to unencrypted pools. It also captures and logs
-errors messages emitted by the `thin_check` or `mkfx.xfs` executables.
+errors messages emitted by the `thin_check` or `mkfs.xfs` executables.
 
 `stratisd` 3.6.3 explicitly sets the `nrext64` option to 0 when invoking
 `mkfs.xfs`. A recent version of XFS changed the default for `nrext64` to 1.
