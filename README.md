@@ -69,7 +69,7 @@ Any content inside the `static/` directory (*not* `content/static/`) will be cop
 
 ### Front Page Sidebar
 
-Links can be added adn removed by editing the `config.toml`. Specifically, the `hyde_user_links`, `hyde_developer_links`, or `hyde_contact_links` arrays.
+Links can be added and removed by editing the `config.toml`. Specifically, the `hyde_user_links`, `hyde_developer_links`, or `hyde_contact_links` arrays.
 
 ## Theming
 

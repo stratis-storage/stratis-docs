@@ -225,7 +225,7 @@ stratis_howto  fs_howto    546 MiB  Nov 09 2018 11:08  /dev/stratis/stratis_howt
 
 ## `snapshot`: Create a snapshot
 
-To create a snaphot, which is a read/writeable thinly provisioned point in time copy of the source FS.
+To create a snapshot, which is a read/writeable thinly provisioned point in time copy of the source FS.
 
 ```
 # stratis filesystem snapshot olympic some_fs some_fs_snapshot

@@ -88,7 +88,7 @@ Download the `stratify.py` script and example kickstart file from GitHub:
 ```
 
 The kickstart file can be customized before beginning the installation - for
-example to set the system language, timzeone, or package selection for the
+example to set the system language, timezone, or package selection for the
 install. See the [kickstart
 documentation](https://pykickstart.readthedocs.io/en/latest/) for further
 information.

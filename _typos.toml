@@ -1,0 +1,6 @@
+[default.extend-words]
+# Misidentified as spelling of "ME"
+MEK = "MEK"
+
+# Misidentified as word, actually a D-Bus signature fragment
+ba = "ba"

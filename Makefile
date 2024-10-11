@@ -47,6 +47,9 @@ clean:
 	(cd ./docs/design ; $(MAKE) clean)
 	(cd ./docs/style ; $(MAKE) clean)
 
+check-typos:
+	typos
+
 WEBSITE_REPO ?=
 test-website-repo:
 	echo "Testing that WEBSITE_REPO environment variable is set to a directory path"

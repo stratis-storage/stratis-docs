@@ -47,7 +47,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--
@@ -158,7 +158,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--
@@ -269,7 +269,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--
@@ -428,7 +428,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--
@@ -587,7 +587,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--
@@ -746,7 +746,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--
@@ -905,7 +905,7 @@
       <!--
          Optional Clevis information to use to encrypt the pool.
          s: Clevis "pin" specification, "tang" or "tpm".
-         s: pin-specfic Clevis configuration
+         s: pin-specific Clevis configuration
       -->
       <arg name="clevis_info" type="(b(ss))" direction="in" />
       <!--

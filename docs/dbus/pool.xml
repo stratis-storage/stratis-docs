@@ -193,7 +193,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -392,7 +392,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -615,7 +615,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -846,7 +846,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1077,7 +1077,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1308,7 +1308,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1540,7 +1540,7 @@
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
 	   s: Clevis pin.
-	   s: Pin-specfic Clevis configuration information.
+	   s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
