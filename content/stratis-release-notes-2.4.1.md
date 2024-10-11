@@ -33,7 +33,7 @@ associated with r4 D-Bus interfaces were not being sent appropriately,
 now they are.
 
 In addition, stratisd 2.4.1 includes logging, at the trace level, of lock
-aquisitions and releases and additional logging in the systemd generators
+acquisitions and releases and additional logging in the systemd generators
 included with the release.
 
 The stratis-cli 2.4.1 release includes:

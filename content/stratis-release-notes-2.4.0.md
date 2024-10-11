@@ -19,7 +19,7 @@ mechanism. Previously, the user could create an encrypted pool using the
 kernel keyring only, and could bind or unbind using Clevis only.
 
 More minor user-visible changes are:
-* An enhancment to the FetchProperties D-Bus interface in order to disclose
+* An enhancement to the FetchProperties D-Bus interface in order to disclose
 more information about sets of encrypted devices.
 * The `engine_state_report` key in the report interface has been stabilized
 and is guaranteed to be supported in future releases.

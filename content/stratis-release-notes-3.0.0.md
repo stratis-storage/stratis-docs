@@ -92,7 +92,7 @@ check using libblkid and exits with an error if libblkid reports that the
 device is in use.
 * Handling of errors returned by internal methods is improved; a chaining
 mechanism has been introduced and the error chains can be scrutinized
-programatically to identify expected scenarios like rollback failures.
+programmatically to identify expected scenarios like rollback failures.
 * A set of states indicating that a pool has reduced capability have been
 added internally and are published on the D-Bus. A pool's capability is
 reduced on an error being returned internally which contains, somewhere in

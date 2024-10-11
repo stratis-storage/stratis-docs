@@ -696,8 +696,8 @@ stratisd implements the D-Bus interface, and manages and monitors Stratis
 
 \begin_layout Standard
 stratisd includes a simulator engine.
- The simulator engine is purely computational and does not affect the environmen
-t, although it does communicate over the D-Bus.
+ The simulator engine is purely computational and does not affect the 
+environment, although it does communicate over the D-Bus.
 \end_layout
 
 \begin_layout Standard
@@ -4362,7 +4362,7 @@ Implementation Details
 
 \begin_layout Standard
 Stratis' command-line tool is written in Python.
- Since it is only used after the system is booted by the adminstrator, Python's
+ Since it is only used after the system is booted by the administrator, Python's
  interpreted nature and overhead is not a concern.
 \end_layout
 

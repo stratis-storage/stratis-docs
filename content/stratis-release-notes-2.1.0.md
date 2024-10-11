@@ -46,7 +46,7 @@ stratisd 2.1.0 supplies several new D-Bus interfaces:
     additional `HasCache` property.
   * `org.storage.stratis2.Report.r1`: This interface supports a set of
     ad-hoc reports about Stratis. The interface is unstable; the names by
-    which the reports can be accesed are not guaranteed to remain stable,
+    which the reports can be accessed are not guaranteed to remain stable,
     and the format of any report is only guaranteed to be valid JSON.
 
 Please consult the D-Bus API Reference for the precise D-Bus specification.

@@ -19,7 +19,7 @@ error was fixed ([stratisd issue 1730]).
 The device discovery implementation was improved; computational complexity
 was reduced and additional logging on unusual events was added.
 
-The D-Bus layer was restructured to more cleanly suppport multiple versioned
+The D-Bus layer was restructured to more cleanly support multiple versioned
 D-Bus interfaces.
 
 All macros were rewritten to use fully qualified names to improve code

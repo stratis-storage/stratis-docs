@@ -24,7 +24,7 @@ of the filesystem D-Bus interface under the new system for stratisd 3.0.0 is
 `org.storage.stratis3.filesystem.r0`.
 
 The motivation for both these changes is the most typical of all: the
-implementation of stratisd will become unwieldly and bug-ridden if we try to
+implementation of stratisd will become unwieldy and bug-ridden if we try to
 maintain backwards compatibility in the D-Bus layer while simultaneously
 doing necessary redesign, re-implementation, and enhancement of the stratisd
 engine. In particular, changes to the way errors are managed internally will
