@@ -12,6 +12,8 @@ Stratis 2.0 is a significant update for both the daemon and the CLI. The
 changes to the daemon are covered first, followed by the changes to the
 CLI.
 
+<!-- more -->
+
 stratisd 2.0.0
 --------------
 
@@ -68,8 +70,6 @@ As always, anyone wishing to implement a program that uses Stratis for
 storage management is strongly advised to make use of the stratisd D-Bus API
 rather than the CLI.
 
-
-<!-- more -->
 
 [project issue 51]: https://github.com/stratis-storage/project/issues/51
 [project issue 52]: https://github.com/stratis-storage/project/issues/52

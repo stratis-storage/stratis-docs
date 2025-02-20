@@ -8,6 +8,8 @@ render = true
 
 *mulhern, Stratis Team*
 
+<!-- more -->
+
 `stratisd` 3.6.7 contains two bug fixes. The first bug fix prevents a
 file descriptor from being closed too soon after opening so that the user 
 is prevented from specifying a passphrase via the `--capture-key`
@@ -28,8 +30,6 @@ for the lock file to contain some extra digits at the end of the running
 `stratisd` process's id.
 
 Both releases contain many minor fixes and improvements.
-
-<!-- more -->
 
 Please consult the [stratisd] changelog for additional information about the
 release.

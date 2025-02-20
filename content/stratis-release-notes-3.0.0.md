@@ -11,6 +11,8 @@ render = true
 Stratis 3.0.0 includes many internal improvements, bug fixes, and
 user-visible changes.
 
+<!-- more -->
+
 Users of the Stratis CLI may observe the following changes:
 * It is now possible to set the filesystem logical size when creating a
 filesystem.
@@ -108,8 +110,6 @@ error during execution of the distinct tasks that are assigned to the
 individual threads that it manages internally.
 * In preparation for edition 2021 of the Rust language, `stratisd` source code
 has been updated to conform entirely to edition 2018 recommendations.
-
-<!-- more -->
 
 NOTE: `stratisd` depends directly on the `chrono` crate against which
 [RUSTSEC-2020-0159] has been filed. We have demonstrated that `stratisd` is

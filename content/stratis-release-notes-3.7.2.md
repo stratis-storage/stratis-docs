@@ -12,6 +12,8 @@ Stratis 3.7.2, which consists of `stratisd 3.7.2` and `stratis-cli 3.7.0`
 includes one significant enhancement, several minor enhancements, and a
 number of small improvements.
 
+<!-- more -->
+
 Most significantly, Stratis 3.7.2 extends its functionality to allow a user
 to revert a snapshot, i.e., to overwrite a Stratis filesystem with a
 previously taken snapshot of that filesystem. The process of reverting  
@@ -37,8 +39,6 @@ introduced for the pool metadata as well.
 `stratisd` also includes a considerable number of dependency version bumps,
 minor fixes and additional testing, while `stratis-cli` includes
 improvements to its command-line parsing implementation.
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the release.

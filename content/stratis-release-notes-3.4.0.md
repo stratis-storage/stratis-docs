@@ -11,6 +11,8 @@ render = true
 Stratis 3.4.0 includes one significant enhancement as well as several smaller
 improvements.
 
+<!-- more -->
+
 Most significantly, Stratis 3.4.0 extends its functionality to allow users to
 specify a pool by its name when starting a stopped pool. Previously it was
 only possible to identify a stopped pool by its UUID.
@@ -26,8 +28,6 @@ the pool name if it is available.
 
 This release also includes improvements to `stratisd`'s internal locking
 mechanism.
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the release.

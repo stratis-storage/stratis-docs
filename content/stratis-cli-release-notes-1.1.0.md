@@ -8,6 +8,8 @@ render = true
 
 *mulhern, Stratis Team*
 
+<!-- more -->
+
 With this release stratis now recognizes an environment variable,
 `STRATIS_DBUS_TIMEOUT`. This environment variable controls the timeout for
 any individual D-Bus call that stratis makes. You may want to set it to a
@@ -21,8 +23,6 @@ For stratis, it constitutes an error if any command issued results in a
 Python stack trace. If you experience any such incident, please
 report it in a GitHub issue, including the full stack trace, and
 circumstances that led up to the incident.
-
-<!-- more -->
 
 This release also includes a minor bug fix ([stratis-cli issue 248]) and an
 enhancement to the bash tab-completion facilities ([stratis-cli pull 300]).

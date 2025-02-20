@@ -11,6 +11,8 @@ render = true
 Stratis 3.2.0 includes one significant enhancement, one bug fix, and a number
 of more minor improvements.
 
+<!-- more -->
+
 Most significantly, Stratis 3.2.0 extends its functionality to allow users to
 stop and start a pool.
 
@@ -38,8 +40,6 @@ the RPC layers used by `stratis-min` and `stratisd-min`.
 In addition, the `stratisd-min` service now requires the `systemd-udevd`
 service to ensure that Stratis filesystem symlinks are created when
 `stratisd-min` sets up a Stratis filesystem.
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the 3.2.0 release.

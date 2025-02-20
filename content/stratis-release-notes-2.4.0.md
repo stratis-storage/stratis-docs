@@ -18,6 +18,8 @@ create a pool with encryption managed either by the kernel keyring or
 mechanism. Previously, the user could create an encrypted pool using the
 kernel keyring only, and could bind or unbind using Clevis only.
 
+<!-- more -->
+
 More minor user-visible changes are:
 * An enhancement to the FetchProperties D-Bus interface in order to disclose
 more information about sets of encrypted devices.
@@ -43,8 +45,6 @@ included in this release.
 
 The ongoing and perpetual but entirely routine work of improvements to
 individual log and error messages continues.
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis] changelogs for additional
 information about the 2.4.0 release.

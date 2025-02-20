@@ -13,6 +13,8 @@ for a Linux installation with proper customization of the initramfs, our most
 recent feature provides all of the plumbing to fully support Stratis filesystems
 as the root filesystem of a Linux installation.
 
+<!-- more -->
+
 ### IPC
 Stratis relies on D-Bus for interprocess communication between the daemon and the
 client. D-Bus does not currently ship in the initramfs so the first order of business
@@ -116,8 +118,6 @@ for Linux installations even easier!
 ### Release version
 All of the utilities required for booting from a Stratis filesystem as the root
 filesystem will be included in stratisd 2.4.0.
-
-<!-- more -->
 
 ### Corrections
 * The `/etc/fstab` examples previously omitted `.service` for `stratis-fstab-setup`. systemd
