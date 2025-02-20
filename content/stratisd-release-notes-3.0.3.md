@@ -10,6 +10,8 @@ render = true
 
 stratisd 3.0.3 contains internal improvements and several bug fixes.
 
+<!-- more -->
+
 Most significantly, it includes an enhancement to stratisd's original
 multi-threading model to allow [locking individual pools]. 
 
@@ -19,8 +21,6 @@ included in the initramfs.
 Under some conditions, a change in pool size did not result in a corresponding
 property changed signal for the relevant D-Bus property change; this has been
 fixed.
-
-<!-- more -->
 
 Please consult the [stratisd changelog] for additional information about the
 release.

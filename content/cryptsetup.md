@@ -8,6 +8,8 @@ render = true
 
 *John Baublitz, Stratis Team*
 
+<!-- more -->
+
 One major focus in the Stratis project recently has been adding an encryption layer
 for data in Stratis pools. Cryptsetup provides a library backend for programmatically
 setting up device encryption, so we decided to write Rust bindings to access the
@@ -26,7 +28,5 @@ GPL-compatible.
 
 If you're interested in seeing more, you can find [the repository here].
 
-
-<!-- more -->
 
 [the repository here]: https://github.com/stratis-storage/libcryptsetup-rs

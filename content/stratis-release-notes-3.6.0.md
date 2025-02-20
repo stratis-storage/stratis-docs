@@ -11,6 +11,8 @@ render = true
 Stratis 3.6.0 includes one significant enhancement as well as several smaller
 improvements.
 
+<!-- more -->
+
 Most significantly, Stratis 3.6.0 extends its functionality to allow a user
 to set a limit on the size of a filesystem. The limit can be set when the
 filesystem is created, or at a later time.
@@ -57,8 +59,6 @@ a pool.
 
 `stratis-cli` also contains sundry internal improvements, and enforces
 a python requirement of at least 3.9 in its package configuration.
-
-<!-- more -->
 
 Please consult the [stratisd], [stratis-cli], [devicemapper], and
 [libcryptsetup-rs] changelogs for additional information about the release.

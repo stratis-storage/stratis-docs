@@ -20,6 +20,8 @@ The changes can largely be divided up into three areas of improvement:
 * Safety
 * Reliability
 
+<!-- more -->
+
 Predictability
 ==============
 We made two notable changes to make behavior in the thin provisioning layer well-defined and
@@ -132,6 +134,5 @@ Future work
 We hope to eventually provide some smarter allocation strategies for our data and metadata
 allocations to maximize contiguous allocation extents.
 
-<!-- more -->
 [a proposal]: https://github.com/stratis-storage/stratisd/issues/2814
 [per-pool locking]: @/per-pool-locking.md

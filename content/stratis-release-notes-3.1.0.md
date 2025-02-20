@@ -12,6 +12,8 @@ Stratis 3.1.0 includes significant improvements to the management of the
 thin-provisioning layers, as well as a number of other user-visible
 enhancements and bug fixes.
 
+<!-- more -->
+
 Please see [this post] for a detailed discussion of the thin-provisioning
 changes. To support these changes the Stratis CLI has been enhanced to:
 * allow specifying whether or not a pool may be overprovisioned on creation
@@ -36,8 +38,6 @@ stratisd 3.1.0 also includes a number of internal improvements:
 while the pool is in operation.
 * Improved handling of udev events on device removal.
 * The usual and customary improvements to log messages.
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the 3.1.0 release.

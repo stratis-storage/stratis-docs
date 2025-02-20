@@ -11,6 +11,8 @@ render = true
 This post includes release notes for the prior patch releases in this
 minor release.
 
+<!-- more -->
+
 `stratisd` 3.6.4 includes a fix for `stratisd-min` handling of the start
 command sent by `stratis-min` to unencrypted pools. It also captures and logs
 errors messages emitted by the `thin_check` or `mkfs.xfs` executables.
@@ -29,8 +31,6 @@ to unlock a pool if the pool was encrypted using both Clevis and the kernel
 keyring methods but the key in the kernel keyring was unavailable.
 
 All releases include a number of housekeeping and maintenance updates.
-
-<!-- more -->
 
 Please consult the [stratisd] changelog for additional information about the
 release.

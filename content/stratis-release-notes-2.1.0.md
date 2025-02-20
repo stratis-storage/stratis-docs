@@ -14,6 +14,8 @@ It supports per-pool encryption of the devices that form a pool's data
 tier. A pool may be encrypted, or its constituent encrypted devices may
 be activated, by means of a key stored in the kernel keyring.
 
+<!-- more -->
+
 stratisd 2.1.0
 --------------
 This release implements encryption support and adds several new D-Bus
@@ -103,7 +105,5 @@ previously encrypted pool; it can only unlock all devices if a key for every
 encrypted pool is in the keyring. Once the devices belonging to a previously
 encrypted pool have been unlocked, the pool will be set up, and can be used in
 exactly the same manner as an unencrypted pool.
-
-<!-- more -->
 
 Please consult the changelogs for additional information about the release.

@@ -13,6 +13,8 @@ a separate subpackage, `stratisd-dracut`. This package must be installed
 in order to support booting from a Stratis filesystem. All other
 functionality is included in the `stratisd` package.
 
+<!-- more -->
+
 The motivation for this change is to allow users greater flexibility and
 robustness. We understand that some users may choose to use Stratis but not to
 use Stratis for their root filesystem. These users may choose to install only
@@ -47,8 +49,6 @@ features, in order to correctly build supporting scripts for the dracut
 module.
 
 We recommend that other downstream packagers adopt a similar scheme.
-
-<!-- more -->
 
 Please consult the [Fedora stratisd package repository] for an example
 of the packaging approach used.

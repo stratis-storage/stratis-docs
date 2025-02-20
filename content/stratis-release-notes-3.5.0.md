@@ -11,6 +11,8 @@ render = true
 Stratis 3.5.0 includes one significant enhancement as well as several smaller
 improvements.
 
+<!-- more -->
+
 Most significantly, Stratis 3.5.0 extends its functionality to allow a user
 to add a cache to an encrypted pool. The cache devices are each encrypted with
 the same mechanism as the data devices; consequently the cache itself is
@@ -34,8 +36,6 @@ included in any previous release.
 This release also reduces the problem of repetitive log messages and modifies
 the D-Bus API to eliminate the `redundancy` parameter previously required by 
 the `CreatePool` D-Bus method.
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the release.

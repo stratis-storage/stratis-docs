@@ -8,6 +8,8 @@ render = true
 
 *mulhern, Stratis Team*
 
+<!-- more -->
+
 The next version of stratisd will be 3.0.0.
 
 We have already decided on two breaking changes for this release:
@@ -36,7 +38,5 @@ an obvious next step.
 
 We are reviewing other possible API changes at this time in order to minimize
 the number of subsequent major version increases that we will be obliged to do.
-
-<!-- more -->
 
 [DBus API Reference]: https://stratis-storage.github.io/DBusAPIReference.pdf

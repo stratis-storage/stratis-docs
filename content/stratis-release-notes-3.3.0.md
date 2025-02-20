@@ -11,6 +11,8 @@ render = true
 Stratis 3.3.0 includes one significant enhancement and several smaller
 enhancements as well as number of stability and efficiency improvements.
 
+<!-- more -->
+
 Most significantly, Stratis 3.3.0 extends its functionality to allow users to
 instruct `stratisd` to include additional space that may have become available
 on a component data device in the space that is available to the device's pool.
@@ -37,8 +39,6 @@ Previously, the check occurred only once, when `stratisd` was started. We
 believe that this change will be more convenient for users who may install
 needed Clevis executables after `stratisd` has already been started.
 
-
-<!-- more -->
 
 Please consult the [stratisd] and [stratis-cli] changelogs for additional
 information about the release.

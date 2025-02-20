@@ -11,6 +11,8 @@ render = true
 `stratisd` 3.5.2 includes three significant enhancements as well as a bug
 fix.
 
+<!-- more -->
+
 The enhancements are:
 
 * `stratisd` 3.5.2 is the first `stratisd` release to include a subpackage,
@@ -26,8 +28,6 @@ is managed during early boot. See [stratisd pr 3269] for further details.
 `stratisd` 3.5.2 also fixes a bug in a script used by the stratisd-dracut
 subpackage. This fix was included in the `stratisd` 3.5.1 release. See
 [stratisd pr 3256] for further details.
-
-<!-- more -->
 
 Please consult the [stratisd] changelog for additional information about the
 release.

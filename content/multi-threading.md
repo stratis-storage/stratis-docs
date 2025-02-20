@@ -8,6 +8,8 @@ render = true
 
 *mulhern, Stratis Team*
 
+<!-- more -->
+
 Introducing Support for Multi-threading in stratisd
 ===================================================
 `stratisd` is an entirely single-threaded application;
@@ -400,8 +402,6 @@ Remarks
 =======
 Preliminary multi-threading support will be included in the next `stratisd`
 release, 2.4.0.
-
-<!-- more -->
 
 [tokio]: https://tokio.rs/
 [thread]: https://doc.rust-lang.org/std/thread/

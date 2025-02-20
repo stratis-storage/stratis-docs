@@ -11,6 +11,8 @@ render = true
 Stratis 2.3.0 adds additional flexibility to its encryption support via
 [Clevis].
 
+<!-- more -->
+
 stratis 2.3.0
 -------------
 This release extends the `pool unlock` command, and adds two new commands,
@@ -82,8 +84,6 @@ the stratisd D-Bus API, or by, e.g., setting a key in the kernel keyring
 without using stratis, to manufacture a situation where stratisd could not
 bind the devices in a pool, even when the correct key is set in the kernel
 keyring. We would not treat such a situation as evidence of a bug in Stratis.
-
-<!-- more -->
 
 Please consult the changelogs for additional information about the release.
 

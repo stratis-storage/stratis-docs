@@ -18,6 +18,8 @@ in a separate [tokio task], but the Stratis engine, the part of our code that
 handles all of the storage stack operations, could still only be accessed
 sequentially.
 
+<!-- more -->
+
 Motivation
 ==========
 After having conversations with the LVM team, it seemed like sequential accesses
@@ -145,6 +147,5 @@ We've added extensive debugging for the locking data structure in case users run
 into issues. To enable these logs and see the state of the per-pool locking data
 structure over time, simply enable trace logs in stratisd!
 
-<!-- more -->
 [here]: @/multi-threading.md
 [tokio task]: https://tokio.rs/tokio/tutorial/spawning

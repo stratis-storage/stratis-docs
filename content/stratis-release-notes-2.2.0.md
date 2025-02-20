@@ -20,6 +20,8 @@ This release also includes enhancements to the stratisd D-Bus interface,
 various bug fixes, and a change in the stratisd CLI specification for
 log levels.
 
+<!-- more -->
+
 stratisd 2.2.0
 --------------
 This release creates and maintains Stratis filesystem symlinks in
@@ -51,8 +53,6 @@ This release also extends the D-Bus interface in a few ways:
     corresponding key descriptions.
 
 Please consult the D-Bus API Reference for the precise D-Bus specification.
-
-<!-- more -->
 
 This release allows the user to specify their preferred log level more
 directly and succinctly with the `--log-level` CLI option.

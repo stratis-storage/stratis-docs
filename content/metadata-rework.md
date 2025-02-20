@@ -17,6 +17,8 @@ metadata rework has been a large effort to pave the way for Stratis moving forwa
 will provide the ability for additional flexibility in enabling and disabling certain layers
 after pool creation time once the features are added.
 
+<!-- more -->
+
 ### Support for V1
 
 V1 will continued to be supported as-is. Features that no longer work on V1 of the metadata
