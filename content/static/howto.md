@@ -139,16 +139,24 @@ stratis_howto  my_precious  546 MiB  Nov 09 2018 11:09  /dev/stratis/stratis_how
 # mount /dev/stratis/stratis_howto/fs_howto /mnt
 ```
 
-## Add mount point to `/etc/fstab` using file system UUID
+## Modifying /etc/fstab so that your filesystem is mounted at boot
 
-You can use `/dev/stratis/<pool name>/<file system name>` but each time you rename a pool or file system you will need to update `/etc/fstab`, thus using file system UUID is recommended.
+If you insert the following line in your /etc/fstab file, your pool will be
+started and your filesystem will be mounted during the boot process.
 
 ```
-# blkid -p /dev/stratis/stratis_howto/fs_howto
-/dev/stratis/stratis_howto/fs_howto: UUID="a38780e5-04e3-49da-8b95-2575d77e947c" TYPE="xfs" USAGE="filesystem"
-
-# echo "UUID=a38780e5-04e3-49da-8b95-2575d77e947c /mnt xfs defaults 0 0" >> /etc/fstab
+/dev/stratis/<pool name>/<file system name> /mnt xfs defaults,x-systemd.requires=stratis-fstab-setup@<pool uuid>.service,x-systemd.after=stratis-fstab-setup@<pool uuid>.service,nofail 0 2
 ```
+
+In case your pool is encrypted so that it requires a password to be entered to
+unlock the pool, this line should be used instead:
+
+```
+/dev/stratis/<pool name>/<file system name> /mnt xfs defaults,x-systemd.requires=stratis-fstab-setup@<pool uuid>.service,x-systemd.after=stratis-fstab-setup@<pool uuid>.service 0 2
+```
+
+The only difference is that the special ```nofail``` modifier should be
+omitted in that case.
 
 # Other useful pool operations
 
