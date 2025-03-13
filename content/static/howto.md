@@ -145,18 +145,13 @@ If you insert the following line in your /etc/fstab file, your pool will be
 started and your filesystem will be mounted during the boot process.
 
 ```
-/dev/stratis/<pool name>/<file system name> /mnt xfs defaults,x-systemd.requires=stratis-fstab-setup@<pool uuid>.service,x-systemd.after=stratis-fstab-setup@<pool uuid>.service,nofail 0 2
-```
-
-In case your pool is encrypted so that it requires a password to be entered to
-unlock the pool, this line should be used instead:
-
-```
 /dev/stratis/<pool name>/<file system name> /mnt xfs defaults,x-systemd.requires=stratis-fstab-setup@<pool uuid>.service,x-systemd.after=stratis-fstab-setup@<pool uuid>.service 0 2
 ```
 
-The only difference is that the special ```nofail``` modifier should be
-omitted in that case.
+This will ensure that the filesystem's pool is started. In case the pool
+is encrypted stratisd will attempt to unlock the pool. If the pool can not
+be unlocked without user intervention, the user will be be prompted for a
+passphrase at boot.
 
 # Other useful pool operations
 
