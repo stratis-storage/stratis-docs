@@ -301,8 +301,12 @@
     <property name="Devnode" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates" />
     </property>
+    <!-- Whether this filesystem is scheduled to be merged into its origin. -->
+    <property name="MergeScheduled" type="b" access="readwrite" />
     <!-- Name of the filesystem. -->
     <property name="Name" type="s" access="read" />
+    <!-- This filesystem's origin, if any. -->
+    <property name="Origin" type="(bs)" access="read" />
     <!-- Object path of the parent pool. -->
     <property name="Pool" type="o" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
