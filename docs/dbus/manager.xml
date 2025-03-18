@@ -1406,6 +1406,7 @@
 	    "devs": always present, an array of mappings of device information
 	      Contains two keys: "uuid" and "devnode"
 	    "clevis_info": optional, not present if pool is unencrypted.
+	      Only used with V1 pools.
 	      (bv): information about Clevis configuration for all devices
 	        if b is true:
 	          devices have consistent Clevis information
@@ -1416,6 +1417,7 @@
 	          devices have inconsistent Clevis configurations
 	          v = s: error message explaining inconsistency
 	    "key_description": optional, not present if pool is unencrypted.
+	      Only used with V1 pools.
 	      (bv): information about kernel key encryption for all devices
 	        if b is true:
 	          devices have consistent key information
@@ -1425,6 +1427,16 @@
 	        else:
 	          devices have inconsistent key information
 	          v = s: error message explaining inconsistency
+	    "metadata_version": optional, only present for V2 pools
+	      bt: optional metadata version number
+	        b: true if the metadata version is consistent for all devices
+	        t: the version number
+	    "features": optional map of pool features, only present for V2 pools
+	      b{sb}: optional map of features to values
+	        b: true if the pool-level metadata contains feature information
+	        {sb}: map of feature names to boolean values
+	          s: feature name
+	          b: true if the feature is enabled
     -->
     <property name="StoppedPools" type="a{sa{sv}}" access="read" />
     <!-- stratisd version -->
