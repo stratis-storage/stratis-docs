@@ -1226,14 +1226,52 @@
       <arg name="name" type="s" direction="in" />
       <!-- Device nodes of devices to form the pool -->
       <arg name="devices" type="as" direction="in" />
-      <!-- Optional key description of the key to use to encrypt the pool -->
-      <arg name="key_desc" type="(bs)" direction="in" />
       <!--
-         Optional Clevis information to use to encrypt the pool.
+         List of key descriptions used to encrypt the pool.
+	 bu: optional token slot at which to bind with this description
+             If no token slot specified, first available is used.
+	    b: true if a token slot is specified, otherwise false
+	    u: the token slot value
+	 s: key description
+      -->
+      <arg name="key_desc" type="a((bu)s)" direction="in" />
+      <!--
+         List of Clevis configurations to use to encrypt the pool.
+	 bu: optional token slot at which to bind with this configuration
+             If no token slot specified, first available is used.
+	    b: true if a token slot is specified, otherwise false
+	    u: the token slot value
          s: Clevis "pin" specification, "tang" or "tpm".
          s: pin-specific Clevis configuration
       -->
-      <arg name="clevis_info" type="(b(ss))" direction="in" />
+      <arg name="clevis_info" type="a((bu)ss)" direction="in" />
+      <!--
+         Amount of space to pre-allocate for dm-integrity journal. If none
+	 specified a default size of 128 MiB will be used.
+	 bt: optional size information
+	    b: true if size is specified, otherwise false
+	    t: the size of the journal, in bytes
+      -->
+      <arg name="journal_size" type="(bt)" direction="in" />
+      <!--
+         Tag specification determining the amount of space that should be
+	 pre-allocated for a dm-integrity tag. If none a default specification,
+	 requiring a 512 B pre-allocation is used.
+	 bt: optional size information
+	    b: true if size is specified, otherwise false
+	    s: the tag specification, as a string. Available values are
+	       "0b", "32b", "512b".
+      -->
+      <arg name="tag_spec" type="(bs)" direction="in" />
+      <!--
+         Whether or not to allocate space for a superblock for dm-integrity.
+	 Space for the superblock is allocated by default.
+	 bb: optional superblock specification
+	    b: true if the second value has an interpretation, otherwise false
+	    b: true if specifying to allocate space for superblock, otherwise
+	       false
+      -->
+      <arg name="allocate_superblock" type="(bb)" direction="in" />
       <!--
          b: True if a pool was created, otherwise false.
          (oao): Result of the creation action, default values if no pool
@@ -1305,11 +1343,23 @@
       <arg name="id" type="s" direction="in" />
       <!-- id type: "uuid" or "name" -->
       <arg name="id_type" type="s" direction="in" />
-      <!-- Unlock method to use if pool is encrypted
-        b: True if an unlock method argument is being specified.
-        s: Method to use to unlock the pool, may be "keyring" or "clevis".
+      <!--
+	Unlock method to use if pool is encrypted
+        b: True if an unlock method argument is being specified. If false,
+           then no attempt will be made to unlock the pool.
+        bu: The token slot to use to unlock the pool. If no token slot is
+           specified, stratisd will try all available slots.
+           b: True if a token slot is specified.
+	   u: The token slot.
       -->
-      <arg name="unlock_method" type="(bs)" direction="in" />
+      <arg name="unlock_method" type="(b(bu))" direction="in" />
+      <!--
+        Optional file descriptor to use to pass password to unlock pool.
+        bh: Optional file descriptor
+           b: True if the file descriptor is set, otherwise false
+	   h: The file descriptor
+      -->
+      <arg name="key_fd" type="(bh)" direction="in" />
       <!--
         b: True if the pool was started, otherwise false.
         o: Object path of the started pool.
