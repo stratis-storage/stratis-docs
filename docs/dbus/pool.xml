@@ -1671,6 +1671,25 @@
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
+    <!-- Get filesystem metadata. -->
+    <method name="FilesystemMetadata">
+      <!--
+         Optional filesystem name. If no filesystem name specified, get
+         filesystem metadata for all the pool's filesystems.
+         b: True if the filesystem name is specified, otherwise false.
+         s: Filesystem name.
+      -->
+      <arg name="fs_name" type="(bs)" direction="in" />
+      <!--
+         True if the metadata that would be written if it were written now,
+         false if the metadata that is currently on disk.
+      -->
+      <arg name="current" type="b" direction="in" />
+      <!-- Filesystem metadata. -->
+      <arg name="results" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
     <!-- Extend the available size of a pool. -->
     <method name="GrowPhysicalDevice">
       <!-- UUID of data device belonging to pool to extend. -->
@@ -1688,6 +1707,18 @@
         ao: Object paths of devices in the cache.
       -->
       <arg name="results" type="(bao)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Get pool metadata. -->
+    <method name="Metadata">
+      <!--
+         True if the metadata that would be written if it were written now,
+         false if the metadata that is currently on disk.
+      -->
+      <arg name="current" type="b" direction="in" />
+      <!-- Pool metadata. -->
+      <arg name="results" type="s" direction="out" />
       <arg name="return_code" type="q" direction="out" />
       <arg name="return_string" type="s" direction="out" />
     </method>
