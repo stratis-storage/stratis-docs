@@ -1890,6 +1890,11 @@
       <arg name="pin" type="s" direction="in" />
       <!-- Pin-specific Clevis configuration information. -->
       <arg name="json" type="s" direction="in" />
+      <!--
+         Optional token slot index to bind the pool at. If no token slot
+	 specified, use the first available empty slot.
+      -->
+      <arg name="token_slot" type="(bu)" direction="in" />
       <!-- True if any new bindings were added, otherwise false. -->
       <arg name="results" type="b" direction="out" />
       <arg name="return_code" type="q" direction="out" />
@@ -1899,6 +1904,11 @@
     <method name="BindKeyring">
       <!-- Description of the key in the kernel keyring. -->
       <arg name="key_desc" type="s" direction="in" />
+      <!--
+         Optional token slot index to bind the pool at. If no token slot
+	 specified, use the first available empty slot.
+      -->
+      <arg name="token_slot" type="(bu)" direction="in" />
       <!-- True if any new bindings were added, otherwise false. -->
       <arg name="results" type="b" direction="out" />
       <arg name="return_code" type="q" direction="out" />
@@ -1991,6 +2001,11 @@
     -->
     <method name="RebindClevis">
       <!--
+         Optional token slot index to rebind the pool at. If no token slot
+	 specified, use the first slot bound with Clevis.
+      -->
+      <arg name="token_slot" type="(bu)" direction="in" />
+      <!--
         True if all bindings were successfully regenerated. Because of the
         nature of Clevis rebinding generation, this method will always return
         true on success.
@@ -2006,6 +2021,11 @@
     <method name="RebindKeyring">
       <!-- Key description. -->
       <arg name="key_desc" type="s" direction="in" />
+      <!--
+         Optional token slot index to rebind the pool at. If no token slot
+	 specified, use the first slot bound with this method.
+      -->
+      <arg name="token_slot" type="(bu)" direction="in" />
       <!-- True if the specified key description is different. -->
       <arg name="results" type="b" direction="out" />
       <arg name="return_code" type="q" direction="out" />
@@ -2039,6 +2059,12 @@
     </method>
     <!-- Remove Clevis encryption from the devices in the pool. -->
     <method name="UnbindClevis">
+      <!--
+         Optional token slot index from which to remove a pool binding.
+         If no token slot specified, remove the binding from the first slot
+         bound with this method.
+      -->
+      <arg name="token_slot" type="(bu)" direction="in" />
       <!-- True if some Clevis bindings were removed, otherwise false. -->
       <arg name="results" type="b" direction="out" />
       <arg name="return_code" type="q" direction="out" />
@@ -2046,6 +2072,12 @@
     </method>
     <!-- Unbind a keyring passphrase from the devices in the pool. -->
     <method name="UnbindKeyring">
+      <!--
+         Optional token slot index from which to remove a pool binding.
+         If no token slot specified, remove the binding from the first slot
+         bound with this method.
+      -->
+      <arg name="token_slot" type="(bu)" direction="in" />
       <!-- True if some bindings were removed, otherwise false. -->
       <arg name="results" type="b" direction="out" />
       <arg name="return_code" type="q" direction="out" />
