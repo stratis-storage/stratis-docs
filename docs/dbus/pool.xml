@@ -2092,6 +2092,8 @@
     -->
     <property name="AvailableActions" type="s" access="read" />
     <!--
+      For V1 pools, Clevis configuration information representing the
+      Clevis encryption situation for all devices in the pool.
       b: True if the Clevis configuration information is consistent for all the
          block devices in the pool, otherwise false.
       b(ss): Clevis encryption configuration.
@@ -2099,8 +2101,16 @@
          ss: Clevis configuration.
 	   s: Clevis pin.
 	   s: Pin-specific Clevis configuration information.
+
+      For V2 pools, an array of token-slot, Clevis configuration pairs,
+      representing the Clevis encryption situation for the whole pool.
+      u(ss): Token slot, Clevis configuration pair.
+        u: Token slot.
+        ss: Associated Clevis configuration.
+          s: Clevis pin.
+	  s: Pin-specific Clevis configuration information.
     -->
-    <property name="ClevisInfo" type="(b(b(ss)))" access="read" />
+    <property name="ClevisInfos" type="v" access="read" />
     <!-- True if the pool is encrypted, otherwise false. -->
     <property name="Encrypted" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
@@ -2113,14 +2123,26 @@
     <!-- True if the pool has a cache, otherwise false. -->
     <property name="HasCache" type="b" access="read" />
     <!--
+      For V1 pools, key description information representing the
+      key description situation for all devices in the pool.
       b: True if the key description information is the same for all the block
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
 	    otherwise false.
 	 s: Key description.
+
+      For V2 pools, an array of token-slot, key description pairs,
+      representing the key description situation for the whole pool.
+      u(ss): Token slot, key description pair.
+        u: Token slot.
+	s: Associated key description.
     -->
-    <property name="KeyDescription" type="(b(bs))" access="read" />
+    <property name="KeyDescriptions" type="v" access="read" />
+    <!-- Pool metadata version. -->
+    <property name="MetadataVersion" type="t" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
     <!-- Name of the pool. -->
     <property name="Name" type="s" access="read" />
     <!--
