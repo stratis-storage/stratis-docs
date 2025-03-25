@@ -1056,6 +1056,394 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
     </property>
   </interface>
+  <interface name="org.storage.stratis3.Manager.r7">
+    <!-- Create a single pool with the specified name and blockdevs. -->
+    <method name="CreatePool">
+      <!-- Name of the pool. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- Device nodes of devices to form the pool -->
+      <arg name="devices" type="as" direction="in" />
+      <!-- Optional key description of the key to use to encrypt the pool -->
+      <arg name="key_desc" type="(bs)" direction="in" />
+      <!--
+         Optional Clevis information to use to encrypt the pool.
+         s: Clevis "pin" specification, "tang" or "tpm".
+         s: pin-specific Clevis configuration
+      -->
+      <arg name="clevis_info" type="(b(ss))" direction="in" />
+      <!--
+         b: True if a pool was created, otherwise false.
+         (oao): Result of the creation action, default values if no pool
+            was created.
+            o: Object path of the created pool.
+            ao: Object paths of all the block devices in the pool.
+      -->
+      <arg name="result" type="(b(oao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Destroy the specified pool. -->
+    <method name="DestroyPool">
+      <!-- Object path of the pool to destroy. -->
+      <arg name="pool" type="o" direction="in" />
+      <!--
+        b: True if the pool was destroyed, otherwise false.
+        s: UUID of the pool destroyed or a default value if no action was
+           taken.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Return JSON representing the internal state of the daemon. The method
+      signature is stable, but the JSON output format is not guaranteed to be
+      stable.
+    -->
+    <method name="EngineStateReport">
+      <!-- JSON output representing the engine state. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Return a list of the Stratis keys in the kernel keyring. -->
+    <method name="ListKeys">
+      <!-- Array of key descriptions. -->
+      <arg name="result" type="as" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Refresh the state of every running pool instance.
+      This method is for troubleshooting and debugging only.
+    -->
+    <method name="RefreshState">
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Set a Stratis key in the kernel keyring. -->
+    <method name="SetKey">
+      <!-- Key description to assign to the set key. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- File descriptor through which to read the key data. -->
+      <arg name="key_fd" type="h" direction="in" />
+      <!--
+        b: True if the key state was changed, otherwise false.
+        b: True if the key was newly set in the keyring. False if a key with the
+           given key description already existed.
+      -->
+      <arg name="result" type="(bb)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Start a pool. -->
+    <method name="StartPool">
+      <!-- identifier of pool to be started -->
+      <arg name="id" type="s" direction="in" />
+      <!-- id type: "uuid" or "name" -->
+      <arg name="id_type" type="s" direction="in" />
+      <!-- Unlock method to use if pool is encrypted
+        b: True if an unlock method argument is being specified.
+        s: Method to use to unlock the pool, may be "keyring" or "clevis".
+      -->
+      <arg name="unlock_method" type="(bs)" direction="in" />
+      <!--
+        b: True if the pool was started, otherwise false.
+        o: Object path of the started pool.
+        ao: Array of object paths of block devices belonging to the pool.
+        ao: Array of object paths of filesystems belonging to the pool.
+      -->
+      <arg name="result" type="(b(oaoao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Stop a running pool. -->
+    <method name="StopPool">
+      <!-- identifier of pool to be stopped -->
+      <arg name="id" type="s" direction="in" />
+      <!-- id type: "uuid" or "name" -->
+      <arg name="id_type" type="s" direction="in" />
+      <!-- Object path of pool to be stopped. -->
+      <arg name="pool" type="o" direction="in" />
+      <!--
+        b: True if the pool was stopped.
+        s: UUID of the stopped pool.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Unset a key in the kernel keyring. -->
+    <method name="UnsetKey">
+      <!-- Key description of the key to unset. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- b: True if the key was in the keyring, otherwise false. -->
+      <arg name="result" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      a{sa{sv}}: Mapping of Stratis pool UUIDs to information about the
+	devices associated with the UUID. These sets of devices may comprise
+        a Stratis pool that can be started with the StartPool message.
+        s: Stratis pool UUIDs
+	    a{sv}: key/value mapping
+          s: keys: possible values are "devs", "key_description", "clevis_info"
+          v: Values for the keys:
+	    "devs": always present, an array of mappings of device information
+	      Contains two keys: "uuid" and "devnode"
+	    "clevis_info": optional, not present if pool is unencrypted.
+	      (bv): information about Clevis configuration for all devices
+	        if b is true:
+	          devices have consistent Clevis information
+	          v = (bs): Clevis configuration information for all devices
+	            b: if false, devices are not encrypted with Clevis
+	            s: Clevis configuration
+	        else:
+	          devices have inconsistent Clevis configurations
+	          v = s: error message explaining inconsistency
+	    "key_description": optional, not present if pool is unencrypted.
+	      (bv): information about kernel key encryption for all devices
+	        if b is true:
+	          devices have consistent key information
+	          v = (bs): key information for all devices
+	            b: if false, devices are not encrypted with a key
+	            s: key description
+	        else:
+	          devices have inconsistent key information
+	          v = s: error message explaining inconsistency
+    -->
+    <property name="StoppedPools" type="a{sa{sv}}" access="read" />
+    <!-- stratisd version -->
+    <property name="Version" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
+  <interface name="org.storage.stratis3.Manager.r8">
+    <!-- Create a single pool with the specified name and blockdevs. -->
+    <method name="CreatePool">
+      <!-- Name of the pool. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- Device nodes of devices to form the pool -->
+      <arg name="devices" type="as" direction="in" />
+      <!--
+         List of key descriptions used to encrypt the pool.
+	 bu: optional token slot at which to bind with this description
+             If no token slot specified, first available is used.
+	    b: true if a token slot is specified, otherwise false
+	    u: the token slot value
+	 s: key description
+      -->
+      <arg name="key_desc" type="a((bu)s)" direction="in" />
+      <!--
+         List of Clevis configurations to use to encrypt the pool.
+	 bu: optional token slot at which to bind with this configuration
+             If no token slot specified, first available is used.
+	    b: true if a token slot is specified, otherwise false
+	    u: the token slot value
+         s: Clevis "pin" specification, "tang" or "tpm".
+         s: pin-specific Clevis configuration
+      -->
+      <arg name="clevis_info" type="a((bu)ss)" direction="in" />
+      <!--
+         Amount of space to pre-allocate for dm-integrity journal. If none
+	 specified a default size of 128 MiB will be used.
+	 bt: optional size information
+	    b: true if size is specified, otherwise false
+	    t: the size of the journal, in bytes
+      -->
+      <arg name="journal_size" type="(bt)" direction="in" />
+      <!--
+         Tag specification determining the amount of space that should be
+	 pre-allocated for a dm-integrity tag. If none a default specification,
+	 requiring a 512 B pre-allocation is used.
+	 bt: optional size information
+	    b: true if size is specified, otherwise false
+	    s: the tag specification, as a string. Available values are
+	       "0b", "32b", "512b".
+      -->
+      <arg name="tag_spec" type="(bs)" direction="in" />
+      <!--
+         Whether or not to allocate space for a superblock for dm-integrity.
+	 Space for the superblock is allocated by default.
+	 bb: optional superblock specification
+	    b: true if the second value has an interpretation, otherwise false
+	    b: true if specifying to allocate space for superblock, otherwise
+	       false
+      -->
+      <arg name="allocate_superblock" type="(bb)" direction="in" />
+      <!--
+         b: True if a pool was created, otherwise false.
+         (oao): Result of the creation action, default values if no pool
+            was created.
+            o: Object path of the created pool.
+            ao: Object paths of all the block devices in the pool.
+      -->
+      <arg name="result" type="(b(oao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Destroy the specified pool. -->
+    <method name="DestroyPool">
+      <!-- Object path of the pool to destroy. -->
+      <arg name="pool" type="o" direction="in" />
+      <!--
+        b: True if the pool was destroyed, otherwise false.
+        s: UUID of the pool destroyed or a default value if no action was
+           taken.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Return JSON representing the internal state of the daemon. The method
+      signature is stable, but the JSON output format is not guaranteed to be
+      stable.
+    -->
+    <method name="EngineStateReport">
+      <!-- JSON output representing the engine state. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Return a list of the Stratis keys in the kernel keyring. -->
+    <method name="ListKeys">
+      <!-- Array of key descriptions. -->
+      <arg name="result" type="as" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      Refresh the state of every running pool instance.
+      This method is for troubleshooting and debugging only.
+    -->
+    <method name="RefreshState">
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Set a Stratis key in the kernel keyring. -->
+    <method name="SetKey">
+      <!-- Key description to assign to the set key. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- File descriptor through which to read the key data. -->
+      <arg name="key_fd" type="h" direction="in" />
+      <!--
+        b: True if the key state was changed, otherwise false.
+        b: True if the key was newly set in the keyring. False if a key with the
+           given key description already existed.
+      -->
+      <arg name="result" type="(bb)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Start a pool. -->
+    <method name="StartPool">
+      <!-- identifier of pool to be started -->
+      <arg name="id" type="s" direction="in" />
+      <!-- id type: "uuid" or "name" -->
+      <arg name="id_type" type="s" direction="in" />
+      <!--
+	Unlock method to use if pool is encrypted
+        b: True if an unlock method argument is being specified. If false,
+           then no attempt will be made to unlock the pool.
+        bu: The token slot to use to unlock the pool. If no token slot is
+           specified, stratisd will try all available slots.
+           b: True if a token slot is specified.
+	   u: The token slot.
+      -->
+      <arg name="unlock_method" type="(b(bu))" direction="in" />
+      <!--
+        Optional file descriptor to use to pass password to unlock pool.
+        bh: Optional file descriptor
+           b: True if the file descriptor is set, otherwise false
+	   h: The file descriptor
+      -->
+      <arg name="key_fd" type="(bh)" direction="in" />
+      <!--
+        b: True if the pool was started, otherwise false.
+        o: Object path of the started pool.
+        ao: Array of object paths of block devices belonging to the pool.
+        ao: Array of object paths of filesystems belonging to the pool.
+      -->
+      <arg name="result" type="(b(oaoao))" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Stop a running pool. -->
+    <method name="StopPool">
+      <!-- identifier of pool to be stopped -->
+      <arg name="id" type="s" direction="in" />
+      <!-- id type: "uuid" or "name" -->
+      <arg name="id_type" type="s" direction="in" />
+      <!-- Object path of pool to be stopped. -->
+      <arg name="pool" type="o" direction="in" />
+      <!--
+        b: True if the pool was stopped.
+        s: UUID of the stopped pool.
+      -->
+      <arg name="result" type="(bs)" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!-- Unset a key in the kernel keyring. -->
+    <method name="UnsetKey">
+      <!-- Key description of the key to unset. -->
+      <arg name="key_desc" type="s" direction="in" />
+      <!-- b: True if the key was in the keyring, otherwise false. -->
+      <arg name="result" type="b" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+    <!--
+      a{sa{sv}}: Mapping of Stratis pool UUIDs to information about the
+	devices associated with the UUID. These sets of devices may comprise
+        a Stratis pool that can be started with the StartPool message.
+        s: Stratis pool UUIDs
+	    a{sv}: key/value mapping
+          s: keys: possible values are "devs", "key_description", "clevis_info"
+          v: Values for the keys:
+	    "devs": always present, an array of mappings of device information
+	      Contains two keys: "uuid" and "devnode"
+	    "clevis_info": optional, not present if pool is unencrypted.
+	      Only used with V1 pools.
+	      (bv): information about Clevis configuration for all devices
+	        if b is true:
+	          devices have consistent Clevis information
+	          v = (bs): Clevis configuration information for all devices
+	            b: if false, devices are not encrypted with Clevis
+	            s: Clevis configuration
+	        else:
+	          devices have inconsistent Clevis configurations
+	          v = s: error message explaining inconsistency
+	    "key_description": optional, not present if pool is unencrypted.
+	      Only used with V1 pools.
+	      (bv): information about kernel key encryption for all devices
+	        if b is true:
+	          devices have consistent key information
+	          v = (bs): key information for all devices
+	            b: if false, devices are not encrypted with a key
+	            s: key description
+	        else:
+	          devices have inconsistent key information
+	          v = s: error message explaining inconsistency
+	    "metadata_version": optional, only present for V2 pools
+	      bt: optional metadata version number
+	        b: true if the metadata version is consistent for all devices
+	        t: the version number
+	    "features": optional map of pool features, only present for V2 pools
+	      b{sb}: optional map of features to values
+	        b: true if the pool-level metadata contains feature information
+	        {sb}: map of feature names to boolean values
+	          s: feature name
+	          b: true if the feature is enabled
+    -->
+    <property name="StoppedPools" type="a{sa{sv}}" access="read" />
+    <!-- stratisd version -->
+    <property name="Version" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const" />
+    </property>
+  </interface>
   <!--
     The Report interface is an unstable interface for querying internal stratisd
     data structure state. It provides reports as JSON, and while the reports can
@@ -1148,6 +1536,34 @@
     </method>
   </interface>
   <interface name="org.storage.stratis3.Report.r6">
+    <!--
+      This method allows fetching a report by name. If a report by the supplied
+      name does not exist, an error is returned.
+    -->
+    <method name="GetReport">
+      <!-- Name of the report. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- s: Report. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+  </interface>
+  <interface name="org.storage.stratis3.Report.r7">
+    <!--
+      This method allows fetching a report by name. If a report by the supplied
+      name does not exist, an error is returned.
+    -->
+    <method name="GetReport">
+      <!-- Name of the report. -->
+      <arg name="name" type="s" direction="in" />
+      <!-- s: Report. -->
+      <arg name="result" type="s" direction="out" />
+      <arg name="return_code" type="q" direction="out" />
+      <arg name="return_string" type="s" direction="out" />
+    </method>
+  </interface>
+  <interface name="org.storage.stratis3.Report.r8">
     <!--
       This method allows fetching a report by name. If a report by the supplied
       name does not exist, an error is returned.
