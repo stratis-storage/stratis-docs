@@ -71,7 +71,7 @@ We now also provide a systemd service to manage setting up non-root filesystems 
 /etc/fstab.  For devices that require a passphrase or are critical for a working
 system, the following line can be used:
 
-`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID].service,x-systemd.after=stratis-fstab-setup@[POOL_UUID].service 0 2`
+`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID].service 0 2`
 
 The absence of `nofail` here is due to the fact that `nofail` causes the boot to
 proceed prior to a successful mount. This means that passphrase prompts
@@ -82,7 +82,7 @@ For devices that do not require interaction to set up, such as unencrypted devic
 devices that have Clevis bindings, and are not critical for a working system, the
 following line can be optionally used:
 
-`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID].service,x-systemd.after=stratis-fstab-setup@[POOL_UUID].service,nofail 0 2`
+`/dev/stratis/[STRATIS_SYMLINK] [MOUNT_POINT] xfs defaults,x-systemd.requires=stratis-fstab-setup@[POOL_UUID].service,nofail 0 2`
 
 The addition of `nofail` here will cause mounting of this device to proceed
 independently from the boot which can speed up boot times. The set up process will
