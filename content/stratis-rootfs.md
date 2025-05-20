@@ -124,6 +124,11 @@ filesystem will be included in stratisd 2.4.0.
 assumes that any unit dependency in `/etc/fstab` is a `.mount` unit file unless explicitly
 specified, so the examples as previously written would cause a failed boot unless `nofail`
 was specified.
+* `systemd-fstab-generator` automatically includes an After constraint as
+well as a Requires constraint in the generated mouunt file when it processes
+an `x-systemd.requires=` option in an fstab entry.  The
+`x-systemd.after=stratis-fstab-setup@<pool uuid>.service` option in the
+example fstab entry has been removed, since it is redundant.
 
 ### Fedora specific set up
 See [this guide] for specific setup steps on Fedora.
