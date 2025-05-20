@@ -145,7 +145,7 @@ If you insert the following line in your /etc/fstab file, your pool will be
 started and your filesystem will be mounted during the boot process.
 
 ```
-/dev/stratis/<pool name>/<file system name> /mnt xfs defaults,x-systemd.requires=stratis-fstab-setup@<pool uuid>.service,x-systemd.after=stratis-fstab-setup@<pool uuid>.service 0 2
+/dev/stratis/<pool name>/<file system name> /mnt xfs defaults,x-systemd.requires=stratis-fstab-setup@<pool uuid>.service 0 2
 ```
 
 This will ensure that the filesystem's pool is started. In case the pool

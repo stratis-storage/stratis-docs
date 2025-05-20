@@ -33,7 +33,7 @@ a cyclic dependency, and the boot process will fail.
 An example fstab entry for a filesystem on a pool that is encrypted using
 NBDE should look something like this:
 
-`/dev/stratis/<POOL_NAME>/<FILESYSTEM_NAME> <MOUNTPOINT> xfs defaults,_netdev,x-systemd.requires=stratis-fstab-setup-with-network@<POOL_UUID>.service,x-systemd.after=stratis-fstab-setup-with-network@<POOL_UUID>.service 0 2`
+`/dev/stratis/<POOL_NAME>/<FILESYSTEM_NAME> <MOUNTPOINT> xfs defaults,_netdev,x-systemd.requires=stratis-fstab-setup-with-network@<POOL_UUID>.service 0 2`
 
 If a filesystem's pool does not require that the network is up to be
 unlocked then the fstab entry may use the existing
