@@ -15,7 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:41  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Install dependencies
         run: dnf install -y make lyx 'dnf-command(copr)'
       - name: Enable copr repo
@@ -29,7 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:41  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Install dependencies
         run: dnf install -y make yamllint
       - name: Run test
@@ -44,7 +48,9 @@ jobs:
           dnf install -y
           clang
           make
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@master
         with:
           components: cargo
