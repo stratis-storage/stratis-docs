@@ -4938,7 +4938,7 @@ Since we want to allow Stratis to be used for system files, Stratis needs
 \begin_layout Standard
 The use of D-Bus is not possible in the preboot environment.
  Therefore, Stratis has an alternate IPC mechanism to be used in the initramfs.
- This can be accessed through the stratis-min and stratisd-min exectutables.
+ This can be accessed through the stratis-min and stratisd-min executables.
 \end_layout
 
 \begin_layout Standard
