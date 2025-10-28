@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: dnf install -y make lyx 'dnf-command(copr)'
       - name: Enable copr repo
-        run: dnf copr enable atim/zola --assumeyes
+        run: dnf copr enable pgdev/zola --assumeyes
       - name: Install zola
         run: dnf install zola --assumeyes
       - name: Run test
