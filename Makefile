@@ -65,9 +65,13 @@ website-copy: test-website-repo test-commit-msg clean website-distrib
 	(cd ./public; cp * -R ${WEBSITE_REPO})
 	(cd ${WEBSITE_REPO}; git add .; git commit -m "${COMMIT_MSG}")
 
+fmt:
+	(cd ./docs/dbus ; $(MAKE) fmt)
+
 .PHONY:
 	check
 	clean
+	fmt
 	pdfs
 	test-commit-msg
 	test-website-repo

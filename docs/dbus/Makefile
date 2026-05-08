@@ -9,6 +9,13 @@ check-closed-insets:
 
 check: check-closed-insets
 
+fmt:
+	xmllint --format ./blockdev.xml --output ./blockdev.xml
+	xmllint --format ./filesystem.xml --output ./filesystem.xml
+	xmllint --format ./manager.xml --output ./manager.xml
+	xmllint --format ./pool.xml --output ./pool.xml
+
 .PHONY:
 	check
 	check-closed-insets
+	fmt
