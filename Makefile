@@ -68,10 +68,14 @@ website-copy: test-website-repo test-commit-msg clean website-distrib
 fmt:
 	(cd ./docs/dbus ; $(MAKE) fmt)
 
+fmt-ci:
+	(cd ./docs/dbus ; $(MAKE) fmt-ci)
+
 .PHONY:
 	check
 	clean
 	fmt
+	fmt-ci
 	pdfs
 	test-commit-msg
 	test-website-repo
