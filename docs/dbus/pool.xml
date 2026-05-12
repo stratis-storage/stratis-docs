@@ -2117,6 +2117,13 @@
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
     </property>
     <!--
+      The number of LUKS2 token slots that are available for additional
+      bindings.
+        b: True if the pool is encrypted, otherwise false.
+        y: The number of available slots.
+    -->
+    <property name="FreeTokenSlots" type="(by)" access="read"/>
+    <!--
       The maximum number of filesystems that the pool supports. May be
       increased, but not decreased.
     -->
@@ -2175,6 +2182,19 @@
     <!-- Stratis UUID of the pool. -->
     <property name="Uuid" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+    </property>
+    <!--
+      Whether or not the pool's volume key is loaded. If the volume key is not
+      loaded and the pool is encrypted, certain administrative actions can not
+      be performed on the pool.
+        v: b | s
+          b: False if the pool is not encrypted. If the pool is encrypted,
+             true if the key is loaded, otherwise false.
+          s: An error string, if there was an error in determining the volume
+             key status.
+    -->
+    <property name="VolumeKeyLoaded" type="v" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
     </property>
   </interface>
 </node>
