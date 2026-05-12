@@ -75,10 +75,10 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
+        List of specifications for the filesystems.
+          a(s(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
       -->
       <arg name="specs" type="a(s(bs))" direction="in"/>
       <!--
@@ -193,8 +193,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -208,8 +208,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -274,10 +274,10 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
+        List of specifications for the filesystems.
+          a(s(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
       -->
       <arg name="specs" type="a(s(bs))" direction="in"/>
       <!--
@@ -392,8 +392,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -412,8 +412,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -497,10 +497,10 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
+        List of specifications for the filesystems.
+          a(s(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
       -->
       <arg name="specs" type="a(s(bs))" direction="in"/>
       <!--
@@ -615,8 +615,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -635,8 +635,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -720,10 +720,10 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
+        List of specifications for the filesystems.
+          a(s(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
       -->
       <arg name="specs" type="a(s(bs))" direction="in"/>
       <!--
@@ -846,8 +846,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -866,8 +866,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -951,10 +951,10 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
+        List of specifications for the filesystems.
+          a(s(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
       -->
       <arg name="specs" type="a(s(bs))" direction="in"/>
       <!--
@@ -1077,8 +1077,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1097,8 +1097,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -1182,10 +1182,10 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
+        List of specifications for the filesystems.
+          a(s(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
       -->
       <arg name="specs" type="a(s(bs))" direction="in"/>
       <!--
@@ -1308,8 +1308,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1328,8 +1328,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -1413,11 +1413,11 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
-           bs: Optional size limit specification
+        List of specifications for the filesystems.
+          a(s(bs)(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
+            bs: Optional size limit specification
       -->
       <arg name="specs" type="a(s(bs)(bs))" direction="in"/>
       <!--
@@ -1540,8 +1540,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1560,8 +1560,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -1645,11 +1645,11 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
-           bs: Optional size limit specification
+        List of specifications for the filesystems.
+          a(s(bs)(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
+            bs: Optional size limit specification
       -->
       <arg name="specs" type="a(s(bs)(bs))" direction="in"/>
       <!--
@@ -1803,8 +1803,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfo" type="(b(b(ss)))" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -1823,8 +1823,8 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
     -->
     <property name="KeyDescription" type="(b(bs))" access="read"/>
     <!-- Name of the pool. -->
@@ -1892,8 +1892,8 @@
       <!-- Pin-specific Clevis configuration information. -->
       <arg name="json" type="s" direction="in"/>
       <!--
-         Optional token slot index to bind the pool at. If no token slot
-	 specified, use the first available empty slot.
+        Optional token slot index to bind the pool at. If no token slot
+        specified, use the first available empty slot.
       -->
       <arg name="token_slot" type="(bu)" direction="in"/>
       <!-- True if any new bindings were added, otherwise false. -->
@@ -1906,8 +1906,8 @@
       <!-- Description of the key in the kernel keyring. -->
       <arg name="key_desc" type="s" direction="in"/>
       <!--
-         Optional token slot index to bind the pool at. If no token slot
-	 specified, use the first available empty slot.
+        Optional token slot index to bind the pool at. If no token slot
+        specified, use the first available empty slot.
       -->
       <arg name="token_slot" type="(bu)" direction="in"/>
       <!-- True if any new bindings were added, otherwise false. -->
@@ -1918,11 +1918,11 @@
     <!-- Create filesystems for the pool. -->
     <method name="CreateFilesystems">
       <!--
-	 List of specifications for the filesystems.
-         a(s(bs)): List of names and optional size specification.
-           s: Name
-           bs: Optional size specification
-           bs: Optional size limit specification
+        List of specifications for the filesystems.
+          a(s(bs)(bs)): List of names and optional size specification.
+            s: Name
+            bs: Optional size specification
+            bs: Optional size limit specification
       -->
       <arg name="specs" type="a(s(bs)(bs))" direction="in"/>
       <!--
@@ -2002,8 +2002,8 @@
     -->
     <method name="RebindClevis">
       <!--
-         Optional token slot index to rebind the pool at. If no token slot
-	 specified, use the first slot bound with Clevis.
+        Optional token slot index to rebind the pool at. If no token slot
+        specified, use the first slot bound with Clevis.
       -->
       <arg name="token_slot" type="(bu)" direction="in"/>
       <!--
@@ -2023,8 +2023,8 @@
       <!-- Key description. -->
       <arg name="key_desc" type="s" direction="in"/>
       <!--
-         Optional token slot index to rebind the pool at. If no token slot
-	 specified, use the first slot bound with this method.
+        Optional token slot index to rebind the pool at. If no token slot
+        specified, use the first slot bound with this method.
       -->
       <arg name="token_slot" type="(bu)" direction="in"/>
       <!-- True if the specified key description is different. -->
@@ -2100,8 +2100,8 @@
       b(ss): Clevis encryption configuration.
          b: True if the pool is encrypted using Clevis.
          ss: Clevis configuration.
-	   s: Clevis pin.
-	   s: Pin-specific Clevis configuration information.
+           s: Clevis pin.
+           s: Pin-specific Clevis configuration information.
 
       For V2 pools, an array of token-slot, Clevis configuration pairs,
       representing the Clevis encryption situation for the whole pool.
@@ -2109,7 +2109,7 @@
         u: Token slot.
         ss: Associated Clevis configuration.
           s: Clevis pin.
-	  s: Pin-specific Clevis configuration information.
+          s: Pin-specific Clevis configuration information.
     -->
     <property name="ClevisInfos" type="v" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
@@ -2130,14 +2130,14 @@
          devices in the pool, otherwise false.
       bs: Encryption information.
          b: True if there is a key description for the devices in the pool,
-	    otherwise false.
-	 s: Key description.
+            otherwise false.
+         s: Key description.
 
       For V2 pools, an array of token-slot, key description pairs,
       representing the key description situation for the whole pool.
       u(ss): Token slot, key description pair.
         u: Token slot.
-	s: Associated key description.
+        s: Associated key description.
     -->
     <property name="KeyDescriptions" type="v" access="read"/>
     <!-- Pool metadata version. -->
