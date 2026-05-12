@@ -2450,9 +2450,7 @@
     -->
     <property name="ClevisInfos" type="v" access="read"/>
     <!-- True if the pool is encrypted, otherwise false. -->
-    <property name="Encrypted" type="b" access="read">
-      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
-    </property>
+    <property name="Encrypted" type="b" access="read"/>
     <!--
       The number of LUKS2 token slots that are available for additional
       bindings.
