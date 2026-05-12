@@ -1553,6 +1553,7 @@
       <arg name="key_desc" type="s" direction="in"/>
       <!-- File descriptor through which to read the key data. -->
       <arg name="key_fd" type="h" direction="in"/>
+      <arg name="remove_cache" type="b" direction="in"/>
       <!--
         b: True if the key state was changed, otherwise false.
         b: True if the key was newly set in the keyring. False if a key with the
@@ -1585,6 +1586,11 @@
           h: The file descriptor
       -->
       <arg name="key_fd" type="(bh)" direction="in"/>
+      <!--
+        True if the pool should be started without its cache, and the entries
+        describing the cache in the pool's metadata should be removed.
+      -->
+      <arg name="remove_cache" type="b" direction="in"/>
       <!--
         b: True if the pool was started, otherwise false.
         o: Object path of the started pool.
