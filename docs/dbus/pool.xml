@@ -2482,6 +2482,15 @@
         s: Associated key description.
     -->
     <property name="KeyDescriptions" type="v" access="read"/>
+    <!--
+      (bs): The last time the pool was re-encrypted.
+        b: False if the pool is unencrypted, or if the pool is encrypted but
+           has never been re-encrypted.
+        s: A string representing the time the pool was most recently
+           re-encrypted. The format of the string is RFC 3339 and ISO 8601
+           compliant.
+    -->
+    <property name="LastReencryptedTimestamp" type="(bs)" access="read"/>
     <!-- Pool metadata version. -->
     <property name="MetadataVersion" type="t" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
