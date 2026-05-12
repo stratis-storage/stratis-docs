@@ -7,7 +7,13 @@ clean:
 check-closed-insets:
 	@grep --quiet "^status open$$" DBusAPIReference.lyx ; if [ $$? -ne "1" ] ; then exit 1 ; fi
 
-check: check-closed-insets
+check-no-tabs:
+	grep --quiet -P "\t" ./blockdev.xml ; if [ $$? -ne "1" ] ; then exit 1 ; fi
+	grep --quiet -P "\t" ./filesystem.xml ; if [ $$? -ne "1" ] ; then exit 1 ; fi
+	grep --quiet -P "\t" ./manager.xml ; if [ $$? -ne "1" ] ; then exit 1 ; fi
+	grep --quiet -P "\t" ./pool.xml ; if [ $$? -ne "1" ] ; then exit 1 ; fi
+
+check: check-closed-insets check-no-tabs
 
 fmt:
 	xmllint --format ./blockdev.xml --output ./blockdev.xml
@@ -28,5 +34,6 @@ fmt-ci:
 .PHONY:
 	check
 	check-closed-insets
+	check-no-tabs
 	fmt
 	fmt-ci
