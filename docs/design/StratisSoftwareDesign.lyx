@@ -1,5 +1,5 @@
-#LyX 2.3 created this file. For more info see http://www.lyx.org/
-\lyxformat 544
+#LyX 2.5 created this file. For more info see https://www.lyx.org/
+\lyxformat 643
 \begin_document
 \begin_header
 \save_transient_properties false
@@ -12,11 +12,11 @@
 \begin_modules
 logicalmkup
 \end_modules
-\maintain_unincluded_children false
+\maintain_unincluded_children no
 \language english
 \language_package default
-\inputencoding auto
-\fontencoding global
+\inputencoding auto-legacy
+\fontencoding auto
 \font_roman "default" "default"
 \font_sans "default" "default"
 \font_typewriter "default" "default"
@@ -24,7 +24,9 @@ logicalmkup
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
-\font_osf false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
 \use_microtype false
@@ -56,9 +58,19 @@ logicalmkup
 \use_indices false
 \paperorientation portrait
 \suppress_date false
-\justification true
-\use_refstyle 1
+\justification default
+\crossref_package refstyle
+\use_formatted_ref 0
 \use_minted 0
+\use_lineno 0
+\backgroundcolor none
+\fontcolor none
+\notefontcolor lightgray
+\boxbgcolor red
+\table_border_color default
+\table_odd_row_color default
+\table_even_row_color default
+\table_alt_row_colors_start 1
 \index Index
 \shortcut idx
 \color #008000
@@ -78,11 +90,17 @@ logicalmkup
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
+\tablestyle default
 \tracking_changes false
 \output_changes false
+\change_bars false
+\postpone_fragile_content false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\docbook_mathml_version 0
 \end_header
 
 \begin_body
@@ -93,8 +111,7 @@ Stratis Software Design
 status collapsed
 
 \begin_layout Plain Layout
-This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
- International License.
+This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
 \end_layout
 
 \end_inset
@@ -116,10 +133,10 @@ LatexCommand tableofcontents
 status collapsed
 
 \begin_layout Plain Layout
-Before saving this file preparatory to a commit, make sure that all insets
- are closed.
- If you are able to read this note, you haven't performed this essential
- step.
+Before saving this file preparatory to a commit,
+ make sure that all insets are closed.
+ If you are able to read this note,
+ you haven't performed this essential step.
 \end_layout
 
 \end_inset
@@ -141,7 +158,8 @@ literal "false"
 
 \end_inset
 
-, and is written using \SpecialChar LyX
+,
+ and is written using \SpecialChar LyX
 .
 \end_layout
 
@@ -150,11 +168,13 @@ Summary
 \end_layout
 
 \begin_layout Standard
-Stratis is an easily configured, tightly integrated solution for storage
- that works within the existing Linux storage management stack.
- To achieve this, Stratis prioritizes a straightforward command-line experience,
- a rich API, and a fully automated, externally-opaque approach to storage
- management.
+Stratis is an easily configured,
+ tightly integrated solution for storage that works within the existing Linux storage management stack.
+ To achieve this,
+ Stratis prioritizes a straightforward command-line experience,
+ a rich API,
+ and a fully automated,
+ externally-opaque approach to storage management.
  It builds upon elements of the existing storage stack as much as possible.
 \end_layout
 
@@ -167,34 +187,34 @@ Problem Statement
 \end_layout
 
 \begin_layout Standard
-Linux has gained many storage-related features over the years, but each
- of these features has required the user to manage the configuration of
- these features in a layered, additive manner.
- Genuinely new and useful features such as thin provisioning, RAID, and
- multipath are dependent on the user correctly configuring many different
- layers via different tools to achieve a complete result.
- Furthermore, since each layer's configuration tool only has a command-line
- interface (CLI), higher-level management tools must each construct input
- and parse the human-oriented output for each of these layers' CLIs.
- This causes a waste of effort and opportunity for bugs, as each higher-level
- tool builds its own internal API for the feature on top of the lower level
- tool's CLI.
+Linux has gained many storage-related features over the years,
+ but each of these features has required the user to manage the configuration of these features in a layered,
+ additive manner.
+ Genuinely new and useful features such as thin provisioning,
+ RAID,
+ and multipath are dependent on the user correctly configuring many different layers via different tools to achieve a complete result.
+ Furthermore,
+ since each layer's configuration tool only has a command-line interface (CLI),
+ higher-level management tools must each construct input and parse the human-oriented output for each of these layers' CLIs.
+ This causes a waste of effort and opportunity for bugs,
+ as each higher-level tool builds its own internal API for the feature on top of the lower level tool's CLI.
 \end_layout
 
 \begin_layout Subsection
-Goal: Bring advanced features to users in a simpler form
+Goal:
+ Bring advanced features to users in a simpler form
 \end_layout
 
 \begin_layout Standard
 Linux storage features are modular and stackable.
- This promotes flexibility and allows independent development efforts, but
- leads to a huge number of possible configurations.
- This requires the user to manage the stack because there's not enough commonali
-ty to enable effective automation.
+ This promotes flexibility and allows independent development efforts,
+ but leads to a huge number of possible configurations.
+ This requires the user to manage the stack because there's not enough commonality to enable effective automation.
 \end_layout
 
 \begin_layout Standard
-But really, there 
+But really,
+ there 
 \emph on
 is
 \emph default
@@ -204,61 +224,66 @@ is
 \end_layout
 
 \begin_layout Standard
-Automated management then leads to less administrative burden placed on
- the user.
- The user still specifies resources, desired features, and results – what
- hardware resources to use, what features to enable, how storage should
- be logically presented – using a smaller number of concepts with well-defined
- relations.
- Software manages the rest, and handles most runtime issues without user
- involvement.
+Automated management then leads to less administrative burden placed on the user.
+ The user still specifies resources,
+ desired features,
+ and results – what hardware resources to use,
+ what features to enable,
+ how storage should be logically presented – using a smaller number of concepts with well-defined relations.
+ Software manages the rest,
+ and handles most runtime issues without user involvement.
 \end_layout
 
 \begin_layout Subsection
-Proposal: Implement a hybrid Volume Managing Filesystem
+Proposal:
+ Implement a hybrid Volume Managing Filesystem
 \end_layout
 
 \begin_layout Standard
-In the past ten years, 
+In the past ten years,
+ 
 \emph on
 volume-managing filesystems
 \emph default
- (VMFs) such as ZFS and Btrfs have come into vogue and gained users, after
- being previously available only on other UNIX-based operating systems.
- These incorporate what would be handled by multiple tools under traditional
- Linux into a single tool.
- Redundancy, thin provisioning, volume management, and filesystems become
- features within a single comprehensive, consistent configuration system.
- Where a traditional Linux storage stack exposes the layers of block devices
- to the user to manage, VMFs hide everything in a 
+ (VMFs) such as ZFS and Btrfs have come into vogue and gained users,
+ after being previously available only on other UNIX-based operating systems.
+ These incorporate what would be handled by multiple tools under traditional Linux into a single tool.
+ Redundancy,
+ thin provisioning,
+ volume management,
+ and filesystems become features within a single comprehensive,
+ consistent configuration system.
+ Where a traditional Linux storage stack exposes the layers of block devices to the user to manage,
+ VMFs hide everything in a 
 \emph on
 pool
 \emph default
 .
- The user puts raw storage in the pool, the VMF manages the storage in the
- pool, providing the features the user wants, and allows the user to create
- filesystems from the pool without being concerned with the details.
+ The user puts raw storage in the pool,
+ the VMF manages the storage in the pool,
+ providing the features the user wants,
+ and allows the user to create filesystems from the pool without being concerned with the details.
 \end_layout
 
 \begin_layout Standard
-Unfortunately, existing VMFs aren't easily used on enterprise Linux distribution
-s like RHEL.
- ZFS isn't an option RHEL can embrace due to licensing, Ubuntu notwithstanding.
- Btrfs has no licensing issues, but maintaining up-to-date support for it
- in enterprise kernels proved difficult.
+Unfortunately,
+ existing VMFs aren't easily used on enterprise Linux distributions like RHEL.
+ ZFS isn't an option RHEL can embrace due to licensing,
+ Ubuntu notwithstanding.
+ Btrfs has no licensing issues,
+ but maintaining up-to-date support for it in enterprise kernels proved difficult.
 \end_layout
 
 \begin_layout Standard
-We can see from the many developer-years of effort that have gone into these
- two projects that writing a VMF is a tremendous, time-consuming undertaking.
+We can see from the many developer-years of effort that have gone into these two projects that writing a VMF is a tremendous,
+ time-consuming undertaking.
  We also can hear our users demanding their features and ease of use.
 \end_layout
 
 \begin_layout Standard
-Rather than writing a new VMF from scratch, Stratis proposes to satisfy
- VMF-like requirements by managing existing technologies on behalf of the
- user, so that users can manage their storage using high-level concepts
- like 
+Rather than writing a new VMF from scratch,
+ Stratis proposes to satisfy VMF-like requirements by managing existing technologies on behalf of the user,
+ so that users can manage their storage using high-level concepts like 
 \begin_inset Quotes eld
 \end_inset
 
@@ -274,19 +299,18 @@ filesystem
 \begin_inset Quotes erd
 \end_inset
 
-, and remain unconcerned with the more complex details under the covers.
+,
+ and remain unconcerned with the more complex details under the covers.
 \end_layout
 
 \begin_layout Standard
-This is also a chance to learn from the benefits and shortcomings of existing
- solutions.
+This is also a chance to learn from the benefits and shortcomings of existing solutions.
  We should not just copy ZFS.
- ZFS is now fifteen years old and the storage landscape has changed since
- its design.
- We seek to satisfy the same needs that ZFS does, but also integrate more
- tightly into today's increasingly automated storage management solutions
- that span the data center as well as the local machine.
- This is made possible by a hybrid, userspace-based approach.
+ ZFS is now fifteen years old and the storage landscape has changed since its design.
+ We seek to satisfy the same needs that ZFS does,
+ but also integrate more tightly into today's increasingly automated storage management solutions that span the data center as well as the local machine.
+ This is made possible by a hybrid,
+ userspace-based approach.
 \end_layout
 
 \begin_layout Subsection
@@ -298,8 +322,14 @@ Requirements
 \emph on
 Make features easier to use in combination with each other
 \emph default
-: thin provisioning, snapshots, multipath, encryption, hardware reconfiguration,
- monitoring, and a caching tier
+:
+ thin provisioning,
+ snapshots,
+ multipath,
+ encryption,
+ hardware reconfiguration,
+ monitoring,
+ and a caching tier
 \end_layout
 
 \begin_layout Enumerate
@@ -318,8 +348,8 @@ Single way to do things
 
 \begin_layout Enumerate
 Do not expose internal implementation details.
- Gives Stratis more implementation freedom, and of little value since internals
- are too complex to make manual user repairs practical
+ Gives Stratis more implementation freedom,
+ and of little value since internals are too complex to make manual user repairs practical
 \end_layout
 
 \begin_layout Enumerate
@@ -328,7 +358,8 @@ User typically will not use on a daily basis
 
 \begin_deeper
 \begin_layout Enumerate
-Consistent commands that a user can guess at, and probably be right
+Consistent commands that a user can guess at,
+ and probably be right
 \end_layout
 
 \begin_layout Enumerate
@@ -356,8 +387,9 @@ User must master only one tool
 \end_layout
 
 \begin_layout Enumerate
-Helps user learn: if task not possible through tool, it must not be worth
- doing (or a good idea)
+Helps user learn:
+ if task not possible through tool,
+ it must not be worth doing (or a good idea)
 \end_layout
 
 \end_deeper
@@ -368,8 +400,7 @@ Programmatic language-neutral API for higher-level management tool integration
 
 \begin_deeper
 \begin_layout Enumerate
-A clear next step for users after hitting the limitations of scripting the
- CLI
+A clear next step for users after hitting the limitations of scripting the CLI
 \end_layout
 
 \begin_layout Enumerate
@@ -383,8 +414,8 @@ Event-driven monitoring and alerts
 
 \begin_deeper
 \begin_layout Enumerate
-Monitoring and alert messages expressed in terms of Stratis user-visible
- simple concepts, not implementation details
+Monitoring and alert messages expressed in terms of Stratis user-visible simple concepts,
+ not implementation details
 \end_layout
 
 \begin_layout Enumerate
@@ -406,9 +437,8 @@ Eliminate manual resizing of filesystems
 
 \begin_deeper
 \begin_layout Enumerate
-Numerous problem reports throughout the years indicate that resizing filesystems
- is an area where users feel unease, due to potential data loss if a mistake
- is made.
+Numerous problem reports throughout the years indicate that resizing filesystems is an area where users feel unease,
+ due to potential data loss if a mistake is made.
  No real reason to require the user do this any more.
 \end_layout
 
@@ -425,9 +455,9 @@ demand-allocated
 \begin_inset Quotes erd
 \end_inset
 
-, similar to virtual memory.
- Current technology allows us to manage a filesystem's actual usage up (growfs)
- or down (thin provisioning).
+,
+ similar to virtual memory.
+ Current technology allows us to manage a filesystem's actual usage up (growfs) or down (thin provisioning).
 \end_layout
 
 \end_deeper
@@ -437,13 +467,13 @@ Initrd-capable
 
 \begin_deeper
 \begin_layout Enumerate
-Allows root fs, all other filesystems except /boot to use Stratis.
+Allows root fs,
+ all other filesystems except /boot to use Stratis.
  Needed for ease of use
 \end_layout
 
 \begin_layout Enumerate
-Limited environment – alternate IPC mechanism that works in the initrd is
- available
+Limited environment – alternate IPC mechanism that works in the initrd is available
 \end_layout
 
 \end_deeper
@@ -469,7 +499,8 @@ Implementable in 1-2 years
 
 \begin_deeper
 \begin_layout Enumerate
-We're already behind, waiting another 10 years isn't an option
+We're already behind,
+ waiting another 10 years isn't an option
 \end_layout
 
 \end_deeper
@@ -482,19 +513,18 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Stratis is a local storage solution that lets multiple logical filesystems
- share a pool of storage that is allocated from one or more block devices.
- Instead of an entirely in-kernel approach like ZFS or Btrfs, Stratis uses
- a hybrid user/kernel approach that builds upon existing block capabilities
- like device-mapper, existing filesystem capabilities like XFS, and a user
- space daemon for monitoring and control.
+Stratis is a local storage solution that lets multiple logical filesystems share a pool of storage that is allocated from one or more block devices.
+ Instead of an entirely in-kernel approach like ZFS or Btrfs,
+ Stratis uses a hybrid user/kernel approach that builds upon existing block capabilities like device-mapper,
+ existing filesystem capabilities like XFS,
+ and a user space daemon for monitoring and control.
 \end_layout
 
 \begin_layout Standard
-The goal of Stratis is to provide the conceptual simplicity of volume-managing
- filesystems, and surpass them in areas such as monitoring and notification,
- automatic reconfiguration, and integration with higher-level storage management
- frameworks.
+The goal of Stratis is to provide the conceptual simplicity of volume-managing filesystems,
+ and surpass them in areas such as monitoring and notification,
+ automatic reconfiguration,
+ and integration with higher-level storage management frameworks.
 \end_layout
 
 \begin_layout Section
@@ -503,24 +533,28 @@ Stratis and the Linux storage stack
 
 \begin_layout Standard
 Stratis simplifies many aspects of local storage provisioning and configuration.
- This, along with its API, would let projects dependent on configuring local
- storage do so much more easily.
+ This,
+ along with its API,
+ would let projects dependent on configuring local storage do so much more easily.
 \end_layout
 
 \begin_layout Standard
-For example, installing the OS to a Stratis pool using Anaconda.
- After selecting the disks to use for the pool, the first benefit would
- be the complex flow around sizing of filesystems could be omitted.
- Second, since Stratis has an API, Anaconda could use it, instead of needing
- work in Blivet to build an API on top of command line tools.
+For example,
+ installing the OS to a Stratis pool using Anaconda.
+ After selecting the disks to use for the pool,
+ the first benefit would be the complex flow around sizing of filesystems could be omitted.
+ Second,
+ since Stratis has an API,
+ Anaconda could use it,
+ instead of needing work in Blivet to build an API on top of command line tools.
 \end_layout
 
 \begin_layout Standard
-Other management tools like Cockpit, virtualization products like RHEV,
- or container products like Atomic would find it much simpler and less error-pro
-ne to use storage and snapshots with Stratis, for the same two reasons:
- don't need to worry about per-filesystem sizing (only that the pool has
- enough 
+Other management tools like Cockpit,
+ virtualization products like RHEV,
+ or container products like Atomic would find it much simpler and less error-prone to use storage and snapshots with Stratis,
+ for the same two reasons:
+ don't need to worry about per-filesystem sizing (only that the pool has enough 
 \begin_inset Quotes eld
 \end_inset
 
@@ -528,13 +562,15 @@ backing store
 \begin_inset Quotes erd
 \end_inset
 
-); and the API, which allows better tool-to-tool integration than using
- CLI programmatically.
+);
+ and the API,
+ which allows better tool-to-tool integration than using CLI programmatically.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 placement H
+alignment document
 wide false
 sideways false
 status collapsed
@@ -572,7 +608,9 @@ Conceptual Model
 \end_layout
 
 \begin_layout Subsection
-Blockdevs, pools, and filesystems
+Blockdevs,
+ pools,
+ and filesystems
 \end_layout
 
 \begin_layout Standard
@@ -580,22 +618,22 @@ Stratis’s conceptual model consists of
 \emph on
 blockdevs
 \emph default
-, 
+,
+ 
 \emph on
 pools
 \emph default
-, and 
+,
+ and 
 \emph on
 filesystems
 \emph default
 .
- A pool is created from one or more blockdevs (block devices), and then
- filesystems are created from the pool.
- Filesystems are mountable hierarchical collections of files that allocate
- backing storage from the pool as it is needed.
- The key difference between a Stratis filesystem and a conventional Unix
- filesystem is that Stratis filesystem sizing and maintenance are not managed
- by the user, but by Stratis.
+ A pool is created from one or more blockdevs (block devices),
+ and then filesystems are created from the pool.
+ Filesystems are mountable hierarchical collections of files that allocate backing storage from the pool as it is needed.
+ The key difference between a Stratis filesystem and a conventional Unix filesystem is that Stratis filesystem sizing and maintenance are not managed by the user,
+ but by Stratis.
 \end_layout
 
 \begin_layout Subsection
@@ -617,16 +655,18 @@ A pool also optionally has a
 \emph on
 cache tier
 \emph default
- that uses a separate collection of faster blockdevs to improve performance
- instead of increasing the pool's capacity.
+ that uses a separate collection of faster blockdevs to improve performance instead of increasing the pool's capacity.
 \end_layout
 
 \begin_layout Standard
-Since a single system may have multiple pools, each pool has a name, as
- does each filesystem within a pool.
+Since a single system may have multiple pools,
+ each pool has a name,
+ as does each filesystem within a pool.
  These are both settable by the user.
- Blockdevs, pools, and filesystems also have UUIDs, which are not settable
- by the user.
+ Blockdevs,
+ pools,
+ and filesystems also have UUIDs,
+ which are not settable by the user.
 \end_layout
 
 \begin_layout Standard
@@ -635,13 +675,12 @@ Stratis supports large numbers of blockdevs and up to
 \end_inset
 
 filesystems per pool.
- However, practical limits on these values may compel users to restrict
- themselves to smaller numbers of blockdevs and filesystems.
+ However,
+ practical limits on these values may compel users to restrict themselves to smaller numbers of blockdevs and filesystems.
 \end_layout
 
 \begin_layout Standard
-A new filesystem is either a new empty filesystem or a snapshot of an existing
- filesystem within the pool.
+A new filesystem is either a new empty filesystem or a snapshot of an existing filesystem within the pool.
  Stratis currently does not distinguish between snapshots and filesystems.
 \end_layout
 
@@ -650,10 +689,11 @@ Scalability and Performance Considerations
 \end_layout
 
 \begin_layout Standard
-Stratis doesn't optimize performance within its data tier, instead focusing
- there on flexibility and integrity.
- Improved performance is the job of caching tier, or perhaps building the
- pool using blockdevs with higher IOPs, such as SSDs.
+Stratis doesn't optimize performance within its data tier,
+ instead focusing there on flexibility and integrity.
+ Improved performance is the job of caching tier,
+ or perhaps building the pool using blockdevs with higher IOPs,
+ such as SSDs.
 \end_layout
 
 \begin_layout Part
@@ -672,10 +712,13 @@ Software Components
 
 \begin_layout Standard
 Stratis consists of a command-line tool,
+
 \emph on
  stratis
 \emph default
-, and a service,
+,
+ and a service,
+
 \emph on
  stratisd
 \emph default
@@ -683,21 +726,21 @@ Stratis consists of a command-line tool,
 \end_layout
 
 \begin_layout Standard
-stratis implements the command-line interface, and converts commands into
- D-Bus API calls to stratisd.
+stratis implements the command-line interface,
+ and converts commands into D-Bus API calls to stratisd.
 \end_layout
 
 \begin_layout Standard
-stratisd implements the D-Bus interface, and manages and monitors Stratis
- internal pool blockdevs, as described below.
- It is started by the system and continues to run as long as Stratis pools
- or blockdevs are present in the system.
+stratisd implements the D-Bus interface,
+ and manages and monitors Stratis internal pool blockdevs,
+ as described below.
+ It is started by the system and continues to run as long as Stratis pools or blockdevs are present in the system.
 \end_layout
 
 \begin_layout Standard
 stratisd includes a simulator engine.
- The simulator engine is purely computational and does not affect the 
-environment, although it does communicate over the D-Bus.
+ The simulator engine is purely computational and does not affect the environment,
+ although it does communicate over the D-Bus.
 \end_layout
 
 \begin_layout Standard
@@ -708,6 +751,7 @@ reference "fig:stratis"
 plural "false"
 caps "false"
 noprefix "false"
+nolink "false"
 
 \end_inset
 
@@ -716,6 +760,8 @@ noprefix "false"
 
 \begin_layout Standard
 \begin_inset Float figure
+placement document
+alignment document
 wide false
 sideways false
 status collapsed
@@ -763,9 +809,8 @@ User Experience
 \end_layout
 
 \begin_layout Standard
-Stratis has a command-line tool that enables the administrator to create
- a Stratis pool from one or more blockdevs, and then allocate filesystems
- from the pool.
+Stratis has a command-line tool that enables the administrator to create a Stratis pool from one or more blockdevs,
+ and then allocate filesystems from the pool.
 \end_layout
 
 \begin_layout Standard
@@ -774,7 +819,6 @@ See reference implementation at
 status collapsed
 
 \begin_layout Plain Layout
-
 https://github.com/stratis-storage/stratis-cli
 \end_layout
 
@@ -784,9 +828,8 @@ https://github.com/stratis-storage/stratis-cli
 \end_layout
 
 \begin_layout Standard
-This component is not required to be installed, in cases such as an appliance
- where a higher-level application such as Cockpit or Ansible uses the D-Bus
- API directly.
+This component is not required to be installed,
+ in cases such as an appliance where a higher-level application such as Cockpit or Ansible uses the D-Bus API directly.
 \end_layout
 
 \begin_layout Subsection
@@ -795,37 +838,36 @@ Known shortcomings
 
 \begin_layout Standard
 Stratis' goal is to hide the complexity of its implementation from the user,
- but by using a reuse/layering approach to its implementation, there will
- be places where Stratis' implementation details will peek through.
- This could cause user confusion, and also could threaten Stratis integrity
- if the user makes changes.
+ but by using a reuse/layering approach to its implementation,
+ there will be places where Stratis' implementation details will peek through.
+ This could cause user confusion,
+ and also could threaten Stratis integrity if the user makes changes.
 \end_layout
 
 \begin_layout Itemize
-For Stratis filesystems, 'df' will report the current used and free sizes
- as seen and reported by XFS.
- This is not useful information, because the filesystem's actual storage
- usage will be less due to thin provisioning, and also because Stratis will
- automatically grow the filesystem if it nears XFS's currently sized capacity.
+For Stratis filesystems,
+ 'df' will report the current used and free sizes as seen and reported by XFS.
+ This is not useful information,
+ because the filesystem's actual storage usage will be less due to thin provisioning,
+ and also because Stratis will automatically grow the filesystem if it nears XFS's currently sized capacity.
 \end_layout
 
 \begin_layout Itemize
-Users should not try to reformat or reconfigure XFS filesystems that are
- managed by Stratis.
- Stratis has no way to enforce this or warn the user to avoid this, other
- than in the documentation.
+Users should not try to reformat or reconfigure XFS filesystems that are managed by Stratis.
+ Stratis has no way to enforce this or warn the user to avoid this,
+ other than in the documentation.
 \end_layout
 
 \begin_layout Itemize
-Stratis will use many device-mapper devices, which will show up in `dmsetup`
- listings and /proc/partitions.
- Similarly, `lsblk` output on a Stratis system will reflect Stratis' internal
- workings and layers.
+Stratis will use many device-mapper devices,
+ which will show up in `dmsetup` listings and /proc/partitions.
+ Similarly,
+ `lsblk` output on a Stratis system will reflect Stratis' internal workings and layers.
 \end_layout
 
 \begin_layout Itemize
-Stratis requires a userspace daemon, which must remain running at all times
- for proper monitoring and pool maintenance.
+Stratis requires a userspace daemon,
+ which must remain running at all times for proper monitoring and pool maintenance.
 \end_layout
 
 \begin_layout Section
@@ -833,8 +875,8 @@ D-Bus Programmatic API
 \end_layout
 
 \begin_layout Standard
-The Stratis service process exposes a D-Bus interface, for other programs
- to integrate support for Stratis.
+The Stratis service process exposes a D-Bus interface,
+ for other programs to integrate support for Stratis.
  This is considered the primary Stratis interface.
  The command-line tool uses the D-Bus API.
 \end_layout
@@ -845,25 +887,25 @@ Overview
 
 \begin_layout Standard
 The D-Bus API is part of stratisd.
- It is a thin layer that receives messages on the D-Bus, processes them,
- transmits them to the Stratis engine, receives the results from the engine,
+ It is a thin layer that receives messages on the D-Bus,
+ processes them,
+ transmits them to the Stratis engine,
+ receives the results from the engine,
  and returns the result to the invoker of the API.
- When processing method calls, its responsibilities are confined to:
+ When processing method calls,
+ its responsibilities are confined to:
 \end_layout
 
 \begin_layout Itemize
-Receiving arguments and verifying that they conform to the signature of
- the invoked method.
+Receiving arguments and verifying that they conform to the signature of the invoked method.
 \end_layout
 
 \begin_layout Itemize
-Transforming method arguments received on the D-Bus to arguments of the
- appropriate type to be passed to engine methods.
+Transforming method arguments received on the D-Bus to arguments of the appropriate type to be passed to engine methods.
 \end_layout
 
 \begin_layout Itemize
-Converting tuple arguments used to represent non-mandatory arguments to
- values which inhabit the Rust Option type.
+Converting tuple arguments used to represent non-mandatory arguments to values which inhabit the Rust Option type.
 \end_layout
 
 \begin_layout Itemize
@@ -871,8 +913,7 @@ Invoking the appropriate engine methods and capturing their return values.
 \end_layout
 
 \begin_layout Itemize
-Marshalling the appropriate return values to place on the D-Bus along with
- the return code and message.
+Marshalling the appropriate return values to place on the D-Bus along with the return code and message.
 \end_layout
 
 \begin_layout Itemize
@@ -889,7 +930,6 @@ status collapsed
 status collapsed
 
 \begin_layout Plain Layout
-
 https://github.com/diwic/dbus-rs
 \end_layout
 
@@ -917,14 +957,14 @@ Security Policy
 
 \begin_layout Standard
 Most stratisd D-Bus methods require root permissions.
- However, listing operations do not; these can be done by an unprivileged
- user.
- The default permissions are specified in the policy file, stratisd.conf,
+ However,
+ listing operations do not;
+ these can be done by an unprivileged user.
+ The default permissions are specified in the policy file,
+ stratisd.conf,
  included in the stratisd distribution.
- These defaults permit all actions by root users but restrict unprivileged
- users to read-only actions.
- Systems administrators can adjust permissions by editing the stratisd D-Bus
- policy files.
+ These defaults permit all actions by root users but restrict unprivileged users to read-only actions.
+ Systems administrators can adjust permissions by editing the stratisd D-Bus policy files.
 \end_layout
 
 \begin_layout Subsection
@@ -932,12 +972,11 @@ Querying stratisd state via D-Bus
 \end_layout
 
 \begin_layout Standard
-stratisd exposes a reporting interface that allows users to query the state
- of stratisd's internal data structures for debugging and error reporting.
- The D-Bus query returns a JSON string that can be parsed to detect state
- programmatically; however, the report interface is unstable, and consequently
- the names and schemas of provided reports do not follow the semantic versioning
- rules to which the rest of stratisd's API conforms.
+stratisd exposes a reporting interface that allows users to query the state of stratisd's internal data structures for debugging and error reporting.
+ The D-Bus query returns a JSON string that can be parsed to detect state programmatically;
+ however,
+ the report interface is unstable,
+ and consequently the names and schemas of provided reports do not follow the semantic versioning rules to which the rest of stratisd's API conforms.
 \end_layout
 
 \begin_layout Section
@@ -960,17 +999,12 @@ They are available in the initramfs as a form of IPC
 \end_layout
 
 \begin_layout Enumerate
-They allow passing file descriptors from process to process in the same
- network packet as the JSON
+They allow passing file descriptors from process to process in the same network packet as the JSON
 \end_layout
 
 \begin_layout Standard
-The JSON RPC IPC mechanism uses the exact same code for the stratisd storage
- engine and is simply a thin layer that handles all of the network operations
- and input parsing to provide arguments to the engine.
- The initramfs IPC API is more limited than that of the D-Bus API and is
- not versioned for backwards compatibility given that it is expected that
- the corresponding CLI will be used to communicate with the minimal daemon.
+The JSON RPC IPC mechanism uses the exact same code for the stratisd storage engine and is simply a thin layer that handles all of the network operations and input parsing to provide arguments to the engine.
+ The initramfs IPC API is more limited than that of the D-Bus API and is not versioned for backwards compatibility given that it is expected that the corresponding CLI will be used to communicate with the minimal daemon.
 \end_layout
 
 \begin_layout Section
@@ -979,9 +1013,8 @@ Internals
 
 \begin_layout Standard
 Stratis internals aim to be opaque to the user.
- This allows its implementation maximum flexibility to do whatever it needs
- in Stratis version 1, as well as to be extended in later versions without
- violating any user-visible expectations.
+ This allows its implementation maximum flexibility to do whatever it needs in Stratis version 1,
+ as well as to be extended in later versions without violating any user-visible expectations.
 \end_layout
 
 \begin_layout Subsection
@@ -989,8 +1022,7 @@ Data Tier Requirements
 \end_layout
 
 \begin_layout Standard
-The data tier of Stratis must manage blockdevs on behalf of the user to
- provide the following:
+The data tier of Stratis must manage blockdevs on behalf of the user to provide the following:
 \end_layout
 
 \begin_layout Enumerate
@@ -1002,8 +1034,7 @@ Fast snapshots of existing filesystems
 \end_layout
 
 \begin_layout Enumerate
-The ability to add individual blockdevs to grow the physical space available
- to filesystems
+The ability to add individual blockdevs to grow the physical space available to filesystems
 \end_layout
 
 \begin_layout Enumerate
@@ -1015,11 +1046,10 @@ Data Tier
 \end_layout
 
 \begin_layout Standard
-The data tier achieves these requirements by layering device-mapper (DM)
- devices on top of the pool's blockdevs.
+The data tier achieves these requirements by layering device-mapper (DM) devices on top of the pool's blockdevs.
  The topmost layer consists of thin devices allocated from a thinpool.
- Stratis initializes these thin devices with a filesystem, and manages the
- DM devices and filesystems to meet the above requirements.
+ Stratis initializes these thin devices with a filesystem,
+ and manages the DM devices and filesystems to meet the above requirements.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1029,10 +1059,9 @@ Blockdevs
 \begin_layout Standard
 This layer is responsible for discovering existing blockdevs in a pool,
  initializing and labeling new blockdevs unambiguously as part of the pool,
- setting up any disk-specific parameters, and storing pool metadata on each
- blockdev.
+ setting up any disk-specific parameters,
+ and storing pool metadata on each blockdev.
  The minimum blockdev size Stratis will accept is 1 GiB.
- Blockdevs may be encrypted or unencrypted.
  See 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1040,6 +1069,7 @@ reference "subsec:Encryption"
 plural "false"
 caps "false"
 noprefix "false"
+nolink "false"
 
 \end_inset
 
@@ -1055,26 +1085,24 @@ Pools need to cope with the addition of block devices.
 \end_layout
 
 \begin_layout Standard
-Stratis allows adding a blockdev to an existing pool, and using it to grow
- the pool's allocated space.
+Stratis allows adding a blockdev to an existing pool,
+ and using it to grow the pool's allocated space.
 \end_layout
 
 \begin_layout Standard
-The flexibility layer contains four linear DM devices made up of segments
- from lower-level devices.
- The first two devices will be used by Layer 4 (Thin Provisioning) as metadata
- and data devices.
- The flex layer will track what lower-level devices these are allocated
- from, and allow the two devices to grow as needed.
+The flexibility layer contains four linear DM devices made up of segments from lower-level devices.
+ The first two devices will be used by Layer 4 (Thin Provisioning) as metadata and data devices.
+ The flex layer will track what lower-level devices these are allocated from,
+ and allow the two devices to grow as needed.
 \end_layout
 
 \begin_layout Standard
-The third linear DM device is a spare metadata device to be used in the
- case that the metadata device requires offline repair.
- It will not usually be instantiated on the system, but guarantees there
- is room if needed.
- This device's size tracks the size of the metadata device, both as initially
- allocated, and as the metadata device is extended.
+The third linear DM device is a spare metadata device to be used in the case that the metadata device requires offline repair.
+ It will not usually be instantiated on the system,
+ but guarantees there is room if needed.
+ This device's size tracks the size of the metadata device,
+ both as initially allocated,
+ and as the metadata device is extended.
 \end_layout
 
 \begin_layout Standard
@@ -1083,16 +1111,17 @@ The fourth and final linear DM device is used for the Metadata Volume (MDV,
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Metadata-Volume-(MDV)"
+nolink "false"
 
 \end_inset
 
 ).
- The MDV is used to store metadata about upper layers, layer five and above.
+ The MDV is used to store metadata about upper layers,
+ layer five and above.
 \end_layout
 
 \begin_layout Standard
-The initial sizes of all flex layer devices should be chosen to allow an
- entire pool to fit within a single blockdev of the minimum size (1 GiB).
+The initial sizes of all flex layer devices should be chosen to allow an entire pool to fit within a single blockdev of the minimum size (1 GiB).
 \end_layout
 
 \begin_layout Subsubsection
@@ -1100,19 +1129,15 @@ Thin Provisioning
 \end_layout
 
 \begin_layout Standard
-The two linear targets from L3 are used as a metadata device and data device
- for a DM thinpool device.
- The thinpool device implements a copy-on-write (CoW) algorithm, so that
- blocks in the data device are only allocated as needed to back the thin
- volumes created from the thinpool.
+The two linear targets from L3 are used as a metadata device and data device for a DM thinpool device.
+ The thinpool device implements a copy-on-write (CoW) algorithm,
+ so that blocks in the data device are only allocated as needed to back the thin volumes created from the thinpool.
 \end_layout
 
 \begin_layout Standard
-Stratis manages the thinpool device by extending the two subdevices in the
- thinpool when either runs low on available blocks.
- If the pool approaches a point where it no longer has empty lower-level
- space to extend onto, Stratis alerts the user and takes action to avoid
- data corruption.
+Stratis manages the thinpool device by extending the two subdevices in the thinpool when either runs low on available blocks.
+ If the pool approaches a point where it no longer has empty lower-level space to extend onto,
+ Stratis alerts the user and takes action to avoid data corruption.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1121,19 +1146,18 @@ Thin Volumes
 
 \begin_layout Standard
 Stratis creates thin volumes from the thin pool.
- It will automatically give a new volume a default size, format it with
- a filesystem, and make it available to the user.
+ It will automatically give a new volume a default size,
+ format it with a filesystem,
+ and make it available to the user.
 \end_layout
 
 \begin_layout Standard
-Stratis also enables creating a new volume as a read/write snapshot of an
- existing volume.
- Although the underlying implementation does not require maintaining the
- relation between a snapshot and its origin, Stratis records this relation
- in its metadata.
- This relation may be of use to users who may, for example, use snapshots
- for backups and may make use of the origin information to identify a particular
- backup snapshot to restore from.
+Stratis also enables creating a new volume as a read/write snapshot of an existing volume.
+ Although the underlying implementation does not require maintaining the relation between a snapshot and its origin,
+ Stratis records this relation in its metadata.
+ This relation may be of use to users who may,
+ for example,
+ use snapshots for backups and may make use of the origin information to identify a particular backup snapshot to restore from.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1141,10 +1165,9 @@ Filesystem
 \end_layout
 
 \begin_layout Standard
-Stratis monitors each filesystem’s usage against its capacity and automatically
- extends them online without user intervention.
- Extending involves changing the thin dev's logical size, and then using
- a tool such as xfs_growfs to grow the filesystem.
+Stratis monitors each filesystem’s usage against its capacity and automatically extends them online without user intervention.
+ Extending involves changing the thin dev's logical size,
+ and then using a tool such as xfs_growfs to grow the filesystem.
 \end_layout
 
 \begin_layout Subsection
@@ -1153,9 +1176,8 @@ Data Tier Metadata
 
 \begin_layout Standard
 Stratis must track the blockdevs that make up the data tier of the pool,
- the three linear targets that span the block devices, the thinpool device
- and the attributes of the thin devices and filesystems created from the
- thinpool.
+ the three linear targets that span the block devices,
+ the thinpool device and the attributes of the thin devices and filesystems created from the thinpool.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1163,8 +1185,9 @@ Requirements
 \end_layout
 
 \begin_layout Enumerate
-Uniquely identify a blockdev as used by Stratis, which pool it is a member
- of, and parameters needed to recreate all layers
+Uniquely identify a blockdev as used by Stratis,
+ which pool it is a member of,
+ and parameters needed to recreate all layers
 \end_layout
 
 \begin_layout Enumerate
@@ -1181,9 +1204,8 @@ Redundant on each blockdev to tolerate unreadable sectors
 status collapsed
 
 \begin_layout Plain Layout
-Recovery from accidental start-of-blockdev overwrite by placing a second
- copy at the end of the disk was also considered, but raised other issues
- that outweighed its benefit.
+Recovery from accidental start-of-blockdev overwrite by placing a second copy at the end of the disk was also considered,
+ but raised other issues that outweighed its benefit.
 \end_layout
 
 \end_inset
@@ -1201,8 +1223,7 @@ Handle thousand+ blockdevs in a pool
 \end_layout
 
 \begin_layout Enumerate
-Handle million+ filesystems in a pool and updates without writing to each
- blockdev
+Handle million+ filesystems in a pool and updates without writing to each blockdev
 \end_layout
 
 \begin_layout Enumerate
@@ -1221,8 +1242,7 @@ status collapsed
 \begin_layout Plain Layout
 Historically this is the minimum storage unit of a hard drive.
  Many Linux kernel APIs assume this value is constant (as does this document),
- and use another term such as 'block size' for dealing with cases where
- the minimum storage unit is different.
+ and use another term such as 'block size' for dealing with cases where the minimum storage unit is different.
 \end_layout
 
 \end_inset
@@ -1231,17 +1251,16 @@ Historically this is the minimum storage unit of a hard drive.
 \end_layout
 
 \begin_layout Standard
-UUIDs are written as un-hyphenated ASCII encodings of their lower-case hexadecim
-al representation
+UUIDs are written as un-hyphenated ASCII encodings of their lower-case hexadecimal representation
 \begin_inset Foot
 status collapsed
 
 \begin_layout Plain Layout
-UUIDs are 128-bit values and therefore require only 16 bytes to represent
- their numeric value.
- However, since each ASCII value requires a byte, and the hexadecimal representa
-tion of an 128-bit value requires 32 hexadecimal digits, the chosen encoding
- requires 32 bytes.
+UUIDs are 128-bit values and therefore require only 16 bytes to represent their numeric value.
+ However,
+ since each ASCII value requires a byte,
+ and the hexadecimal representation of an 128-bit value requires 32 hexadecimal digits,
+ the chosen encoding requires 32 bytes.
 \end_layout
 
 \end_inset
@@ -1250,8 +1269,7 @@ tion of an 128-bit value requires 32 hexadecimal digits, the chosen encoding
 \end_layout
 
 \begin_layout Standard
-All checksums are calculated using an implementation of the CRC-32C (Castagnoli)
- algorithm.
+All checksums are calculated using an implementation of the CRC-32C (Castagnoli) algorithm.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1281,38 +1299,35 @@ Metadata Volume (MDV)
 \end_layout
 
 \begin_layout Standard
-(Specific DM targets such as the thinpool also place their own metadata
- on disk.)
+(Specific DM targets such as the thinpool also place their own metadata on disk.)
 \end_layout
 
 \begin_layout Standard
-Information is duplicated across all blockdevs within an on-disk metadata
- format called the Blockdev Data Area (BDA).
- The BDA consists of a binary Signature Block, and the Metadata Area (MDA),
+Information is duplicated across all blockdevs within an on-disk metadata format called the Blockdev Data Area (BDA).
+ The BDA consists of a binary Signature Block,
+ and the Metadata Area (MDA),
  which stores information in a text-based JSON format.
- Both the binary and text-based portions of the BDA define redundancy and
- integrity-checking measures.
+ Both the binary and text-based portions of the BDA define redundancy and integrity-checking measures.
 \end_layout
 
 \begin_layout Standard
-The Metadata Volume (MDV) stores metadata on Layers 5 and up in a conventional
- block device and filesystem that is part of the Flex layer.
- Choosing to split overall metadata storage into two schemes allows upper
- layers' metadata to be free of limitations that would apply if a single
- scheme was used.
- For example, on-disk metadata formats find it hard to support runtime size
- extension, may keep redundant copies to ensure reliability, and aggressively
- check for corruption.
+The Metadata Volume (MDV) stores metadata on Layers 5 and up in a conventional block device and filesystem that is part of the Flex layer.
+ Choosing to split overall metadata storage into two schemes allows upper layers' metadata to be free of limitations that would apply if a single scheme was used.
+ For example,
+ on-disk metadata formats find it hard to support runtime size extension,
+ may keep redundant copies to ensure reliability,
+ and aggressively check for corruption.
  This can work well with small amounts of data that is infrequently changed,
- but has trouble as data grows, or we wish to do updates in-place.
+ but has trouble as data grows,
+ or we wish to do updates in-place.
 \end_layout
 
 \begin_layout Standard
-Upper-level metadata can achieve redundancy and integrity by building on
- the pre-existing lower layers, and work under looser restrictions around
- updating in place, and the total size to which it may grow.
- It can reuse an existing, well-tested solution for solving data organization
- and storage issues – a general-purpose filesystem.
+Upper-level metadata can achieve redundancy and integrity by building on the pre-existing lower layers,
+ and work under looser restrictions around updating in place,
+ and the total size to which it may grow.
+ It can reuse an existing,
+ well-tested solution for solving data organization and storage issues – a general-purpose filesystem.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1322,6 +1337,7 @@ BlockDev Data Area (BDA)
 \begin_layout Standard
 \begin_inset Float figure
 placement H
+alignment document
 wide false
 sideways false
 status collapsed
@@ -1351,16 +1367,17 @@ BDA format
 \end_layout
 
 \begin_layout Standard
-The BDA consists of a fixed-length Static Header of sixteen sectors, which
- contains two copies of the Signature Block; and the metadata area (MDA),
+The BDA consists of a fixed-length Static Header of sixteen sectors,
+ which contains two copies of the Signature Block;
+ and the metadata area (MDA),
  whose length is specified in the Signature Block.
  These are written to the beginning of the blockdev as described below.
 \end_layout
 
 \begin_layout Standard
 Stratis reserves the first 16 sectors of each blockdev for the Static Header.
- When initializing or modifying the Signature Block, identical data is written
- to locations 1 and 2.
+ When initializing or modifying the Signature Block,
+ identical data is written to locations 1 and 2.
 \end_layout
 
 \begin_layout Standard
@@ -1651,7 +1668,8 @@ checksum of signature block (bytes at offset 4 length 508)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stratis signature: '!Stra0tis
+Stratis signature:
+ '!Stra0tis
 \backslash
 x86
 \backslash
@@ -1920,8 +1938,8 @@ flags (u64)
 \begin_inset Text
 
 \begin_layout Plain Layout
-initialization time: UNIX timestamp (seconds since Jan 1 1970) using UTC
- (u64)
+initialization time:
+ UNIX timestamp (seconds since Jan 1 1970) using UTC (u64)
 \end_layout
 
 \end_inset
@@ -1964,16 +1982,18 @@ unused
 \end_layout
 
 \begin_layout Itemize
-No flags are yet defined, so 'flags' field is zeroed.
+No flags are yet defined,
+ so 'flags' field is zeroed.
 \end_layout
 
 \begin_layout Itemize
-All 'unused' fields are zeroed, and are reserved for future use.
+All 'unused' fields are zeroed,
+ and are reserved for future use.
 \end_layout
 
 \begin_layout Itemize
-If not zero, blockdev metadata area length (offset 96) must be a number
- divisible by four of at least 2032.
+If not zero,
+ blockdev metadata area length (offset 96) must be a number divisible by four of at least 2032.
 \end_layout
 
 \begin_layout Itemize
@@ -1981,43 +2001,44 @@ The BDA is followed immediately by
 \emph on
 reserved space
 \emph default
-, whose size is specified in the signature block (offset 104).
+,
+ whose size is specified in the signature block (offset 104).
 \end_layout
 
 \begin_layout Itemize
-Minimum length of BDA (static header and MDA) plus Reserved Space is 2048
- sectors (1 MiB).
+Minimum length of BDA (static header and MDA) plus Reserved Space is 2048 sectors (1 MiB).
 \end_layout
 
 \begin_layout Itemize
-When a blockdev is removed from a pool, or is part of a pool that is destroyed,
+When a blockdev is removed from a pool,
+ or is part of a pool that is destroyed,
  Stratis wipes the Static Header.
 \end_layout
 
 \begin_layout Itemize
 The purpose of the unused sectors is twofold.
- First, placing the Signature Block copy locations in two separate 4K blocks
- helps to prevent a single bad write operation on 4K-block disks from corrupting
- both copies.
- Second, using a single sector for the Signature Block helps to minimize
- the likelihood of corruption on disks with 512 byte blocks.
+ First,
+ placing the Signature Block copy locations in two separate 4K blocks helps to prevent a single bad write operation on 4K-block disks from corrupting both copies.
+ Second,
+ using a single sector for the Signature Block helps to minimize the likelihood of corruption on disks with 512 byte blocks.
 \end_layout
 
 \begin_layout Itemize
-Each time that Stratis writes one or both Signature Block locations, it
- also zeroes the unused sectors that share the same 4K block.
+Each time that Stratis writes one or both Signature Block locations,
+ it also zeroes the unused sectors that share the same 4K block.
 \end_layout
 
 \begin_layout Standard
-The MDA is divided into four equal-size regions, numbered 0-3.
- When updating metadata, identical data is written to either the odd (1
- and 3) or even (0 and 2) regions, chosen by examining the timestamps and
- overwriting the older of two pairs.
+The MDA is divided into four equal-size regions,
+ numbered 0-3.
+ When updating metadata,
+ identical data is written to either the odd (1 and 3) or even (0 and 2) regions,
+ chosen by examining the timestamps and overwriting the older of two pairs.
 \end_layout
 
 \begin_layout Standard
-Each MDA region's update consists of a fixed-length MDA Region Header, followed
- by variable-length JSON data.
+Each MDA region's update consists of a fixed-length MDA Region Header,
+ followed by variable-length JSON data.
 \end_layout
 
 \begin_layout Standard
@@ -2332,16 +2353,16 @@ JSON data
 
 \begin_layout Itemize
 Metadata updates write to the older of the odd or even MDA regions.
- This is determined by lowest timestamp, and then lowest nanoseconds if
- timestamps are equal.
+ This is determined by lowest timestamp,
+ and then lowest nanoseconds if timestamps are equal.
 \end_layout
 
 \begin_layout Itemize
-MDA updates include the MDA Header, which includes the current time.
- However, if using the current time would not result in the update having
- the latest time across all MDA regions on all blockdevs in the pool, instead
- use a time of one nanosecond later than the latest MDA region time across
- all blockdevs.
+MDA updates include the MDA Header,
+ which includes the current time.
+ However,
+ if using the current time would not result in the update having the latest time across all MDA regions on all blockdevs in the pool,
+ instead use a time of one nanosecond later than the latest MDA region time across all blockdevs.
 \end_layout
 
 \begin_layout Itemize
@@ -2375,6 +2396,7 @@ Repeat for additional blockdevs.
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:The-MDA-and"
+nolink "false"
 
 \end_inset
 
@@ -2383,10 +2405,9 @@ reference "subsec:The-MDA-and"
 
 \end_deeper
 \begin_layout Itemize
-Multiple blockdevs being updated with the same metadata must write identical
- data to each MDA region, but which regions (odd or even) is used may vary,
- if the blockdevs have received differing numbers of metadata updates over
- time.
+Multiple blockdevs being updated with the same metadata must write identical data to each MDA region,
+ but which regions (odd or even) is used may vary,
+ if the blockdevs have received differing numbers of metadata updates over time.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2394,8 +2415,7 @@ Metadata Area (MDA)
 \end_layout
 
 \begin_layout Standard
-The MDA contains a JSON object that represents the pool's overall configuration
- from L0 to L4.
+The MDA contains a JSON object that represents the pool's overall configuration from L0 to L4.
 \end_layout
 
 \begin_layout Description
@@ -2412,7 +2432,7 @@ objects:
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="4">
+<lyxtabular version="3" rows="8" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2609,7 +2629,7 @@ parameters of the thinpool device
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2618,7 +2638,7 @@ started
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2627,7 +2647,7 @@ boolean
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2636,11 +2656,109 @@ as of stratisd 3.2.0
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 indicates whether a pool is started or stopped
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+features
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of values that can be 
+\series bold
+Raid
+\series default
+,
+ 
+\series bold
+Integrity
+\series default
+,
+ 
+\series bold
+Encryption
+\series default
+,
+ 
+\series bold
+KeyDescriptionEnabled
+\series default
+,
+ and 
+\series bold
+ClevisEnabled
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+last_reencrypt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+string
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UNIX timestamp of last reencrypt operation (seconds since Jan 1 1970) using UTC (u64)
 \end_layout
 
 \end_inset
@@ -2654,7 +2772,8 @@ indicates whether a pool is started or stopped
 \end_layout
 
 \begin_layout Description
-backstore: An object describing the data tier and the cache tier.
+backstore:
+ An object describing the data tier and the cache tier.
 \end_layout
 
 \begin_layout Standard
@@ -2773,7 +2892,8 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-the cap device, from which segments are allocated to the flex layer
+the cap device,
+ from which segments are allocated to the flex layer
 \end_layout
 
 \end_inset
@@ -2825,12 +2945,13 @@ the block devices in the cache tier
 \end_layout
 
 \begin_layout Description
-data_tier: An object describing the data tier.
+data_tier:
+ An object describing the data tier.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
+<lyxtabular version="3" rows="3" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2875,7 +2996,7 @@ description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2884,7 +3005,7 @@ blockdev
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2893,7 +3014,7 @@ object
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2902,11 +3023,49 @@ y
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Settings and mappings describing block devices that make up the tier
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integrity_spec
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+object
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Spec of reserved space for future integrity operations
 \end_layout
 
 \end_inset
@@ -2920,7 +3079,8 @@ Settings and mappings describing block devices that make up the tier
 \end_layout
 
 \begin_layout Description
-blockdev: An object describing physical block devices that make up the tier.
+blockdev:
+ An object describing physical block devices that make up the tier.
 \end_layout
 
 \begin_layout Standard
@@ -3061,7 +3221,231 @@ base_dev
 \end_layout
 
 \begin_layout Description
-base_dev: An object describing an allocation from a block device.
+integrity_spec:
+ An object describing the space reserved for future integrity operations.
+\end_layout
+
+\begin_layout Description
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features borderColor="default" oddRowsColor="default" evenRowsColor="default" tabularvalignment="middle">
+<column alignment="center" valignment="top" color="default">
+<column alignment="center" valignment="top" color="default">
+<column alignment="center" valignment="top" color="default">
+<column alignment="center" valignment="top" color="default">
+<row color="default">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row color="default">
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tag_spec
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+string
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+as of stratisd 3.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+size of integrity tags;
+ can be 
+\series bold
+0b
+\series default
+,
+ 
+\series bold
+32b
+\series default
+,
+ or 
+\series bold
+512b
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row color="default">
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+journal_size
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+as of stratisd 3.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+space allocated for integrity journal in sectors
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row color="default">
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+block_size
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+as of stratisd 3.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+block size of the integrity device in bytes
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row color="default">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allocate_superblock
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+as of stratisd 3.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+whether or not to reserve space for the integrity superblock
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+base_dev:
+ An object describing an allocation from a block device.
 \end_layout
 
 \begin_layout Standard
@@ -3232,12 +3616,13 @@ the length in sectors of the segment
 \end_layout
 
 \begin_layout Description
-base_block_dev: An object describing a block device in the lowest layer.
+base_block_dev:
+ An object describing a block device in the lowest layer.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
+<lyxtabular version="3" rows="5" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -3309,11 +3694,50 @@ y
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-The UUID of the block device, as recorded in its Signature Block
+The UUID of the block device,
+ as recorded in its Signature Block
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integrity_meta_allocs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of pairs of integers representing the starting offset and length of an allocation in sectors that make up the integrity metadata allocations
 \end_layout
 
 \end_inset
@@ -3389,8 +3813,8 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-uniquely identifying information for the blockdev, such as SCSI VPD83 or
- serial number
+uniquely identifying information for the blockdev,
+ such as SCSI VPD83 or serial number
 \end_layout
 
 \end_inset
@@ -3404,8 +3828,142 @@ uniquely identifying information for the blockdev, such as SCSI VPD83 or
 \end_layout
 
 \begin_layout Description
-cap: An object describing a view of the top-level linear device provided
- by the backstore to the flex layer.
+cap:
+ An object describing a view of the top-level linear device provided by the backstore to the flex layer.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="45col%">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+key
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+JSON type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+required
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+allocs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of pairs of integers representing the starting offset and length of an allocation in sectors
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crypt_meta_allocs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+array
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" color="default" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+an array of pairs of integers representing the starting offset and length of an allocation in sectors for crypt device metadata
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+cache_tier:
+ An object describing the cache tier.
 \end_layout
 
 \begin_layout Standard
@@ -3459,7 +4017,7 @@ description
 \begin_inset Text
 
 \begin_layout Plain Layout
-allocs
+blockdev
 \end_layout
 
 \end_inset
@@ -3468,7 +4026,7 @@ allocs
 \begin_inset Text
 
 \begin_layout Plain Layout
-array
+object
 \end_layout
 
 \end_inset
@@ -3486,8 +4044,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-an array of pairs of integers representing the starting offset and length
- of an allocation in sectors
+Settings and mappings describing block devices that make up the tier
 \end_layout
 
 \end_inset
@@ -3501,17 +4058,8 @@ an array of pairs of integers representing the starting offset and length
 \end_layout
 
 \begin_layout Description
-cache_tier: An object describing the cache tier.
- Identical format to 
-\series bold
-data_tier
-\series default
- except VDO layer is not supported.
-\end_layout
-
-\begin_layout Description
-flex_devs: An object with four keys that define the linear segments that
- make up each device in the Flex layer.
+flex_devs:
+ An object with four keys that define the linear segments that make up each device in the Flex layer.
 \end_layout
 
 \begin_layout Standard
@@ -3592,8 +4140,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-an array of pairs of integers representing the starting offset and length
- of an allocation in sectors that make up the metadata volume (MDV)
+an array of pairs of integers representing the starting offset and length of an allocation in sectors that make up the metadata volume (MDV)
 \end_layout
 
 \end_inset
@@ -3631,8 +4178,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-an array of pairs of integers representing the starting offset and length
- of an allocation in sectors that make up the thin metadata device
+an array of pairs of integers representing the starting offset and length of an allocation in sectors that make up the thin metadata device
 \end_layout
 
 \end_inset
@@ -3670,8 +4216,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-an array of pairs of integers representing the starting offset and length
- of an allocation in sectors that make up the thin metadata spare device
+an array of pairs of integers representing the starting offset and length of an allocation in sectors that make up the thin metadata spare device
 \end_layout
 
 \end_inset
@@ -3709,8 +4254,7 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-an array of pairs of integers representing the starting offset and length
- of an allocation in sectors that make up the thin data device
+an array of pairs of integers representing the starting offset and length of an allocation in sectors that make up the thin data device
 \end_layout
 
 \end_inset
@@ -3724,7 +4268,8 @@ an array of pairs of integers representing the starting offset and length
 \end_layout
 
 \begin_layout Description
-thinpool_dev: An object that defines properties of the thinpool device.
+thinpool_dev:
+ An object that defines properties of the thinpool device.
 \end_layout
 
 \begin_layout Standard
@@ -3943,8 +4488,7 @@ Metadata Volume (MDV)
 \end_layout
 
 \begin_layout Standard
-The Metadata Volume is formatted with an XFS filesystem that is used by
- Stratis to store information on user-created thin filesystems (L5-L7).
+The Metadata Volume is formatted with an XFS filesystem that is used by Stratis to store information on user-created thin filesystems (L5-L7).
  This information is stored in the filesystem as individual JSON files.
 \end_layout
 
@@ -3960,32 +4504,29 @@ The MDA and Very Large Pools
 
 \begin_layout Standard
 Stratis pools with very large numbers of blockdevs will encounter two issues.
- First, updating the metadata on all blockdevs in the pool may become a
- performance bottleneck.
- Second, the default MDA size may become inadequate to contain the information
- required.
+ First,
+ updating the metadata on all blockdevs in the pool may become a performance bottleneck.
+ Second,
+ the default MDA size may become inadequate to contain the information required.
 \end_layout
 
 \begin_layout Standard
-To solve the first issue, Stratis caps the number of blockdevs that receive
- updated metadata information.
- A reasonable value for this cap might be in the range of 6 to 10, and should
- try to spread metadata updates across path-independent blockdevs, if this
- can be discerned, or randomly.
- This limits excessive I/O when blockdevs are added or removed from the
- pool, but maximizes the likelihood that up-to-date pool metadata is retrievable
- in case of failure.
+To solve the first issue,
+ Stratis caps the number of blockdevs that receive updated metadata information.
+ A reasonable value for this cap might be in the range of 6 to 10,
+ and should try to spread metadata updates across path-independent blockdevs,
+ if this can be discerned,
+ or randomly.
+ This limits excessive I/O when blockdevs are added or removed from the pool,
+ but maximizes the likelihood that up-to-date pool metadata is retrievable in case of failure.
 \end_layout
 
 \begin_layout Standard
-To solve the second issue, Stratis monitors how large its most recent serialized
- metadata updates are, and increases the size of MDA areas on newly added
- devices when a fairly low threshold – %50 – is reached in comparison to
- the available MDA region size.
- This ensures that by the time sufficient blockdevs have been added to the
- pool to be in danger of serialized JSON data being too large, there are
- enough blockdevs with enlarged MDA space that they can be used for MDA
- writes.
+To solve the second issue,
+ Stratis monitors how large its most recent serialized metadata updates are,
+ and increases the size of MDA areas on newly added devices when a fairly low threshold – %50 – is reached in comparison to the available MDA region size.
+ This ensures that by the time sufficient blockdevs have been added to the pool to be in danger of serialized JSON data being too large,
+ there are enough blockdevs with enlarged MDA space that they can be used for MDA writes.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3997,11 +4538,12 @@ Bad things happen.
 \end_layout
 
 \begin_layout Standard
-In order to recover from disk errors, Stratis uses checksums over the critical
- metadata, and writes duplicate copies to a single blockdev, as well as
- across multiple blockdevs, when possible.
- It takes this approach – copies – rather than a mechanism that might make
- it possible to partially repair corrupted metadata for three reasons:
+In order to recover from disk errors,
+ Stratis uses checksums over the critical metadata,
+ and writes duplicate copies to a single blockdev,
+ as well as across multiple blockdevs,
+ when possible.
+ It takes this approach – copies – rather than a mechanism that might make it possible to partially repair corrupted metadata for three reasons:
 \end_layout
 
 \begin_layout Enumerate
@@ -4012,15 +4554,15 @@ This metadata is relatively small.
 Partially reconstructed information has limited value.
  This is due to the layered nature of Stratis.
  It's not sufficient to know some subset of the device mapping levels.
- Since they are layered, recovering only some layouts allows no data to
- be recovered without also knowing how others are mapped on top, and vice
- versa.
+ Since they are layered,
+ recovering only some layouts allows no data to be recovered without also knowing how others are mapped on top,
+ and vice versa.
 \end_layout
 
 \begin_layout Enumerate
-Stratis metadata on the block devices should require relatively few updates
- per day, since the changes it would reflect are blockdevs being added to
- the pool, or thinpool data device expansions.
+Stratis metadata on the block devices should require relatively few updates per day,
+ since the changes it would reflect are blockdevs being added to the pool,
+ or thinpool data device expansions.
  Infrequent updates reduces the likelihood of corruption
 \begin_inset Foot
 status collapsed
@@ -4040,10 +4582,11 @@ Filesystem metadata is stored on the Metadata Volume on an XFS filesystem.
 \end_layout
 
 \begin_layout Standard
-In addition to Stratis-specific metadata, device-mapper layers such as thin,
- as well as XFS filesystems, all have their own metadata.
- Stratis would rely on running each of their specific repair/fsck tools
- in case they reported errors.
+In addition to Stratis-specific metadata,
+ device-mapper layers such as thin,
+ as well as XFS filesystems,
+ all have their own metadata.
+ Stratis would rely on running each of their specific repair/fsck tools in case they reported errors.
 \end_layout
 
 \begin_layout Subsection
@@ -4058,9 +4601,11 @@ name "subsec:Cache-Tier"
 \end_layout
 
 \begin_layout Standard
-The Cache Tier is a secondary optional stack that, if present, serves as
- a cache for the DataTier.
- If present, the Cache Tier sits directly underneath the Flex Layer.
+The Cache Tier is a secondary optional stack that,
+ if present,
+ serves as a cache for the DataTier.
+ If present,
+ the Cache Tier sits directly underneath the Flex Layer.
  Its structure is similar to the lower levels of the Data Tier.
 \end_layout
 
@@ -4073,8 +4618,7 @@ Caching may be configured for write-back and write-through modes.
 \end_layout
 
 \begin_layout Enumerate
-Stratis concatenates all cache blockdevs and uses the resulting device to
- cache the thinpool device.
+Stratis concatenates all cache blockdevs and uses the resulting device to cache the thinpool device.
  This lets all filesystems benefit from the cache.
 \end_layout
 
@@ -4095,9 +4639,10 @@ Cache Tier Metadata Requirements
 \end_layout
 
 \begin_layout Enumerate
-Identify all blockdevs that are part of the pool's cache tier and other
- cache-specific configuration parameters (e.g.
- WT/WB, block size, cache policy)
+Identify all blockdevs that are part of the pool's cache tier and other cache-specific configuration parameters (e.g.
+ WT/WB,
+ block size,
+ cache policy)
 \end_layout
 
 \begin_layout Enumerate
@@ -4114,33 +4659,24 @@ name "subsec:Encryption"
 Encryption
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
+Metadata V1
+\end_layout
+
+\begin_layout Itemize
 stratisd encrypts devices at the blockdev level.
- If Stratis devices are encrypted, the following conditions will hold:
+ Each blockdev will be encrypted with a distinct and randomly generated MEK (Media Encryption Key).
 \end_layout
 
 \begin_layout Itemize
-Each blockdev will be encrypted with a distinct and randomly generated MEK
- (Media Encryption Key).
+All blockdevs in a pool will be encrypted,
+ or all blockdevs in a pool will be unencrypted.
+ Stratis will support mixed usage for pools,
+ where some pools are encrypted and others are not.
 \end_layout
 
 \begin_layout Itemize
-All blockdevs in a pool will be encrypted, or all blockdevs in a pool will
- be unencrypted.
- Stratis will support mixed usage for pools, where some pools are encrypted
- and others are not.
-\end_layout
-
-\begin_layout Itemize
-A distinct passphrase (used to generate the KEK or Key Encryption Key) will
- be supported for each pool, although it will be possible to use the same
- passphrase for every pool, if desired.
-\end_layout
-
-\begin_layout Itemize
-The user will be required to choose whether or not a pool is encrypted at
- pool creation time and must identify their choice by an additional argument
- in the CLI's 
+The user will be required to choose whether or not a pool is encrypted at pool creation time and must identify their choice by an additional argument in the CLI's 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4149,49 +4685,95 @@ pool create
 \end_inset
 
  command.
- Encryption of an already existing pool will not be supported.
+ 
 \end_layout
 
 \begin_layout Itemize
-Re-encryption will not be supported initially; this functionality will be
- considered and added in a later step.
+If a pool was encrypted on creation,
+ then all blockdevs added to the data tier will be automatically encrypted with a randomly generated MEK and the pool's designated KEK.
 \end_layout
 
 \begin_layout Itemize
-If a pool was encrypted on creation, then all blockdevs added to the data
- tier will be automatically encrypted with a randomly generated MEK and
- the pool's designated KEK.
+Each cache device is individually encrypted according the block device specifications in the second bullet point.
+\end_layout
+
+\begin_layout Subsubsection
+Metadata V2
 \end_layout
 
 \begin_layout Itemize
-On any encrypted blockdev, the Stratis metadata will itself be encrypted;
- it will be inaccessible until the encrypted blockdev is opened.
+stratisd encrypts devices at the pool level.
+ The encryption layer sits above the cache layer or cap device.
+ Metadata for layers below the encryption layer is not encrypted.
 \end_layout
 
 \begin_layout Itemize
-The use of a cache tier and of encryption will be mutually exclusive.
- If a pool is encrypted, an attempt to add a blockdev to the cache tier
- will be rejected.
+The combination of the data contained in the unencrypted metadata and the cipher chosen for encryption is not vulnerable to either attacks that use malicious metadata to decrypt encrypted data or plaintext attacks based on the unencrypted metadata.
+ Potential future work involves adding an HMAC to verify that the unencrypted metadata has not been changed.
 \end_layout
 
 \begin_layout Itemize
-The default cipher specified by cryptsetup 2.1, 
+Encryption,
+ reencryption,
+ and decryption of a pool are supported.
+\end_layout
+
+\begin_layout Itemize
+All block devices added to the pool will be underneath the encryption layer.
+ As a result,
+ adding new block devices is completely decoupled from the encryption layer and all data on the newly added device will be encrypted by the same upper encryption layer.
+\end_layout
+
+\begin_layout Itemize
+The cache is inherently encrypted when the pool is encrypted as a result of its placement below the encryption layer.
+\end_layout
+
+\begin_layout Subsubsection
+All versions of the metadata
+\end_layout
+
+\begin_layout Itemize
+The default cipher specified by cryptsetup 2.1,
+ 
 \family typewriter
 aes-xts-plain64
 \family default
-, is used to encrypt all encrypted devices.
+,
+ is used to encrypt all encrypted devices.
  The MEK is 512 bits.
 \end_layout
 
+\begin_layout Itemize
+All data on the pool will be encrypted with one or more randomly generated MEKs.
+\end_layout
+
+\begin_layout Itemize
+A distinct passphrase (used to generate the KEK or Key Encryption Key) will be supported for each pool,
+ although it will be possible to use the same passphrase for every pool,
+ if desired.
+\end_layout
+
+\begin_layout Itemize
+If the pool is encrypted,
+ the cache will be also be encrypted.
+\end_layout
+
 \begin_layout Standard
-The above conditions require an implementation which makes use of the LUKS2
- header.
- In particular, for a blockdev to be decrypted with its pool-specific KEK,
- it will be necessary to include information within the device header which
- allows the device to be identified as belonging to a particular Stratis
- pool.
- The LUKS2 header includes support for LUKS tokens, which will allow stratisd
- to identify the pool to which a device belongs; the LUKS1 header does not.
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For V1 of the metadata,
+ the above conditions require an implementation which makes use of the LUKS2 header.
+ In particular,
+ for a blockdev to be decrypted with its pool-specific KEK,
+ it will be necessary to include information within the device header which allows the device to be identified as belonging to a particular Stratis pool.
+ The LUKS2 header includes support for LUKS tokens,
+ which will allow stratisd to identify the pool to which a device belongs;
+ the LUKS1 header does not.
 \end_layout
 
 \begin_layout Subsection
@@ -4199,17 +4781,15 @@ Block Device Characteristic Requirements (stratisd 3.4.0)
 \end_layout
 
 \begin_layout Standard
-stratisd endeavors to enforce sufficient consistency in the characteristics
- of the block devices that make up a pool to ensure continuous proper operation
- of Stratis pools.
+stratisd endeavors to enforce sufficient consistency in the characteristics of the block devices that make up a pool to ensure continuous proper operation of Stratis pools.
 \end_layout
 
 \begin_layout Standard
-At present, stratisd takes into account the physical and the logical sector
- size of a block device, i.e, those values obtained by the BLKBPSZGET and
- the BLKSSZGET ioctls.
- stratisd's requirements for creating new pools or pool caches or for adding
- block devices to an existing pool or its cache are quite stringent.
+At present,
+ stratisd takes into account the physical and the logical sector size of a block device,
+ i.e,
+ those values obtained by the BLKBPSZGET and the BLKSSZGET ioctls.
+ stratisd's requirements for creating new pools or pool caches or for adding block devices to an existing pool or its cache are quite stringent.
  It follows a more relaxed policy with pre-existing pools or caches.
 \end_layout
 
@@ -4218,19 +4798,15 @@ Pre-existing pools and caches
 \end_layout
 
 \begin_layout Standard
-With existing pools stratisd makes use of a rule intended to guard against
- changes in the logical and physical sector size presented by the cap device
- to the layers above.
+With existing pools stratisd makes use of a rule intended to guard against changes in the logical and physical sector size presented by the cap device to the layers above.
  stratisd may automatically extend the cap device to accommodate pool usage.
- If the cap device is extended to make use of a block device which has a
- larger logical or physical sector size than the devices that it was using
- previously, the sector sizes exported by the cap device will change to
- the larger size.
- This can have the unfortunate effect of making XFS filesystems previously
- created above the cap device unmountable.
- To prevent this situation, stratisd enforces the following rule: If the
- cap device can be extended so that its logical or physical sector size
- could change, stratisd places the pool in 
+ If the cap device is extended to make use of a block device which has a larger logical or physical sector size than the devices that it was using previously,
+ the sector sizes exported by the cap device will change to the larger size.
+ This can have the unfortunate effect of making XFS filesystems previously created above the cap device unmountable.
+ To prevent this situation,
+ stratisd enforces the following rule:
+ If the cap device can be extended so that its logical or physical sector size could change,
+ stratisd places the pool in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4238,8 +4814,7 @@ no_pool_changes
 \begin_inset Quotes erd
 \end_inset
 
- mode and logs a warning encouraging the user to migrate their data to a
- new pool.
+ mode and logs a warning encouraging the user to migrate their data to a new pool.
  A pool in 
 \begin_inset Quotes eld
 \end_inset
@@ -4248,15 +4823,15 @@ no_pool_changes
 \begin_inset Quotes erd
 \end_inset
 
- mode can not take any action, including auto-extending.
+ mode can not take any action,
+ including auto-extending.
 \end_layout
 
 \begin_layout Standard
-With regard to existing pool caches, the danger of dynamically changing
- sector sizes does not exist.
- stratisd always makes use of all the block devices belonging to the cache
- when forming its cache device, so there is no check necessary for existing
- cache devices.
+With regard to existing pool caches,
+ the danger of dynamically changing sector sizes does not exist.
+ stratisd always makes use of all the block devices belonging to the cache when forming its cache device,
+ so there is no check necessary for existing cache devices.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4264,9 +4839,7 @@ Newly created pools and caches
 \end_layout
 
 \begin_layout Standard
-If the user wishes to create a new pool or a new cache it is required that
- all the block devices specified at creation have the same logical and physical
- sector size.
+If the user wishes to create a new pool or a new cache it is required that all the block devices specified at creation have the same logical and physical sector size.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4282,15 +4855,15 @@ no_pool_changes
 \begin_inset Quotes erd
 \end_inset
 
- mode, so it is not possible to add additional devices to such a pool's
- data or cache tier.
+ mode,
+ so it is not possible to add additional devices to such a pool's data or cache tier.
 \end_layout
 
 \begin_layout Standard
-As a consequence of this rule, it can be assumed that all pools to which
- devices are being added can be assumed to have certain properties.
- In particular, both the data tier and the cache tier have achieved their
- 
+As a consequence of this rule,
+ it can be assumed that all pools to which devices are being added can be assumed to have certain properties.
+ In particular,
+ both the data tier and the cache tier have achieved their 
 \begin_inset Flex Emph
 status collapsed
 
@@ -4301,27 +4874,22 @@ terminal sector sizes
 \end_inset
 
 .
- These are the respective sector sizes that the cap device would have if
- it were extended across all block devices that belong to the data tier
- and is the maximum of the respective sector sizes of all the individual
- block devices in the data tier.
- Since the cache always makes use of all its devices, it achieves its terminal
- sector sizes when constructed.
+ These are the respective sector sizes that the cap device would have if it were extended across all block devices that belong to the data tier and is the maximum of the respective sector sizes of all the individual block devices in the data tier.
+ Since the cache always makes use of all its devices,
+ it achieves its terminal sector sizes when constructed.
 \end_layout
 
 \begin_layout Standard
-Taking these facts into account, the following rule is used when initializing
- a cache:
+Taking these facts into account,
+ the following rule is used when initializing a cache:
 \end_layout
 
 \begin_layout Enumerate
-all the block devices specified for the cache must have the same logical
- and physical sector size.
+all the block devices specified for the cache must have the same logical and physical sector size.
 \end_layout
 
 \begin_layout Enumerate
-the logical sector size of all the devices specified for the cache must
- be the same as the terminal logical sector size of the data tier.
+the logical sector size of all the devices specified for the cache must be the same as the terminal logical sector size of the data tier.
 \end_layout
 
 \begin_layout Standard
@@ -4329,13 +4897,11 @@ and the following rule when adding devices to either the data or cache tier:
 \end_layout
 
 \begin_layout Enumerate
-all the block devices specified must have the same logical and physical
- sector size
+all the block devices specified must have the same logical and physical sector size
 \end_layout
 
 \begin_layout Enumerate
-both sector sizes of all the devices specified must be the same as the respectiv
-e terminal sector sizes of that tier
+both sector sizes of all the devices specified must be the same as the respective terminal sector sizes of that tier
 \end_layout
 
 \begin_layout Subsubsection
@@ -4343,13 +4909,9 @@ Notes
 \end_layout
 
 \begin_layout Standard
-Because stratisd must support pools that were previously created without
- the restrictions of uniform logical and physical sector size that stratisd
- began imposing in the 3.4.0 release, these rules do not guarantee total uniformit
-y of either physical or logical sector size in the devices that make up
- a pool or a cache.
- They guarantee only that the devices that extend the data or cache tier
- after stratisd 3.4.0 will all have the same logical and physical sector size.
+Because stratisd must support pools that were previously created without the restrictions of uniform logical and physical sector size that stratisd began imposing in the 3.4.0 release,
+ these rules do not guarantee total uniformity of either physical or logical sector size in the devices that make up a pool or a cache.
+ They guarantee only that the devices that extend the data or cache tier after stratisd 3.4.0 will all have the same logical and physical sector size.
 \end_layout
 
 \begin_layout Section
@@ -4362,8 +4924,8 @@ Implementation Details
 
 \begin_layout Standard
 Stratis' command-line tool is written in Python.
- Since it is only used after the system is booted by the administrator, Python's
- interpreted nature and overhead is not a concern.
+ Since it is only used after the system is booted by the administrator,
+ Python's interpreted nature and overhead is not a concern.
 \end_layout
 
 \begin_layout Subsection
@@ -4371,8 +4933,8 @@ stratisd
 \end_layout
 
 \begin_layout Standard
-Stratisd needs to be implemented in a compiled language, in order to meet
- the requirement that it operate in a preboot environment.
+Stratisd needs to be implemented in a compiled language,
+ in order to meet the requirement that it operate in a preboot environment.
  A small runtime memory footprint is also important.
 \end_layout
 
@@ -4395,11 +4957,14 @@ Compiled with minimal runtime (no GC)
 \end_layout
 
 \begin_layout Itemize
-Memory safety, speed, and concurrency
+Memory safety,
+ speed,
+ and concurrency
 \end_layout
 
 \begin_layout Itemize
-Strong stdlib, including collections
+Strong stdlib,
+ including collections
 \end_layout
 
 \begin_layout Itemize
@@ -4407,7 +4972,9 @@ Error handling
 \end_layout
 
 \begin_layout Itemize
-Libraries available for D-Bus, devicemapper, and JSON serialization
+Libraries available for D-Bus,
+ devicemapper,
+ and JSON serialization
 \end_layout
 
 \begin_layout Itemize
@@ -4415,14 +4982,13 @@ FFI to C libs if needed
 \end_layout
 
 \begin_layout Itemize
-Will be available on RHEL 8 in delivery timeframe; currently packaged in
- Fedora
+Will be available on RHEL 8 in delivery timeframe;
+ currently packaged in Fedora
 \end_layout
 
 \begin_layout Standard
 Other alternatives considered were C and C++.
- Rust was preferred over them for increased memory safety and productivity
- reasons.
+ Rust was preferred over them for increased memory safety and productivity reasons.
 \end_layout
 
 \begin_layout Subsection
@@ -4430,20 +4996,22 @@ devicemapper names
 \end_layout
 
 \begin_layout Standard
-If stratisd terminates unexpectedly and is restarted, it needs to rebuild
- its knowledge of the running system.
+If stratisd terminates unexpectedly and is restarted,
+ it needs to rebuild its knowledge of the running system.
  This includes not only re-enumerating blockdevs to find Stratis pool members,
- but also determining the current state of the devicemapper targets that
- make up pools.
- A restarting stratisd needs to handle if none, some, or all of the expected
- DM devices are present, and if present DM devices are working correctly,
+ but also determining the current state of the devicemapper targets that make up pools.
+ A restarting stratisd needs to handle if none,
+ some,
+ or all of the expected DM devices are present,
+ and if present DM devices are working correctly,
  or in an error state.
 \end_layout
 
 \begin_layout Standard
-To these ends, Stratis uses consistent naming for devicemapper targets.
- This lets stratisd more easily determine if DM devices already exist, and
- avoids leaking old DM mappings.
+To these ends,
+ Stratis uses consistent naming for devicemapper targets.
+ This lets stratisd more easily determine if DM devices already exist,
+ and avoids leaking old DM mappings.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4479,8 +5047,8 @@ Naming Convention
 \end_layout
 
 \begin_layout Standard
-Stratis DM names consist of five required and two optional parts, separated
- by a '-'.
+Stratis DM names consist of five required and two optional parts,
+ separated by a '-'.
 \end_layout
 
 \begin_layout Standard
@@ -4580,7 +5148,8 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-Universal DM differentiator: 'stratis'
+Universal DM differentiator:
+ 'stratis'
 \end_layout
 
 \end_inset
@@ -4627,7 +5196,8 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-Naming convention version: '1'
+Naming convention version:
+ '1'
 \end_layout
 
 \end_inset
@@ -4721,8 +5291,9 @@ y
 \begin_inset Text
 
 \begin_layout Plain Layout
-ASCII hex UUID of the associated pool or, in the case of encryption, the
- block device
+ASCII hex UUID of the associated pool or,
+ in the case of encryption,
+ the block device
 \end_layout
 
 \end_inset
@@ -4863,8 +5434,7 @@ n
 \begin_inset Text
 
 \begin_layout Plain Layout
-Role-specific unique differentiator between multiple devices within the
- layer with the same role
+Role-specific unique differentiator between multiple devices within the layer with the same role
 \end_layout
 
 \end_inset
@@ -4878,8 +5448,8 @@ Role-specific unique differentiator between multiple devices within the
 \end_layout
 
 \begin_layout Itemize
-The maximum length (adding 6 '-'s as separator) is 125, to stay within the
- DM name limit of 127 characters.
+The maximum length (adding 6 '-'s as separator) is 125,
+ to stay within the DM name limit of 127 characters.
 \end_layout
 
 \begin_layout Itemize
@@ -4890,13 +5460,11 @@ private
 \begin_inset Quotes erd
 \end_inset
 
- is included in names for DM devices that are internal and that should be
- excluded from content scanning by tools such as blkid.
+ is included in names for DM devices that are internal and that should be excluded from content scanning by tools such as blkid.
 \end_layout
 
 \begin_layout Itemize
-Characters for each part are drawn solely from the character classes '[a-z]'
- and '[0-9]' except that part 7 may also use the '-' character.
+Characters for each part are drawn solely from the character classes '[a-z]' and '[0-9]' except that part 7 may also use the '-' character.
  These restrictions meet D-Bus and udev requirements
 \begin_inset Foot
 status collapsed
@@ -4911,8 +5479,13 @@ See libdm/libdm-common.c _is_whitelisted_char() in the lvm2 code for more.
 \end_layout
 
 \begin_layout Itemize
-Encryption uses device UUIDs because there may be multiple encrypted devices
- in one pool so using the pool UUID would result in naming collisions
+For V1,
+ encryption uses device UUIDs because there may be multiple encrypted devices in one pool so using the pool UUID would result in naming collisions
+\end_layout
+
+\begin_layout Itemize
+For V2,
+ Encryption uses a pool UUID because there will be exactly one crypt device
 \end_layout
 
 \begin_layout Subsection
@@ -4920,30 +5493,32 @@ devicemapper minimum version
 \end_layout
 
 \begin_layout Standard
-Stratisd devicemapper minor version 37 or greater, for DM event poll() support
- and support for event_nr in list_devices ioctl.
+Stratisd devicemapper minor version 37 or greater,
+ for DM event poll() support and support for event_nr in list_devices ioctl.
 \end_layout
 
 \begin_layout Subsection
-OS Integration: Boot and initrd
+OS Integration:
+ Boot and initrd
 \end_layout
 
 \begin_layout Standard
-Since we want to allow Stratis to be used for system files, Stratis needs
- to run in the initrd preboot environment.
- This allows it to activate pools and filesystems so that they can be mounted
- and accessible during the transition to the main phase of operation.
+Since we want to allow Stratis to be used for system files,
+ Stratis needs to run in the initrd preboot environment.
+ This allows it to activate pools and filesystems so that they can be mounted and accessible during the transition to the main phase of operation.
 \end_layout
 
 \begin_layout Standard
 The use of D-Bus is not possible in the preboot environment.
- Therefore, Stratis has an alternate IPC mechanism to be used in the initramfs.
+  Therefore, Stratis has an alternate IPC mechanism to be used in the initramfs.
  This can be accessed through the stratis-min and stratisd-min executables.
 \end_layout
 
 \begin_layout Standard
-Stratis packages distribute a dracut module, systemd generator, and service
- file to automate set up of all needed pools, encrypted or unencrypted,
+Stratis packages distribute a dracut module,
+ systemd generator,
+ and service file to automate set up of all needed pools,
+ encrypted or unencrypted,
  during the boot process and 
 \begin_inset Flex Code
 status collapsed
@@ -4958,7 +5533,8 @@ status collapsed
 \end_layout
 
 \begin_layout Subsection
-OS Integration: udev
+OS Integration:
+ udev
 \end_layout
 
 \begin_layout Standard
@@ -4971,31 +5547,34 @@ libudev
 \end_inset
 
  enables access to the udev device database.
- This allows library users to enumerate block devices on the system, and
- includes attributes describing their contents, such as what filesystem
- or volume manager signature was detected.
- (libudev uses libblkid for this, which recently had Stratis signature support
- added.) The primary benefit of this is to perform the time-consuming block
- device scan only once, and to alleviate library users from interpreting
- block device contents.
+ This allows library users to enumerate block devices on the system,
+ and includes attributes describing their contents,
+ such as what filesystem or volume manager signature was detected.
+ (libudev uses libblkid for this,
+ which recently had Stratis signature support added.) The primary benefit of this is to perform the time-consuming block device scan only once,
+ and to alleviate library users from interpreting block device contents.
 \end_layout
 
 \begin_layout Standard
-On boot, Stratis uses libudev to enumerate Stratis block devices on the
- system, reads the Stratis metadata from each, and activates pools that
- are complete.
- Later, during the main running phase, Stratis monitors udev events for
- newly-added block devices, so that if missing Stratis pool members are
- connected to complete a pool, the pool can be activated and used.
+On boot,
+ Stratis uses libudev to enumerate Stratis block devices on the system,
+ reads the Stratis metadata from each,
+ and activates pools that are complete.
+ Later,
+ during the main running phase,
+ Stratis monitors udev events for newly-added block devices,
+ so that if missing Stratis pool members are connected to complete a pool,
+ the pool can be activated and used.
 \end_layout
 
 \begin_layout Subsection
-OS Integration: /dev entries
+OS Integration:
+ /dev entries
 \end_layout
 
 \begin_layout Standard
-Stratis allows the user to create filesystems, which then can be mounted
- and used via 
+Stratis allows the user to create filesystems,
+ which then can be mounted and used via 
 \begin_inset Flex Code
 status collapsed
 
@@ -5037,7 +5616,8 @@ status collapsed
 
 \end_inset
 
- for each pool present on the system, and
+ for each pool present on the system,
+ and
 \begin_inset Newline newline
 \end_inset
 
@@ -5052,8 +5632,9 @@ status collapsed
 \end_inset
 
 for each filesystem within the pool.
- Changes such as creations, removals, and renames are reflected in the entries
- under 
+ Changes such as creations,
+ removals,
+ and renames are reflected in the entries under 
 \begin_inset Flex Code
 status collapsed
 
@@ -5064,8 +5645,7 @@ status collapsed
 \end_inset
 
 .
- These entries give the user a well-known path to a device to use for mounting
- the Stratis filesystem.
+ These entries give the user a well-known path to a device to use for mounting the Stratis filesystem.
  Filesystems may also be listed in 
 \begin_inset Flex Code
 status collapsed
@@ -5077,8 +5657,9 @@ status collapsed
 \end_inset
 
  using XFS UUID.
- However, if the device is encrypted, it is recommended that users take
- advantage of the 
+ However,
+ if the device is encrypted,
+ it is recommended that users take advantage of the 
 \begin_inset Flex Code
 status collapsed
 
@@ -5102,8 +5683,7 @@ Stratis's current snapshot implementation is characterized by a few traits:
 \begin_layout Itemize
 A snapshot and its origin are not linked in lifetime.
  i.e.
- a snapshotted filesystem may live longer than the filesystem it was created
- from.
+ a snapshotted filesystem may live longer than the filesystem it was created from.
 \end_layout
 
 \begin_layout Itemize
@@ -5115,8 +5695,8 @@ A filesystem may be snapshotted while it is mounted or unmounted.
 \end_layout
 
 \begin_layout Itemize
-Each snapshot uses around half a gigabyte of actual backing storage, which
- is needed for the XFS filesystem's log.
+Each snapshot uses around half a gigabyte of actual backing storage,
+ which is needed for the XFS filesystem's log.
 \end_layout
 
 \begin_layout Standard
@@ -5128,18 +5708,19 @@ Backstore Internals
 \end_layout
 
 \begin_layout Standard
-The backstore is divided into two tiers: the data tier, and an optional
- cache tier.
+The backstore is divided into two tiers:
+ the data tier,
+ and an optional cache tier.
  Each tier has its own set of physical block devices.
- The goal of each tier is to provide a single linear device that the flex
- layer (or another tier) can easily build on top of.
+ The goal of each tier is to provide a single linear device that the flex layer (or another tier) can easily build on top of.
 \end_layout
 
 \begin_layout Standard
-A tier is created with a certain feature set, which results in an internal
- layering of devices as needed to support those features.
+A tier is created with a certain feature set,
+ which results in an internal layering of devices as needed to support those features.
  The features a tier supports are fixed at tier creation time.
- However, the block devices that make up the tier may change.
+ However,
+ the block devices that make up the tier may change.
  New blockdevs may be added.
 \end_layout
 
@@ -5156,8 +5737,8 @@ blockdevs (list/iterate)
 \end_layout
 
 \begin_layout Standard
-The tier includes optional internal support for multiple features, which
- also are implemented using DM devices.
+The tier includes optional internal support for multiple features,
+ which also are implemented using DM devices.
 \end_layout
 
 \begin_layout Standard
@@ -5170,7 +5751,8 @@ bottom
 \end_inset
 
  of the tier are blockdevs.
- These blockdevs are mapped through layers that add value, such as encryption.
+ These blockdevs are mapped through layers that add value,
+ such as encryption.
 \end_layout
 
 \begin_layout Standard
@@ -5182,11 +5764,13 @@ better
 \begin_inset Quotes erd
 \end_inset
 
- blockdevs, whose total size is likely different.
+ blockdevs,
+ whose total size is likely different.
 \end_layout
 
 \begin_layout Standard
-While each intermediate layer may provide an array of blockdevs, the 
+While each intermediate layer may provide an array of blockdevs,
+ the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5194,9 +5778,8 @@ cap
 \begin_inset Quotes erd
 \end_inset
 
- layer of the tier presents a single linear blockdev that maintains the
- location of each presented block and never shrinks, and hides the interior
- complexity of the tier from upper users.
+ layer of the tier presents a single linear blockdev that maintains the location of each presented block and never shrinks,
+ and hides the interior complexity of the tier from upper users.
 \end_layout
 
 \begin_layout Standard
@@ -5216,8 +5799,7 @@ encryption
 \begin_inset Newline newline
 \end_inset
 
-This layer provides optional encryption for all block devices available
- in the pool.
+This layer provides optional encryption for all block devices available in the pool.
 \end_layout
 
 \begin_layout Enumerate
@@ -5225,8 +5807,9 @@ cap
 \begin_inset Newline newline
 \end_inset
 
-If presented with more than one blockdev, or the blockdev has a nonzero
- offset, the 
+If presented with more than one blockdev,
+ or the blockdev has a nonzero offset,
+ the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5234,9 +5817,7 @@ cap
 \begin_inset Quotes erd
 \end_inset
 
- layer will ensure the Tier presents a single blockdev with consistent block
- mapping for use above the tier by creating a Linear device that never relocates
- previously-mapped block ranges.
+ layer will ensure the Tier presents a single blockdev with consistent block mapping for use above the tier by creating a Linear device that never relocates previously-mapped block ranges.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5244,9 +5825,8 @@ Demand-based allocations
 \end_layout
 
 \begin_layout Standard
-Layers should not consume the entire space available to them when constructing
- devices, but instead grow existing mapped allocations (or create new ones)
- as the total demands of upper layers grow larger.
+Layers should not consume the entire space available to them when constructing devices,
+ but instead grow existing mapped allocations (or create new ones) as the total demands of upper layers grow larger.
  This is preferred over a 
 \begin_inset Quotes eld
 \end_inset
@@ -5255,9 +5835,7 @@ greedy
 \begin_inset Quotes erd
 \end_inset
 
- strategy because it provides a better user experience to allow the amount
- of space allocated to both data and metadata to be calculated dynamically
- if requirements change.
+ strategy because it provides a better user experience to allow the amount of space allocated to both data and metadata to be calculated dynamically if requirements change.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5265,14 +5843,10 @@ Block device growth
 \end_layout
 
 \begin_layout Standard
-The logical separation between the backstore and thin pool allows relatively
- simple support for growing block devices that can change in size like loopback
- devices or RAID arrays.
- Because the cap device abstracts away the complexity of the underlying
- block devices, newly exposed block device segments can be added to the
- cap device without any support needing to be added to the thin pool.
- The thin pool will simply see that more space is now available and allocate
- it lazily as needed.
+The logical separation between the backstore and thin pool allows relatively simple support for growing block devices that can change in size like loopback devices or RAID arrays.
+ Because the cap device abstracts away the complexity of the underlying block devices,
+ newly exposed block device segments can be added to the cap device without any support needing to be added to the thin pool.
+ The thin pool will simply see that more space is now available and allocate it lazily as needed.
 \end_layout
 
 \begin_layout Subsection
@@ -5280,12 +5854,13 @@ Operation States
 \end_layout
 
 \begin_layout Standard
-When encountering errors, Stratis must handle them if possible, but there
- are also errors that are severe enough to hamper Stratis's ability to function.
- When these occur, instead of terminating, Stratis continues by transitioning
- to a less-capable operation state.
- This allows some measure of continued monitoring and enables its condition
- to be visible to the user through the API.
+When encountering errors,
+ Stratis must handle them if possible,
+ but there are also errors that are severe enough to hamper Stratis's ability to function.
+ When these occur,
+ instead of terminating,
+ Stratis continues by transitioning to a less-capable operation state.
+ This allows some measure of continued monitoring and enables its condition to be visible to the user through the API.
 \end_layout
 
 \begin_layout Standard
@@ -5350,10 +5925,8 @@ no_ipc_requests
 
 \begin_layout Plain Layout
 Pool operations triggered by an IPC request are disabled.
- This is often due to a failed IPC command that could not be fully rolled
- back.
- Manual resolution of the bad roll back state will allow the pool to resume
- fully operational state again.
+ This is often due to a failed IPC command that could not be fully rolled back.
+ Manual resolution of the bad roll back state will allow the pool to resume fully operational state again.
 \end_layout
 
 \end_inset
@@ -5374,8 +5947,7 @@ no_pool_changes
 
 \begin_layout Plain Layout
 Any operations that modify the state of the pool will be disabled.
- This includes IPC requests and background operations such as extending
- the thin pool and filesystem.
+ This includes IPC requests and background operations such as extending the thin pool and filesystem.
 \end_layout
 
 \end_inset
@@ -5393,36 +5965,32 @@ Licensing
 \end_layout
 
 \begin_layout Standard
-Currently, stratisd and all Rust libraries included in the stratis-storage
- organization meant for stratisd are licensed as MPLv2.
- This conclusion was reached after careful consideration of compatibility
- with other licenses in the open source ecosystem.
+Currently,
+ stratisd and all Rust libraries included in the stratis-storage organization meant for stratisd are licensed as MPLv2.
+ This conclusion was reached after careful consideration of compatibility with other licenses in the open source ecosystem.
  MPLv2 allows some major benefits:
 \end_layout
 
 \begin_layout Enumerate
-It is compatible with more permissive licenses in the open source ecosystem
- such as BSD and MIT licenses.
+It is compatible with more permissive licenses in the open source ecosystem such as BSD and MIT licenses.
  Given the prevalence of more permissive licenses in the Rust ecosystem,
  this is an important consideration.
 \end_layout
 
 \begin_layout Enumerate
 It is compatible with GPL code.
- This permits stratisd to incorporate GPL code and become effectively GPL
- without ever changing the MPLv2 license.
+ This permits stratisd to incorporate GPL code and become effectively GPL without ever changing the MPLv2 license.
 \end_layout
 
 \begin_layout Enumerate
 If GPL code is incompatible with the license of a dependency added later,
- MPLv2 allows the removal of GPL code and migration of the GPL code into
- a separate service to permit the addition of the conflicting dependency.
+ MPLv2 allows the removal of GPL code and migration of the GPL code into a separate service to permit the addition of the conflicting dependency.
  This can all be done without relicensing.
 \end_layout
 
 \begin_layout Standard
-After evaluating the options, the MPLv2 seemed to be the most flexible license
- that still fulfilled the requirements for this project.
+After evaluating the options,
+ the MPLv2 seemed to be the most flexible license that still fulfilled the requirements for this project.
 \end_layout
 
 \begin_layout Standard
@@ -5430,7 +5998,6 @@ After evaluating the options, the MPLv2 seemed to be the most flexible license
 status collapsed
 
 \begin_layout Plain Layout
-
 
 \backslash
 nocite{*}
@@ -5458,12 +6025,11 @@ Appendices
 \end_layout
 
 \begin_layout Section
-Encryption implementation details
+Encryption V1 implementation details
 \end_layout
 
 \begin_layout Standard
-Stratis uses libcryptsetup to manage FDE (full disk encryption) for each
- block device added to an encrypted pool.
+Stratis uses libcryptsetup to manage FDE (full disk encryption) for each block device added to an encrypted pool.
 \end_layout
 
 \begin_layout Subsection
@@ -5471,10 +6037,8 @@ On-disk format
 \end_layout
 
 \begin_layout Standard
-Stratis uses the LUKS2 encryption format as the basis for the encryption
- implementation.
- The LUKS2 header contains information that can be used to identify a device
- as a Stratis encrypted device.
+Stratis uses the LUKS2 encryption format as the basis for the encryption implementation.
+ The LUKS2 header contains information that can be used to identify a device as a Stratis encrypted device.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5482,36 +6046,34 @@ LUKS2 token format
 \end_layout
 
 \begin_layout Standard
-LUKS2 tokens contain the necessary information to describe how to unlock
- the device.
+LUKS2 tokens contain the necessary information to describe how to unlock the device.
  No private information is contained in the tokens.
- Stratis uses two tokens, one standard cryptsetup token which allows activating
- the device using a passphrase stored in the kernel keyring and another
- Stratis-defined token that contains activation information required by
- Stratis.
+ Stratis uses two tokens,
+ one standard cryptsetup token which allows activating the device using a passphrase stored in the kernel keyring and another Stratis-defined token that contains activation information required by Stratis.
  Token IDs are statically assigned for each token for a number of reasons:
 \end_layout
 
 \begin_layout Itemize
-Using static IDs, stratisd does not have to do a scan of all of the tokens
- followed by heuristics to recognize a token.
- Instead, it chooses the static ID, and if the format does not match what
- was expected, it is not treated as a Stratis encrypted device.
+Using static IDs,
+ stratisd does not have to do a scan of all of the tokens followed by heuristics to recognize a token.
+ Instead,
+ it chooses the static ID,
+ and if the format does not match what was expected,
+ it is not treated as a Stratis encrypted device.
 \end_layout
 
 \begin_layout Itemize
-As other activation methods are added, activation of a pool can specify
- one token ID to use for activation of all devices in the pool and expect
- that they will all be unlocked using the same mechanism.
+As other activation methods are added,
+ activation of a pool can specify one token ID to use for activation of all devices in the pool and expect that they will all be unlocked using the same mechanism.
 \end_layout
 
 \begin_layout Itemize
-New tokens may be added without breaking changes to the assignment of existing
- token IDs.
+New tokens may be added without breaking changes to the assignment of existing token IDs.
 \end_layout
 
 \begin_layout Standard
-The Stratis token has an ID of 0, the LUKS2 keyring token has an ID of 1,
+The Stratis token has an ID of 0,
+ the LUKS2 keyring token has an ID of 1,
  and the Clevis token has an ID of 2.
 \end_layout
 
@@ -5520,10 +6082,9 @@ LUKS2 keyring token
 \end_layout
 
 \begin_layout Standard
-The kernel keyring token contains information for LUKS2 integration with
- keys in the kernel keyring.
- This token is a standard token supported by cryptsetup, and details for
- the format can be found in the cryptsetup documentation.
+The kernel keyring token contains information for LUKS2 integration with keys in the kernel keyring.
+ This token is a standard token supported by cryptsetup,
+ and details for the format can be found in the cryptsetup documentation.
  Interaction with this token is handled by standard libcryptsetup API methods.
 \end_layout
 
@@ -5539,8 +6100,8 @@ name "subsec:Stratis-token"
 \end_layout
 
 \begin_layout Standard
-The Stratis token is used for device identification and activation, and
- the values are set directly by Stratis.
+The Stratis token is used for device identification and activation,
+ and the values are set directly by Stratis.
  The format specification is as follows:
 \end_layout
 
@@ -5550,12 +6111,10 @@ inline false
 status collapsed
 
 \begin_layout Plain Layout
-
 {
 \end_layout
 
 \begin_layout Plain Layout
-
 	
 \begin_inset Quotes eld
 \end_inset
@@ -5564,7 +6123,8 @@ type
 \begin_inset Quotes erd
 \end_inset
 
-: 
+:
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5576,7 +6136,6 @@ stratis
 \end_layout
 
 \begin_layout Plain Layout
-
 	
 \begin_inset Quotes eld
 \end_inset
@@ -5585,11 +6144,11 @@ keyslots
 \begin_inset Quotes erd
 \end_inset
 
-: [],
+:
+ [],
 \end_layout
 
 \begin_layout Plain Layout
-
 	
 \begin_inset Quotes eld
 \end_inset
@@ -5598,11 +6157,11 @@ activation_name
 \begin_inset Quotes erd
 \end_inset
 
-: <DEVICEMAPPER_NAME>,
+:
+ <DEVICEMAPPER_NAME>,
 \end_layout
 
 \begin_layout Plain Layout
-
 	
 \begin_inset Quotes eld
 \end_inset
@@ -5611,11 +6170,11 @@ pool_uuid
 \begin_inset Quotes erd
 \end_inset
 
-: <POOL_UUID>,
+:
+ <POOL_UUID>,
 \end_layout
 
 \begin_layout Plain Layout
-
 	
 \begin_inset Quotes eld
 \end_inset
@@ -5624,11 +6183,11 @@ device_uuid
 \begin_inset Quotes erd
 \end_inset
 
-: <DEVICE_UUID>,
+:
+ <DEVICE_UUID>,
 \end_layout
 
 \begin_layout Plain Layout
-
 	
 \begin_inset Quotes eld
 \end_inset
@@ -5637,11 +6196,11 @@ pool_name
 \begin_inset Quotes erd
 \end_inset
 
-: <POOL_NAME>
+:
+ <POOL_NAME>
 \end_layout
 
 \begin_layout Plain Layout
-
 }
 \end_layout
 
@@ -5660,17 +6219,14 @@ inline false
 status collapsed
 
 \begin_layout Plain Layout
-
 <DEVICEMAPPER_NAME>
 \end_layout
 
 \end_inset
 
- This is the managed name that will show up in devicemapper when the device
- is activated using libcryptsetup.
- While the name can be seen on the system by querying devicemapper, managing
- encrypted Stratis devices outside of Stratis is not supported so this is
- considered an internal name.
+ This is the managed name that will show up in devicemapper when the device is activated using libcryptsetup.
+ While the name can be seen on the system by querying devicemapper,
+ managing encrypted Stratis devices outside of Stratis is not supported so this is considered an internal name.
 \end_layout
 
 \begin_layout Standard
@@ -5679,7 +6235,6 @@ inline false
 status collapsed
 
 \begin_layout Plain Layout
-
 <POOL_UUID>
 \end_layout
 
@@ -5690,8 +6245,7 @@ status collapsed
 
 \begin_layout Standard
 This UUID corresponds to the Stratis pool that owns this block device.
- The pool UUID in the token matches the pool UUID in the encrypted Stratis
- metadata.
+ The pool UUID in the token matches the pool UUID in the encrypted Stratis metadata.
 \end_layout
 
 \begin_layout Standard
@@ -5700,7 +6254,6 @@ inline false
 status collapsed
 
 \begin_layout Plain Layout
-
 <DEVICE_UUID>
 \end_layout
 
@@ -5711,8 +6264,7 @@ status collapsed
 
 \begin_layout Standard
 This UUID corresponds to the device UUID for this specific block device.
- The device UUID in the token matches the device UUID in the encrypted Stratis
- metadata.
+ The device UUID in the token matches the device UUID in the encrypted Stratis metadata.
 \end_layout
 
 \begin_layout Standard
@@ -5721,7 +6273,6 @@ inline false
 status collapsed
 
 \begin_layout Plain Layout
-
 <POOL_NAME>
 \end_layout
 
@@ -5731,9 +6282,7 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-This name is duplicated from the pool level metadata and updated when the
- pool name is changed to facilitate starting pools by name for encrypted
- devices.
+This name is duplicated from the pool level metadata and updated when the pool name is changed to facilitate starting pools by name for encrypted devices.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5741,9 +6290,8 @@ Encrypted Stratis metadata format
 \end_layout
 
 \begin_layout Standard
-Once the LUKS2 volume is unlocked, the encrypted Stratis metadata should
- be accessible through the unencrypted logical devicemapper device in exactly
- the same way as an unencrypted Stratis device.
+Once the LUKS2 volume is unlocked,
+ the encrypted Stratis metadata should be accessible through the unencrypted logical devicemapper device in exactly the same way as an unencrypted Stratis device.
 \end_layout
 
 \begin_layout Subsection
@@ -5752,28 +6300,25 @@ Encrypted device creation
 
 \begin_layout Standard
 Stratis does not wipe the device prior to initializing it with a LUKS2 header.
- This means that an attacker can deduce the following from examining a disk
- that has been initialized using Stratis without any prior preparation:
+ This means that an attacker can deduce the following from examining a disk that has been initialized using Stratis without any prior preparation:
 \end_layout
 
 \begin_layout Itemize
 The amount of data currently stored on disk that is encrypted.
- For example, if a disk has sectors that were zeroed or contain unencrypted
- data previously stored on the disk at the end of an encrypted segment,
- this can give insight into how many encrypted blocks are stored on the
- device.
- To prevent this, the device should be wiped with random data prior to providing
- it to a Stratis pool.
+ For example,
+ if a disk has sectors that were zeroed or contain unencrypted data previously stored on the disk at the end of an encrypted segment,
+ this can give insight into how many encrypted blocks are stored on the device.
+ To prevent this,
+ the device should be wiped with random data prior to providing it to a Stratis pool.
 \end_layout
 
 \begin_layout Itemize
-The contents of unencrypted data that was previously stored on the disk
- prior to initialization by Stratis.
- cryptsetup's LUKS2 implementation does not overwrite all of the data on
- the disk by default, so without prior preparation, any sectors that have
- not been overwritten with encrypted data will still contain the data previously
- stored on the disk.
- To prevent this, the disk should be zeroed or wiped with random data.
+The contents of unencrypted data that was previously stored on the disk prior to initialization by Stratis.
+ cryptsetup's LUKS2 implementation does not overwrite all of the data on the disk by default,
+ so without prior preparation,
+ any sectors that have not been overwritten with encrypted data will still contain the data previously stored on the disk.
+ To prevent this,
+ the disk should be zeroed or wiped with random data.
 \end_layout
 
 \begin_layout Subsection
@@ -5781,14 +6326,12 @@ Encrypted device discovery
 \end_layout
 
 \begin_layout Standard
-Stratis identifies encrypted devices belonging to Stratis by their Stratis
- token.
- It does not attempt to activate any device until it receives a D-Bus command
- to activate all devices.
- When the command is received, stratisd attempts to unlock the devices using
- the LUKS2 keyring token previously set by stratisd.
- If activation of devices yields a set of devices that can form a complete
- pool, the pool is set up.
+Stratis identifies encrypted devices belonging to Stratis by their Stratis token.
+ It does not attempt to activate any device until it receives a D-Bus command to activate all devices.
+ When the command is received,
+ stratisd attempts to unlock the devices using the LUKS2 keyring token previously set by stratisd.
+ If activation of devices yields a set of devices that can form a complete pool,
+ the pool is set up.
 \end_layout
 
 \begin_layout Subsection
@@ -5804,27 +6347,26 @@ reference "subsec:Stratis-token"
 plural "false"
 caps "false"
 noprefix "false"
+nolink "false"
 
 \end_inset
 
  for an explanation of the Stratis token.
- Device activation results in a new, activated device path with the canonical
- path name 
+ Device activation results in a new,
+ activated device path with the canonical path name 
 \begin_inset listings
 inline false
 status collapsed
 
 \begin_layout Plain Layout
-
 /dev/mapper/<activation_name>
 \end_layout
 
 \end_inset
 
  where the unencrypted data can be accessed.
- Because of the design and use of libcryptsetup, encrypted devices can also
- be activated outside of Stratis using libcryptsetup or the cryptsetup CLI
- as long as the required passphrase is in the kernel keyring.
+ Because of the design and use of libcryptsetup,
+ encrypted devices can also be activated outside of Stratis using libcryptsetup or the cryptsetup CLI as long as the required passphrase is in the kernel keyring.
 \end_layout
 
 \begin_layout Subsection
@@ -5832,13 +6374,11 @@ Encrypted device destruction
 \end_layout
 
 \begin_layout Standard
-Destroying an encrypted Stratis device does not wipe the entire device as
- the cost of this operation is linearly proportional with respect to disk
- size.
- Instead, Stratis uses libcryptsetup to destroy all of the keyslots, wiping
- all of the encrypted MEK (media encryption key) data in each keyslot.
- It then obtains the size of the LUKS2 metadata on this device and does
- an additional wipe of the remaining LUKS2 metadata.
+Destroying an encrypted Stratis device does not wipe the entire device as the cost of this operation is linearly proportional with respect to disk size.
+ Instead,
+ Stratis uses libcryptsetup to destroy all of the keyslots,
+ wiping all of the encrypted MEK (media encryption key) data in each keyslot.
+ It then obtains the size of the LUKS2 metadata on this device and does an additional wipe of the remaining LUKS2 metadata.
  This provides the following device properties on pool destruction:
 \end_layout
 
@@ -5847,19 +6387,16 @@ The MEK data is destroyed so the data stored on the device will be unrecoverable
 \end_layout
 
 \begin_layout Itemize
-If this device is used when creating another pool later, Stratis will be
- able to reinitialize it and will consider this device unowned due to the
- wipe of the LUKS2 metadata.
+If this device is used when creating another pool later,
+ Stratis will be able to reinitialize it and will consider this device unowned due to the wipe of the LUKS2 metadata.
 \end_layout
 
 \begin_layout Itemize
-The encrypted data will be left on the device but will be inaccessible due
- to the destruction of the key.
+The encrypted data will be left on the device but will be inaccessible due to the destruction of the key.
 \end_layout
 
 \begin_layout Standard
-Additional security may be achieved by zeroing the disk or overwriting it
- with random data using external tools.
+Additional security may be achieved by zeroing the disk or overwriting it with random data using external tools.
 \end_layout
 
 \begin_layout Subsection
@@ -5867,17 +6404,9 @@ Key consistency for encrypted pools
 \end_layout
 
 \begin_layout Standard
-Stratis takes steps to ensure that the same passphrase used during initial
- creation of the pool is the passphrase that is used for adding encrypted
- block devices at a later time.
- stratisd runs a check prior to adding block devices to an encrypted pool
- to verify that the passphrase in the kernel keyring with the key description
- recorded in the LUKS2 metadata can unlock the block devices that have already
- been encrypted and added to the pool.
- This prevents the passphrase data associated with a key description from
- being accidentally or intentionally changed between pool creation and addition
- of encrypted block devices which would result in an unusable pool and loss
- of data on the next occasion when the pool must be set up.
+Stratis takes steps to ensure that the same passphrase used during initial creation of the pool is the passphrase that is used for adding encrypted block devices at a later time.
+ stratisd runs a check prior to adding block devices to an encrypted pool to verify that the passphrase in the kernel keyring with the key description recorded in the LUKS2 metadata can unlock the block devices that have already been encrypted and added to the pool.
+ This prevents the passphrase data associated with a key description from being accidentally or intentionally changed between pool creation and addition of encrypted block devices which would result in an unusable pool and loss of data on the next occasion when the pool must be set up.
 \end_layout
 
 \begin_layout Subsection
@@ -5886,25 +6415,19 @@ Key management
 
 \begin_layout Standard
 Stratis provides facilities for key management.
- The kernel keyring is used as the backing store for the keys provided through
- the D-Bus API to allow proper access controls for passphrases.
- The architecture of key input has been carefully designed to avoid leaving
- keys in memory after they are no longer in use.
- The key is not directly sent over D-Bus; D-Bus traffic is not encrypted
- so this would leak the plaintext passphrase.
- Instead, the client side provides the server side with a file descriptor
- from which to read the passphrase so that no data is ever exposed in the
- D-Bus method call.
- When a user provides a key using the interactive mode in the CLI or D-Bus
- API, input buffering is turned off on the client side so the key is never
- stored in userspace memory.
- On the server side, stratisd reads the key into a memory block managed
- by libcryptsetup so that as soon as the memory is no longer in use, libcryptset
-up will wipe the memory using a method that will not be optimized out by
- the compiler.
- All of this guarantees that the key data will only be available in one
- memory location while it is in use, and that the memory will be securely
- wiped after use.
+ The kernel keyring is used as the backing store for the keys provided through the D-Bus API to allow proper access controls for passphrases.
+ The architecture of key input has been carefully designed to avoid leaving keys in memory after they are no longer in use.
+ The key is not directly sent over D-Bus;
+ D-Bus traffic is not encrypted so this would leak the plaintext passphrase.
+ Instead,
+ the client side provides the server side with a file descriptor from which to read the passphrase so that no data is ever exposed in the D-Bus method call.
+ When a user provides a key using the interactive mode in the CLI or D-Bus API,
+ input buffering is turned off on the client side so the key is never stored in userspace memory.
+ On the server side,
+ stratisd reads the key into a memory block managed by libcryptsetup so that as soon as the memory is no longer in use,
+ libcryptsetup will wipe the memory using a method that will not be optimized out by the compiler.
+ All of this guarantees that the key data will only be available in one memory location while it is in use,
+ and that the memory will be securely wiped after use.
 \end_layout
 
 \end_body
