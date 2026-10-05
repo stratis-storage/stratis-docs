@@ -1,16 +1,16 @@
-#LyX 2.3 created this file. For more info see http://www.lyx.org/
-\lyxformat 544
+#LyX 2.5 created this file. For more info see https://www.lyx.org/
+\lyxformat 643
 \begin_document
 \begin_header
 \save_transient_properties true
 \origin unavailable
 \textclass article
 \use_default_options true
-\maintain_unincluded_children false
+\maintain_unincluded_children no
 \language english
 \language_package default
-\inputencoding auto
-\fontencoding global
+\inputencoding auto-legacy
+\fontencoding auto
 \font_roman "default" "default"
 \font_sans "default" "default"
 \font_typewriter "default" "default"
@@ -18,7 +18,9 @@
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
-\font_osf false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
 \use_microtype false
@@ -49,9 +51,19 @@
 \use_indices false
 \paperorientation portrait
 \suppress_date false
-\justification true
-\use_refstyle 1
+\justification default
+\crossref_package refstyle
+\use_formatted_ref 0
 \use_minted 0
+\use_lineno 0
+\backgroundcolor none
+\fontcolor none
+\notefontcolor lightgray
+\boxbgcolor red
+\table_border_color default
+\table_odd_row_color default
+\table_even_row_color default
+\table_alt_row_colors_start 1
 \index Index
 \shortcut idx
 \color #008000
@@ -67,11 +79,17 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
+\tablestyle default
 \tracking_changes false
 \output_changes false
+\change_bars false
+\postpone_fragile_content false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\docbook_mathml_version 0
 \end_header
 
 \begin_body
@@ -81,7 +99,8 @@ Stratis Coding Style Guidelines
 \end_layout
 
 \begin_layout Date
-Last modified: 01/10/2019
+Last modified:
+ 01/10/2019
 \end_layout
 
 \begin_layout Standard
@@ -107,10 +126,11 @@ literal "false"
 
 \end_inset
 
-, and is written using \SpecialChar LyX
+,
+ and is written using \SpecialChar LyX
  2.3.3.
- Please ask any questions by opening an issue, and propose changes as pull
- requests.
+ Please ask any questions by opening an issue,
+ and propose changes as pull requests.
 \end_layout
 
 \begin_layout Section
@@ -118,16 +138,15 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-A consistent style helps legibility and saves developers from needing to
- think about issues that are not really important.
+A consistent style helps legibility and saves developers from needing to think about issues that are not really important.
 \end_layout
 
 \begin_layout Standard
-For both Rust and Python, there are standard coding conventions, as well
- as tools that help keep code consistent with these conventions that we
- will try to use as much as possible.
- There are also some additional project-specific style guidelines, which
- we will document here to help developers new to the project.
+For both Rust and Python,
+ there are standard coding conventions,
+ as well as tools that help keep code consistent with these conventions that we will try to use as much as possible.
+ There are also some additional project-specific style guidelines,
+ which we will document here to help developers new to the project.
 \end_layout
 
 \begin_layout Section
@@ -159,8 +178,7 @@ use
 \begin_inset Quotes erd
 \end_inset
 
- declarations within a module (such as a source file) should be grouped
- into up to four sections:
+ declarations within a module (such as a source file) should be grouped into up to four sections:
 \end_layout
 
 \begin_deeper
@@ -189,7 +207,8 @@ declarations from other modules in the same crate
 \end_layout
 
 \begin_layout Standard
-as needed, separated by blank lines.
+as needed,
+ separated by blank lines.
 \end_layout
 
 \end_deeper
@@ -202,8 +221,9 @@ use
 \begin_inset Quotes erd
 \end_inset
 
- directive, except for declarations from external dependencies, which require
- a separate use directive for each crate.
+ directive,
+ except for declarations from external dependencies,
+ which require a separate use directive for each crate.
 \end_layout
 
 \end_deeper
@@ -258,8 +278,8 @@ should never fail
 
 \end_deeper
 \begin_layout Enumerate
-When implementing a trait, the methods should be ordered as they are ordered
- in the trait definition.
+When implementing a trait,
+ the methods should be ordered as they are ordered in the trait definition.
 \end_layout
 
 \begin_layout Subsection
@@ -267,16 +287,15 @@ Conventions (stratisd)
 \end_layout
 
 \begin_layout Enumerate
-Stratisd has many instances of ranges of storage being allocated from other
- things.
+Stratisd has many instances of ranges of storage being allocated from other things.
  This can become confusing.
- In naming methods that relate to this, use the following conventions:
+ In naming methods that relate to this,
+ use the following conventions:
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-A method that attempts to allocate some number of unit of storage from an
- allocation pool container should be called 
+A method that attempts to allocate some number of unit of storage from an allocation pool container should be called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -299,8 +318,9 @@ request
 
 \begin_layout Enumerate
 A method returning the total amount of storage units (i.e.
- sectors, DataBlocks, or similar) in an allocation pool should be called
- 
+ sectors,
+ DataBlocks,
+ or similar) in an allocation pool should be called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -316,8 +336,7 @@ A method returning the total
 \emph on
 usable
 \emph default
- amount of storage units – the total number minus overhead (if any) – in
- an allocation pool should be called 
+ amount of storage units – the total number minus overhead (if any) – in an allocation pool should be called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -337,8 +356,7 @@ usable_size
 \end_layout
 
 \begin_layout Enumerate
-A method returning the number of previously-unallocated storage units should
- be called 
+A method returning the number of previously-unallocated storage units should be called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -358,8 +376,7 @@ avail_size
 \end_layout
 
 \begin_layout Enumerate
-A method returning the number of allocated storage units should be called
- 
+A method returning the number of allocated storage units should be called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -377,16 +394,17 @@ Style (Python)
 
 \begin_layout Enumerate
 Use list comprehensions instead of for-loops when possible.
- In places where they can be used, comprehensions more clearly communicate
- the code's intent to filter and/or map a list into another list.
- Same goes for generator, dict, and set comprehensions.
+ In places where they can be used,
+ comprehensions more clearly communicate the code's intent to filter and/or map a list into another list.
+ Same goes for generator,
+ dict,
+ and set comprehensions.
 \end_layout
 
 \begin_layout Enumerate
-Do not use boolean overloading in conditionals unless the type of the object
- is unknown.
- If the type of the object is known, use an explicit comparison such as
- 
+Do not use boolean overloading in conditionals unless the type of the object is unknown.
+ If the type of the object is known,
+ use an explicit comparison such as 
 \begin_inset Quotes eld
 \end_inset
 
@@ -403,14 +421,17 @@ is None
 \end_inset
 
 .
- This way, if an object of an unexpected type arrives, the comparison will
- generate an error instead of a latent bug.
+ This way,
+ if an object of an unexpected type arrives,
+ the comparison will generate an error instead of a latent bug.
 \end_layout
 
 \begin_layout Enumerate
 Use os.path methods when assembling or deconstructing paths.
- We are not concerned with cross-platform usage, so this is for clarity,
- to make it clear that it's a path, not a string.
+ We are not concerned with cross-platform usage,
+ so this is for clarity,
+ to make it clear that it's a path,
+ not a string.
 \end_layout
 
 \end_body
