@@ -1,16 +1,16 @@
-#LyX 2.3 created this file. For more info see http://www.lyx.org/
-\lyxformat 544
+#LyX 2.5 created this file. For more info see https://www.lyx.org/
+\lyxformat 643
 \begin_document
 \begin_header
 \save_transient_properties true
 \origin unavailable
 \textclass article
 \use_default_options true
-\maintain_unincluded_children false
+\maintain_unincluded_children no
 \language english
 \language_package default
-\inputencoding auto
-\fontencoding global
+\inputencoding auto-legacy
+\fontencoding auto
 \font_roman "default" "default"
 \font_sans "lmss" "default"
 \font_typewriter "default" "default"
@@ -18,7 +18,9 @@
 \font_default_family sfdefault
 \use_non_tex_fonts false
 \font_sc false
-\font_osf false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
 \use_microtype false
@@ -50,9 +52,19 @@
 \use_indices false
 \paperorientation portrait
 \suppress_date false
-\justification true
-\use_refstyle 1
+\justification default
+\crossref_package refstyle
+\use_formatted_ref 0
 \use_minted 0
+\use_lineno 0
+\backgroundcolor none
+\fontcolor none
+\notefontcolor lightgray
+\boxbgcolor red
+\table_border_color default
+\table_odd_row_color default
+\table_even_row_color default
+\table_alt_row_colors_start 1
 \index Index
 \shortcut idx
 \color #008000
@@ -72,11 +84,17 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
+\tablestyle default
 \tracking_changes false
 \output_changes false
+\change_bars false
+\postpone_fragile_content false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\docbook_mathml_version 0
 \end_header
 
 \begin_body
@@ -87,8 +105,7 @@ Stratisd D-Bus API Reference Manual
 status collapsed
 
 \begin_layout Plain Layout
-This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
- International License.
+This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
 \end_layout
 
 \end_inset
@@ -98,7 +115,6 @@ This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
 status collapsed
 
 \begin_layout Plain Layout
-
 
 \backslash
 
@@ -125,10 +141,10 @@ LatexCommand tableofcontents
 status collapsed
 
 \begin_layout Plain Layout
-Before saving this file preparatory to a commit, make sure that all insets
- are closed.
- If you are able to read this note, you haven't performed this essential
- step.
+Before saving this file preparatory to a commit,
+ make sure that all insets are closed.
+ If you are able to read this note,
+ you haven't performed this essential step.
 \end_layout
 
 \end_inset
@@ -150,9 +166,10 @@ literal "false"
 
 \end_inset
 
-, .
- Please ask any questions by opening an issue, and propose changes as pull
- requests.
+,
+ .
+ Please ask any questions by opening an issue,
+ and propose changes as pull requests.
 \end_layout
 
 \begin_layout Section
@@ -161,13 +178,13 @@ Introduction
 
 \begin_layout Standard
 This document describes the D-Bus API for the Stratis daemon.
- The D-Bus API constitutes the only public API of the Stratis daemon at
- the time of this writing.
- The public methods of the daemon's engine do not constitute part of the
- public API.
- The D-Bus API is a thin layer which receives messages on the D-Bus, processes
- them, transmits them to the Stratis engine, receives the results from the
- engine, and transmits a response on the D-Bus.
+ The D-Bus API constitutes the only public API of the Stratis daemon at the time of this writing.
+ The public methods of the daemon's engine do not constitute part of the public API.
+ The D-Bus API is a thin layer which receives messages on the D-Bus,
+ processes them,
+ transmits them to the Stratis engine,
+ receives the results from the engine,
+ and transmits a response on the D-Bus.
 \end_layout
 
 \begin_layout Section
@@ -188,15 +205,16 @@ org.freedesktop.dbus.ObjectManager
 \family typewriter
 GetManagedObjects()
 \family default
- method, which returns a view of the objects that the D-Bus layer has in
- its tree.
- This view constitutes a summary of the state of the pools, devices, and
- filesystems that Stratis manages.
+ method,
+ which returns a view of the objects that the D-Bus layer has in its tree.
+ This view constitutes a summary of the state of the pools,
+ devices,
+ and filesystems that Stratis manages.
  The objects are identified primarily by their D-Bus object paths.
- However, depending on the interface which an object supports it may also
- support certain identifying properties.
- For example, all objects that represent pools support an interface which
- implements a 
+ However,
+ depending on the interface which an object supports it may also support certain identifying properties.
+ For example,
+ all objects that represent pools support an interface which implements a 
 \family typewriter
 Name
 \family default
@@ -208,11 +226,14 @@ Uuid
 \end_layout
 
 \begin_layout Standard
-In invoking methods, or obtaining the values of properties, the client must
- identify existing objects by means of their object paths, either implicitly
- by invoking a method on an object constructed from an object path, or explicitl
-y, by passing object paths as arguments to a method.
- For example, the API's 
+In invoking methods,
+ or obtaining the values of properties,
+ the client must identify existing objects by means of their object paths,
+ either implicitly by invoking a method on an object constructed from an object path,
+ or explicitly,
+ by passing object paths as arguments to a method.
+ For example,
+ the API's 
 \family typewriter
 DestroyPool()
 \family default
@@ -224,7 +245,8 @@ the object path of the
 \family typewriter
 Manager
 \family default
- object, on which to invoke the 
+ object,
+ on which to invoke the 
 \family typewriter
 DestroyPool()
 \family default
@@ -232,8 +254,8 @@ DestroyPool()
 \end_layout
 
 \begin_layout Itemize
-the object path of the pool object, which is passed as an argument to the
- 
+the object path of the pool object,
+ which is passed as an argument to the 
 \family typewriter
 DestroyPool()
 \family default
@@ -241,8 +263,7 @@ DestroyPool()
 \end_layout
 
 \begin_layout Standard
-It is expected that the client will identify the object path of the pool
- object by locating it using its 
+It is expected that the client will identify the object path of the pool object by locating it using its 
 \family typewriter
 Name
 \family default
@@ -279,11 +300,14 @@ All objects support the
 org.freedesktop.dbus.Introspectable
 \family default
  interface.
- This interface has one method, 
+ This interface has one method,
+ 
 \family typewriter
 Introspect()
 \family default
-, which returns an XML description of the object's interfaces, methods,
+,
+ which returns an XML description of the object's interfaces,
+ methods,
  and properties.
 \end_layout
 
@@ -292,11 +316,13 @@ Stratisd Interfaces and Methods
 \end_layout
 
 \begin_layout Standard
-Each kind of object implements an identifying interface, i.e., pools implement
- a pool interface, filesystems implement a filesystem interface, etc.
+Each kind of object implements an identifying interface,
+ i.e.,
+ pools implement a pool interface,
+ filesystems implement a filesystem interface,
+ etc.
  There is a top level manager interface that implements management tasks.
- The following is a description of the interfaces and their methods and
- properties.
+ The following is a description of the interfaces and their methods and properties.
 \end_layout
 
 \begin_layout Paragraph
@@ -304,13 +330,12 @@ Idempotency
 \end_layout
 
 \begin_layout Standard
-It is intended that all operations that can be requested via the D-Bus API
- be idempotent.
- By this is meant that if an operation is requested repeatedly, and there
- are no intervening actions, then the operation should succeed every time,
+It is intended that all operations that can be requested via the D-Bus API be idempotent.
+ By this is meant that if an operation is requested repeatedly,
+ and there are no intervening actions,
+ then the operation should succeed every time,
  or it should fail every time.
- Since the return values may encode information about actions taken these
- may differ between different invocations.
+ Since the return values may encode information about actions taken these may differ between different invocations.
  However if an error is returned that should always be the same error.
  Lack of idempotency as defined here constitutes a bug.
 \end_layout
@@ -320,8 +345,8 @@ Structure of the Return Value
 \end_layout
 
 \begin_layout Standard
-All methods return a return code and an accompanying message, with type
- signature 
+All methods return a return code and an accompanying message,
+ with type signature 
 \begin_inset Quotes eld
 \end_inset
 
@@ -329,8 +354,10 @@ qs
 \begin_inset Quotes erd
 \end_inset
 
-, and may also return data.
- If a method does return data, then the data is the first element in a triple,
+,
+ and may also return data.
+ If a method does return data,
+ then the data is the first element in a triple,
  followed by the return code and message.
  The data may be a 
 \begin_inset CommandInset href
@@ -342,8 +369,9 @@ literal "false"
 \end_inset
 
  such as a struct or an array.
- Otherwise, if the method returns no data, the returned value is just a
- pair of the return code and message.
+ Otherwise,
+ if the method returns no data,
+ the returned value is just a pair of the return code and message.
 \end_layout
 
 \begin_layout Paragraph
@@ -352,11 +380,12 @@ Duplicate Device Nodes in Method Arguments
 
 \begin_layout Standard
 Some methods expect an array of device nodes as an argument.
- It is not considered an error if the array contains duplicate items; the
- items are reduced to a set.
- The order in which the devices are processed, for example, are added to
- an existing pool, is not guaranteed to be the same as the order in which
- they are passed as arguments.
+ It is not considered an error if the array contains duplicate items;
+ the items are reduced to a set.
+ The order in which the devices are processed,
+ for example,
+ are added to an existing pool,
+ is not guaranteed to be the same as the order in which they are passed as arguments.
 \end_layout
 
 \begin_layout Paragraph
@@ -380,7 +409,8 @@ option
 \begin_inset Quotes erd
 \end_inset
 
- type, but this type is not available
+ type,
+ but this type is not available
 \begin_inset Foot
 status collapsed
 
@@ -389,7 +419,6 @@ status collapsed
 status collapsed
 
 \begin_layout Plain Layout
-
 https://dbus.freedesktop.org/doc/dbus-specification.html
 \end_layout
 
@@ -401,7 +430,8 @@ https://dbus.freedesktop.org/doc/dbus-specification.html
 \end_inset
 
 .
- Nonetheless, it is desirable to have a way of representing a 
+ Nonetheless,
+ it is desirable to have a way of representing a 
 \begin_inset Quotes eld
 \end_inset
 
@@ -412,11 +442,11 @@ don't care
  condition when invoking D-Bus methods.
  Certain methods accept a pair argument that mimics such a type.
  The first item is a boolean.
- If the value is false, then the pair represents None.
- If the value is true, then the pair represents Some(x) where x is the second
- item of the pair.
- This same scheme is used in the results of various D-Bus method and also
- for some properties.
+ If the value is false,
+ then the pair represents None.
+ If the value is true,
+ then the pair represents Some(x) where x is the second item of the pair.
+ This same scheme is used in the results of various D-Bus method and also for some properties.
 \end_layout
 
 \begin_layout Paragraph
@@ -424,7 +454,9 @@ UUID format
 \end_layout
 
 \begin_layout Standard
-UUIDs are in simple format, i.e., without hyphens.
+UUIDs are in simple format,
+ i.e.,
+ without hyphens.
 \end_layout
 
 \begin_layout Paragraph
@@ -432,8 +464,9 @@ Time format
 \end_layout
 
 \begin_layout Standard
-Times, such as the initialization time of a block device, are in RFC 3339
- and ISO 8601 format.
+Times,
+ such as the initialization time of a block device,
+ are in RFC 3339 and ISO 8601 format.
 \end_layout
 
 \begin_layout Paragraph
@@ -441,8 +474,11 @@ Size format
 \end_layout
 
 \begin_layout Standard
-All sizes, whether as parameters, in results, or as properties, are specified
- in bytes and formatted as strings.
+All sizes,
+ whether as parameters,
+ in results,
+ or as properties,
+ are specified in bytes and formatted as strings.
 \end_layout
 
 \begin_layout Section
@@ -464,9 +500,9 @@ Interface major versions
 \begin_layout Standard
 The versioning scheme is currently included in the bus name (for example,
  org.storage.stratis3) and all of the interface names (org.storage.stratis3.pool,
- org.storage.stratis3.filesystem, and so on).
- The interface version number corresponds to the major version number of
- stratisd.
+ org.storage.stratis3.filesystem,
+ and so on).
+ The interface version number corresponds to the major version number of stratisd.
 \end_layout
 
 \begin_layout Subsubsection
@@ -475,10 +511,12 @@ Interface minor versions
 
 \begin_layout Standard
 The scheme allows supporting multiple interface revisions.
- For each minor version of stratisd a new revision of each existing interface
- is introduced, while prior interface revisions continue to be supported.
- The revision signifier is appended to the interface stem, e.g., org.storage.sratis3.
-pool.r0, org.storage.stratis3.pool.r1.
+ For each minor version of stratisd a new revision of each existing interface is introduced,
+ while prior interface revisions continue to be supported.
+ The revision signifier is appended to the interface stem,
+ e.g.,
+ org.storage.sratis3.pool.r0,
+ org.storage.stratis3.pool.r1.
 \end_layout
 
 \begin_layout Subsection
@@ -486,13 +524,11 @@ Interface breaking changes
 \end_layout
 
 \begin_layout Standard
-If a user installs from source, there are some considerations when updating
- to a new major version.
- Because stratisd uses the system bus in D-Bus, D-Bus will only allow stratis
- to bind to the new interface name if the D-Bus policy file allowing this
- is updated.
- When a new major version is released this file must be edited or else stratis
- will fail to communicate using the CLI or the programmatic API over D-Bus.
+If a user installs from source,
+ there are some considerations when updating to a new major version.
+ Because stratisd uses the system bus in D-Bus,
+ D-Bus will only allow stratis to bind to the new interface name if the D-Bus policy file allowing this is updated.
+ When a new major version is released this file must be edited or else stratis will fail to communicate using the CLI or the programmatic API over D-Bus.
 \end_layout
 
 \begin_layout Section
@@ -500,9 +536,8 @@ Introspection Data
 \end_layout
 
 \begin_layout Standard
-The introspection data for every kind of object stratisd supports, with
- accompanying comments describing the use of the parameters and the meaning
- of the return values is available via the following links:
+The introspection data for every kind of object stratisd supports,
+ with accompanying comments describing the use of the parameters and the meaning of the return values is available via the following links:
 \end_layout
 
 \begin_layout Description
