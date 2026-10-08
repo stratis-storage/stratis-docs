@@ -91,6 +91,14 @@ fmt-ci:
 
 .PHONY: resave
 resave:
-	lyx -e lyx ./docs/dbus/DBusAPIReference.lyx
-	lyx -e lyx ./docs/design/StratisSoftwareDesign.lyx
-	lyx -e lyx ./docs/style/StratisStyleGuidelines.lyx
+	@LYX=$$(which lyx 2>/dev/null); \
+	if [ -z "$$LYX" ]; then \
+		echo "ERROR: lyx not found in PATH"; \
+		exit 1; \
+	fi; \
+	for doc in ./docs/dbus/DBusAPIReference.lyx ./docs/design/StratisSoftwareDesign.lyx ./docs/style/StratisStyleGuidelines.lyx; do \
+		if ! $$LYX -batch --export lyx $$doc; then \
+			echo "ERROR: Failed to resave $$doc"; \
+			exit 1; \
+		fi; \
+	done
