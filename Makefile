@@ -88,3 +88,9 @@ fmt:
 .PHONY: fmt-ci
 fmt-ci:
 	(cd ./docs/dbus ; $(MAKE) fmt-ci)
+
+.PHONY: resave
+resave:
+	lyx -e lyx ./docs/dbus/DBusAPIReference.lyx
+	lyx -e lyx ./docs/design/StratisSoftwareDesign.lyx
+	lyx -e lyx ./docs/style/StratisStyleGuidelines.lyx
