@@ -1,24 +1,14 @@
 SITE=./public
 PRE_SITE=./static
-ZOLA := $(if $(shell which zola),,foo)
-LYX := $(if $(shell which lyx),,foo)
 
 .PHONY: pdfs
 pdfs:
-ifdef LYX
-	@echo "ERROR: No lyx found in PATH, cannot build PDF documentation"
-	exit 1
-endif
 	(cd ./docs/design ; $(MAKE) StratisSoftwareDesign.pdf)
 	(cd ./docs/dbus; $(MAKE) DBusAPIReference.pdf)
 	(cd ./docs/style; $(MAKE) StratisStyleGuidelines.pdf)
 
 .PHONY: website-build
 website-build: pdfs
-ifdef ZOLA
-	@echo "ERROR: No zola found in PATH, cannot build website. Follow instructions at https://getzola.org/documentation/"
-	exit 1
-endif
 	cp ./docs/design/StratisSoftwareDesign.pdf $(PRE_SITE)
 	cp ./docs/dbus/DBusAPIReference.pdf $(PRE_SITE)
 	cp ./docs/style/StratisStyleGuidelines.pdf $(PRE_SITE)
@@ -29,12 +19,22 @@ endif
 
 .PHONY: website-distrib
 website-distrib: website-build
-	mkdir -p templates
-	zola build
+	@ZOLA=$$(which zola 2>/dev/null); \
+	if [ -z "$$ZOLA" ]; then \
+		echo "ERROR: zola not found in PATH"; \
+		exit 1; \
+	fi; \
+	mkdir -p templates; \
+	$$ZOLA build
 
 .PHONY: website-test
 website-test: website-distrib
-	zola serve
+	@ZOLA=$$(which zola 2>/dev/null); \
+	if [ -z "$$ZOLA" ]; then \
+		echo "ERROR: zola not found in PATH"; \
+		exit 1; \
+	fi; \
+	$$ZOLA serve
 
 .PHONY: yamllint
 yamllint:
@@ -91,6 +91,14 @@ fmt-ci:
 
 .PHONY: resave
 resave:
-	lyx -e lyx ./docs/dbus/DBusAPIReference.lyx
-	lyx -e lyx ./docs/design/StratisSoftwareDesign.lyx
-	lyx -e lyx ./docs/style/StratisStyleGuidelines.lyx
+	@LYX=$$(which lyx 2>/dev/null); \
+	if [ -z "$$LYX" ]; then \
+		echo "ERROR: lyx not found in PATH"; \
+		exit 1; \
+	fi; \
+	for doc in ./docs/dbus/DBusAPIReference.lyx ./docs/design/StratisSoftwareDesign.lyx ./docs/style/StratisStyleGuidelines.lyx; do \
+		if ! $$LYX -batch --export lyx $$doc; then \
+			echo "ERROR: Failed to resave $$doc"; \
+			exit 1; \
+		fi; \
+	done
