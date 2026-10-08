@@ -30,7 +30,7 @@ jobs:
           VERSION=$(rpm -q lyx)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Create PR if there is something to commit
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           base: master
           commit-message: "chore: LyX re-save (LyX version ${{ steps.lyx_version.outputs.version }})"
