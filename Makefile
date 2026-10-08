@@ -1,6 +1,5 @@
 SITE=./public
 PRE_SITE=./static
-ZOLA := $(if $(shell which zola),,foo)
 LYX := $(if $(shell which lyx),,foo)
 
 .PHONY: pdfs
@@ -15,10 +14,6 @@ endif
 
 .PHONY: website-build
 website-build: pdfs
-ifdef ZOLA
-	@echo "ERROR: No zola found in PATH, cannot build website. Follow instructions at https://getzola.org/documentation/"
-	exit 1
-endif
 	cp ./docs/design/StratisSoftwareDesign.pdf $(PRE_SITE)
 	cp ./docs/dbus/DBusAPIReference.pdf $(PRE_SITE)
 	cp ./docs/style/StratisStyleGuidelines.pdf $(PRE_SITE)
@@ -29,12 +24,22 @@ endif
 
 .PHONY: website-distrib
 website-distrib: website-build
-	mkdir -p templates
-	zola build
+	@ZOLA=$$(which zola 2>/dev/null); \
+	if [ -z "$$ZOLA" ]; then \
+		echo "ERROR: zola not found in PATH"; \
+		exit 1; \
+	fi; \
+	mkdir -p templates; \
+	$$ZOLA build
 
 .PHONY: website-test
 website-test: website-distrib
-	zola serve
+	@ZOLA=$$(which zola 2>/dev/null); \
+	if [ -z "$$ZOLA" ]; then \
+		echo "ERROR: zola not found in PATH"; \
+		exit 1; \
+	fi; \
+	$$ZOLA serve
 
 .PHONY: yamllint
 yamllint:
