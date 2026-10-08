@@ -1,0 +1,39 @@
+---
+name: Resave with current version of LyX every Sunday
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  resave:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/fedora/fedora:44  # CURRENT DEVELOPMENT ENVIRONMENT
+
+    steps:
+      - name: Install dependencies
+        run: dnf install -y git make lyx
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Resave
+        run: make resave
+      - name: Get LyX version
+        id: lyx_version
+        run: |
+          VERSION=$(rpm -q lyx)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Create PR if there is something to commit
+        uses: peter-evans/create-pull-request@v6
+        with:
+          base: master
+          commit-message: "chore: LyX re-save (LyX version ${{ steps.lyx_version.outputs.version }})"
+          branch: lyx-resave-${{ github.run_id }}
+          title: "Resave with LyX version ${{ steps.lyx_version.outputs.version }}"
+          draft: true
