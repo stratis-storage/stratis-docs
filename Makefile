@@ -1,13 +1,8 @@
 SITE=./public
 PRE_SITE=./static
-LYX := $(if $(shell which lyx),,foo)
 
 .PHONY: pdfs
 pdfs:
-ifdef LYX
-	@echo "ERROR: No lyx found in PATH, cannot build PDF documentation"
-	exit 1
-endif
 	(cd ./docs/design ; $(MAKE) StratisSoftwareDesign.pdf)
 	(cd ./docs/dbus; $(MAKE) DBusAPIReference.pdf)
 	(cd ./docs/style; $(MAKE) StratisStyleGuidelines.pdf)

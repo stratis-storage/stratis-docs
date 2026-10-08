@@ -1,5 +1,10 @@
 StratisStyleGuidelines.pdf: StratisStyleGuidelines.lyx
-	lyx -batch --export pdf $<
+	@LYX=$$(which lyx 2>/dev/null); \
+	if [ -z "$$LYX" ]; then \
+		echo "ERROR: lyx not found in PATH"; \
+		exit 1; \
+	fi; \
+	$$LYX -batch --export pdf $<
 
 .PHONY: clean
 clean:
