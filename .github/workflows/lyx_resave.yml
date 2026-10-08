@@ -20,6 +20,11 @@ jobs:
     steps:
       - name: Install dependencies
         run: dnf install -y git make lyx
+      - name: Configure workspace as a safe directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
       - name: Checkout
         uses: actions/checkout@v6
       - name: Resave
